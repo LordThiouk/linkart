@@ -177,7 +177,7 @@ function main() {
   let message;
   try {
     message = fs.readFileSync(commitMessageFile, 'utf8').trim();
-  } catch (e) {
+  } catch (_e) {
     // Fallback sur latin1 si UTF-8 échoue
     message = fs.readFileSync(commitMessageFile, 'latin1').trim();
   }

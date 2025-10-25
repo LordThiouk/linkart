@@ -26,7 +26,7 @@ function execCommand(command, description) {
     execSync(command, { stdio: 'inherit' });
     log(`✅ ${description} - OK`, 'green');
     return true;
-  } catch (error) {
+  } catch (_error) {
     log(`❌ ${description} - FAILED`, 'red');
     return false;
   }
@@ -58,7 +58,7 @@ function checkSupabaseTypes() {
 
     log('✅ Types Supabase OK', 'green');
     return true;
-  } catch (error) {
+  } catch (_error) {
     log('❌ Erreur lors de la vérification des types Supabase', 'red');
     return false;
   }
@@ -83,7 +83,7 @@ function checkMigrationFiles() {
 
     log(`✅ ${migrationFiles.length} migration(s) trouvée(s)`, 'green');
     return true;
-  } catch (error) {
+  } catch (_error) {
     log('❌ Erreur lors de la vérification des migrations', 'red');
     return false;
   }
@@ -104,7 +104,7 @@ function checkDocumentationStructure() {
 
     log('✅ Structure documentation OK', 'green');
     return true;
-  } catch (error) {
+  } catch (_error) {
     log('❌ Erreur lors de la vérification de la documentation', 'red');
     return false;
   }

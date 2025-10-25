@@ -19,25 +19,13 @@ function log(message, color = 'reset') {
   console.log(`${colors[color]}${message}${colors.reset}`);
 }
 
-function execCommand(command, description) {
-  try {
-    log(`\n🔍 ${description}...`, 'blue');
-    execSync(command, { stdio: 'inherit' });
-    log(`✅ ${description} - OK`, 'green');
-    return true;
-  } catch (error) {
-    log(`❌ ${description} - FAILED`, 'red');
-    return false;
-  }
-}
-
 function execCommandOptional(command, description) {
   try {
     log(`\n🔍 ${description}...`, 'blue');
     execSync(command, { stdio: 'inherit' });
     log(`✅ ${description} - OK`, 'green');
     return true;
-  } catch (error) {
+  } catch (_error) {
     log(`⚠️  ${description} - SKIPPED (optionnel)`, 'yellow');
     return true; // Ne bloque pas le push
   }
@@ -62,7 +50,7 @@ function checkSecurityAudit() {
     execSync('npm audit --audit-level moderate', { stdio: 'inherit' });
     log('✅ Audit de sécurité OK', 'green');
     return true;
-  } catch (error) {
+  } catch (_error) {
     log('⚠️  Vulnérabilités détectées dans les dépendances', 'yellow');
     log('Considérez la mise à jour des packages vulnérables', 'yellow');
     return true; // Ne pas bloquer pour les vulnérabilités mineures
@@ -77,7 +65,7 @@ function checkSupabaseConnection() {
     execSync('npx supabase status', { stdio: 'inherit' });
     log('✅ Connexion Supabase OK', 'green');
     return true;
-  } catch (error) {
+  } catch (_error) {
     log('⚠️  Supabase local non démarré - OK pour le push', 'yellow');
     return true; // Ne pas bloquer si Supabase n'est pas localement démarré
   }
@@ -102,7 +90,7 @@ function checkGitStatus() {
 
     log('✅ Statut Git OK', 'green');
     return true;
-  } catch (error) {
+  } catch (_error) {
     log('❌ Erreur lors de la vérification Git', 'red');
     return false;
   }

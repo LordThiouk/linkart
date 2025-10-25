@@ -89,15 +89,15 @@ function checkSupabaseTypes() {
         // Nettoyer le fichier temporaire
         fs.unlinkSync(tempFile);
       }
-    } catch (error) {
+    } catch (_error) {
       log('⚠️  Impossible de vérifier la synchronisation (normal en local)', 'yellow');
       log('✅ Types Supabase OK', 'green');
     }
 
     return true;
-  } catch (error) {
+  } catch (_error) {
     log('❌ Erreur lors de la vérification des types Supabase', 'red');
-    log(`Détails: ${error.message}`, 'red');
+    log(`Détails: ${_error.message}`, 'red');
     return false;
   }
 }

@@ -26,7 +26,7 @@ function execCommand(command, description) {
     execSync(command, { stdio: 'inherit' });
     log(`✅ ${description} - OK`, 'green');
     return true;
-  } catch (error) {
+  } catch (_error) {
     log(`❌ ${description} - FAILED`, 'red');
     return false;
   }
@@ -38,7 +38,7 @@ function execCommandOptional(command, description) {
     execSync(command, { stdio: 'inherit' });
     log(`✅ ${description} - OK`, 'green');
     return true;
-  } catch (error) {
+  } catch (_error) {
     log(`⚠️  ${description} - SKIPPED (optionnel)`, 'yellow');
     return true; // Ne bloque pas le commit
   }
@@ -62,7 +62,7 @@ function execCommandWithIgnore(command, description) {
     }
     log(`✅ ${description} - OK`, 'green');
     return true;
-  } catch (error) {
+  } catch (_error) {
     log(`❌ ${description} - FAILED`, 'red');
     return false;
   }
@@ -76,7 +76,7 @@ function checkSupabaseTypes() {
     execSync('node scripts/check-supabase-types.js', { stdio: 'inherit' });
     log('✅ Types Supabase OK', 'green');
     return true;
-  } catch (error) {
+  } catch (_error) {
     log('❌ Erreur lors de la vérification des types Supabase', 'red');
     return false;
   }
@@ -132,7 +132,7 @@ function checkSecrets() {
       log(result, 'red');
       found = true;
     }
-  } catch (error) {
+  } catch (_error) {
     // Grep renvoie un code d'erreur si rien n'est trouvé, c'est le comportement attendu
   }
 
