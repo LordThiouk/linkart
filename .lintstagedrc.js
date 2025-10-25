@@ -12,6 +12,12 @@ module.exports = stagedFiles => {
 
   const sqlFiles = filteredFiles.filter(file => file.match(/supabase\/.*\.sql$/)).join(' ');
 
+  // Vérifier si des fichiers source ont été modifiés
+  const sourceFiles = filteredFiles.filter(file => 
+    file.match(/src\/.*\.(ts|tsx|js|jsx)$/) || 
+    file.match(/supabase\/.*\.sql$/)
+  );
+
   const commands = [];
 
   if (eslintFiles) {
@@ -28,6 +34,11 @@ module.exports = stagedFiles => {
 
   if (sqlFiles) {
     commands.push(`prettier --write --parser sql ${sqlFiles}`);
+  }
+
+  // Si des fichiers source ont été modifiés, régénérer la documentation
+  if (sourceFiles.length > 0) {
+    commands.push('npm run docs:generate');
   }
 
   return commands;

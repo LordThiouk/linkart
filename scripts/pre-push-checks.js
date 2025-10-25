@@ -108,6 +108,7 @@ function main() {
     () => checkSupabaseConnection(),
     () => checkGitStatus(),
     () => execCommandOptional('npm run ci:docs', 'Documentation'),
+    () => execCommandOptional('npm run docs:check', 'Synchronisation documentation'),
   ];
 
   let allPassed = true;

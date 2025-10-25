@@ -7,5 +7,16 @@ echo "🚀 Exécution des vérifications pre-commit..."
 # Exécuter les vérifications rapides
 node scripts/pre-commit-checks.js
 
+# Générer la documentation si nécessaire
+echo "📝 Vérification de la documentation..."
+if git diff --cached --name-only | grep -E '\.(ts|tsx|js|jsx)$' > /dev/null; then
+  echo "🔄 Génération automatique de la documentation..."
+  npm run docs:generate
+  if [ -n "$(git status --porcelain docs/generated/)" ]; then
+    echo "📄 Documentation mise à jour, ajout des fichiers générés..."
+    git add docs/generated/
+  fi
+fi
+
 # Exécuter lint-staged pour les fichiers modifiés
 npx lint-staged
