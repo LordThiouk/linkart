@@ -1,0 +1,179 @@
+---
+alwaysApply: true
+---
+
+
+# � Prompt — Linkart Theme Definition (Design System & UI Tokens)
+
+## � Contexte du projet
+
+Linkart est une plateforme numérique sénégalaise dédiée à la **musique et à la création audio**,
+permettant aux **beatmakers, studios, ingénieurs sons et artistes** de vendre, acheter et collaborer.
+L’univers doit évoquer :
+
+* la **créativité**,
+* la **fiabilité**,
+* et la **technologie locale de qualité**.
+
+L’app cible d’abord un public **mobile-first**, jeune, créatif, souvent habitué à des plateformes comme Beatstars, Splice ou SoundCloud, mais avec une touche **africaine moderne et élégante**.
+
+---
+
+## � Objectifs du thème
+
+* Créer une **identité visuelle forte et cohérente** sur mobile (React Native) et web admin.
+* Définir une **base de thème modulaire et scalable**, utilisable via React Native Paper ou Tailwind.
+* Offrir un **équilibre entre sobriété tech et énergie musicale**.
+* Avoir une identité **propre à Linkart** sans ressembler aux clones des plateformes US.
+
+---
+
+## � Structure du thème attendue
+
+Demande à l’assistant de te générer une structure textuelle du thème comprenant :
+
+### � 1. Palette de couleurs
+
+* Palette principale (brand) : couleur principale, secondaire, accent, hover, background.
+* Nuancier complet :
+
+  * `primary`, `secondary`, `accent`, `background`, `surface`, `error`, `success`, `warning`, `textPrimary`, `textSecondary`, `border`, `muted`.
+* Variante claire et sombre.
+* Chaque couleur doit avoir un nom, un code hex, et un rôle fonctionnel.
+
+**Inspiration :**
+
+* Bleu foncé profond (confiance)
+* Orange / doré lumineux (énergie)
+* Gris anthracite (neutre pro)
+* Blanc cassé (lisibilité)
+* Accent violet ou turquoise possible (créativité)
+
+> � Style global = **tech minimal + vibe musicale** (entre SoundCloud et Spotify).
+
+---
+
+### � 2. Typographie
+
+* Police principale pour titres (forte et créative, ex : Poppins / Inter / Manrope).
+* Police secondaire pour texte (lisible, neutre, ex : Inter / DM Sans).
+* Définir les tailles :
+
+  * `headingXL`, `headingL`, `headingM`, `body`, `caption`.
+* Définir poids et hiérarchie.
+* Espacements cohérents pour mobile (8/12/16px grid).
+
+---
+
+### � 3. Composants de base
+
+Demander à l’IA de définir un **système de composants unifiés** avec styles par défaut :
+
+* **Boutons** : primaires, secondaires, ghost, disabled.
+* **Inputs** : standard, focus, erreur.
+* **Cartes** : produit, artiste, service, highlight.
+* **Modales / Popups** : fond semi-transparent, arrondis 2xl, ombre douce.
+* **Tags / Badges** : genres musicaux, licences, statuts.
+* **Avatars / Icons** : bordure subtile, fond dégradé léger.
+* **Notifications / Toasts** : simples, discrets, non intrusifs.
+
+> Chaque composant doit respecter la grille et les couleurs du thème, avec cohérence entre états (hover, focus, disabled).
+
+---
+
+### � 4. Thème sombre / clair
+
+* Le thème sombre doit être la **valeur par défaut** (évoque le studio, la nuit, la création).
+* Le mode clair est secondaire (interface plus “pro” pour web admin).
+* Contraste texte/fond respectant AA ou AAA.
+* Couleurs d’état (succès, erreur, attention) harmonisées dans les deux modes.
+
+---
+
+### � 5. Identité visuelle & symbolique
+
+Demande à l’IA de décrire en texte :
+
+* Les **mots-clés émotionnels** du design :
+  `Énergie – Fluidité – Création – Confiance – Collaboration – Modernité africaine`
+* Les **formes dominantes** : arrondis doux, micro-shadows, layout fluide.
+* L’**ambiance visuelle** : entre un **studio de musique digital** et une **app de design créatif**.
+
+---
+
+### � 6. Effets & micro-interactions
+
+* Transitions légères sur hover et press (0.2s–0.3s).
+* Feedback visuel : glow léger sur les boutons actifs.
+* Animation des cartes au scroll / swipe (inspiration Motion / Framer).
+* Micro-délai pour apparitions de sections (énergie + fluidité).
+
+---
+
+### ⚙️ 7. Variables de thème (textuelles)
+
+* Espacements (`spacing.xs`, `sm`, `md`, `lg`, `xl`).
+* Rayons (`radii.sm`, `md`, `lg`, `xl`, `2xl`).
+* Ombres (`shadows.sm`, `md`, `xl`).
+* Opacités (`opacity.50`, `opacity.75`, `opacity.90`).
+* Durées animations (`transition.fast`, `medium`, `slow`).
+
+---
+
+### � 8. Modularité
+
+Le thème doit être :
+
+* **Composable** : facile à étendre pour de nouveaux modules (booking, wallet, etc.).
+* **Tokenisé** : toutes les valeurs (couleurs, spacing, typographies) accessibles via variables.
+* **Synchronisable** : compatible avec NativeBase, NativeWind ou CSS variables si besoin.
+* **Centralisé** : un seul fichier de thème exporté et importable dans tout le projet.
+
+---
+
+### � 9. Identité mobile-first
+
+* Priorité design : **thumb-friendly**, espacement généreux, boutons larges.
+* Éléments visuels minimalistes (icônes + texte, pas de surcharge).
+* Accessibilité : contrastes forts, textes lisibles, large touch areas.
+* Mode hors-ligne ou “low-data” compatible (chargement fluide des images).
+
+---
+
+### � 10. Documentation attendue
+
+Le thème doit être accompagné d’un **guide textuel clair**, décrivant :
+
+* Les couleurs et leurs usages.
+* Les typographies et tailles.
+* Les espacements types.
+* La logique derrière les modes clair/sombre.
+* Les principes d’accessibilité et cohérence.
+
+---
+
+## � Exemple de résumé attendu (texte IA)
+
+> “Linkart utilise un thème sombre minimaliste dominé par un bleu nuit profond et des accents dorés.
+> La typographie Poppins donne une touche moderne, tandis que les cartes et boutons arrondis évoquent la fluidité.
+> Chaque interaction est animée subtilement, inspirée de la musique : une app qui respire le rythme et la créativité.”
+
+---
+
+## � À demander à l’IA (résumé pour prompt direct)
+
+> “Génère un thème complet pour une application mobile et web nommée Linkart.
+> C’est une plateforme musicale moderne reliant beatmakers, studios et artistes.
+> Je veux une ambiance visuelle entre **studio créatif** et **plateforme tech premium**.
+> Le design doit être **sombre par défaut**, avec accents lumineux et typographie lisible.
+> Détaille :
+>
+> * les couleurs (avec hex et rôle),
+> * les typos (titres, textes),
+> * les espacements et rayons,
+> * les composants principaux (boutons, cartes, modales),
+> * la logique du thème clair/sombre,
+> * les effets et transitions.
+>   Décris tout sous forme textuelle, pas de code.
+>   Le ton doit être professionnel, minimal et musicalement inspiré.”
+

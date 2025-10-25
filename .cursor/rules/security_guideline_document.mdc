@@ -1,0 +1,270 @@
+---
+alwaysApply: true
+---
+
+
+# Linkart — Security Guideline Document
+
+> Version: v1.0
+> Auteur : Papa Diop
+> Objectif : définir les standards de sécurité applicables à Linkart (backend, mobile, stockage, paiements et données utilisateurs).
+
+---
+
+## 1. Principes fondamentaux
+
+La sécurité de Linkart repose sur trois piliers :
+
+1. **Isolation** : séparation stricte des responsabilités (utilisateur, backend, stockage).
+2. **Authentification forte** : chaque action sensible est liée à un utilisateur authentifié via Supabase JWT.
+3. **Traçabilité** : toutes les opérations critiques (paiement, téléchargement, retrait) sont journalisées.
+
+> Objectif : éviter toute fuite, accès non autorisé ou manipulation frauduleuse des données et fonds.
+
+---
+
+## 2. Authentification & autorisation
+
+### 2.1 Authentification
+
+* Auth via **Supabase Auth OTP (téléphone ou email)**.
+* Jetons JWT générés côté Supabase, TTL 1h.
+* Rafraîchissement automatique avec `supabase.auth.refreshSession()`.
+* Aucun token stocké en clair (AsyncStorage sécurisé).
+
+### 2.2 Autorisation (RLS)
+
+* RLS activé sur toutes les tables principales :
+
+  * `users`, `products`, `transactions`, `wallets`, `ratings`, `download_tokens`.
+* Politiques personnalisées selon `auth.uid()` et `user.capabilities`.
+* Seul l’utilisateur propriétaire ou l’admin peut :
+
+  * Modifier ses produits
+  * Consulter son wallet
+  * Télécharger un fichier acheté
+
+### 2.3 Capabilities
+
+* `can_buy`, `can_sell`, `can_withdraw`, `can_boost` stockés dans `users.capabilities`.
+* Chaque action backend vérifie les flags avant exécution.
+
+---
+
+## 3. Gestion des secrets & environnements
+
+| Secret                      | Description                     | Stockage                      |
+| --------------------------- | ------------------------------- | ----------------------------- |
+| `SUPABASE_SERVICE_ROLE_KEY` | Clé serveur pour Edge Functions | Supabase secrets / Vercel env |
+| `SUPABASE_URL`              | URL du projet                   | Public côté client            |
+| `R2_ACCESS_KEY_ID`          | Accès Cloudflare R2             | Vercel env (privé)            |
+| `R2_SECRET_ACCESS_KEY`      | Secret Cloudflare R2            | Vercel env (privé)            |
+| `PAYMENT_WAVE_CLIENT_ID`    | Identifiant Wave API            | Vercel env                    |
+| `PAYMENT_WAVE_SECRET`       | Secret Wave                     | Vercel env                    |
+| `SENTRY_DSN`                | Monitoring                      | Public côté client            |
+| `JWT_SECRET_DOWNLOAD`       | Signature URLs presignées       | Supabase secrets uniquement   |
+
+> � Aucun secret ne doit être dans le repo, `.env` local doit être dans `.gitignore`.
+
+---
+
+## 4. Données & stockage
+
+### 4.1 Cloudflare R2
+
+* Stockage des fichiers : beats, previews, contrats, avatars.
+* Accès uniquement via **URLs presignées** générées par Edge Functions.
+* TTL :
+
+  * Upload : 5 minutes
+  * Download : 15 minutes
+* Préfixes structurés :
+
+  ```
+  beats/{userId}/{productId}.zip
+  previews/{userId}/{productId}_preview.mp3
+  contracts/{txId}.pdf
+  avatars/{userId}.jpg
+  ```
+* Permissions R2 : `public read` interdit, `put/get` uniquement via signature.
+
+### 4.2 Données sensibles
+
+* Hash des IPs et user agents dans `download_logs`.
+* Pas de stockage de numéro de carte (paiement externe).
+* Suppression automatique des URLs expirées.
+* Données personnelles supprimables sur demande (RGPD).
+
+---
+
+## 5. Paiements & modèle escrow
+
+### 5.1 Processus
+
+1. Achat → transaction créée (`status=pending`)
+2. Paiement validé par Wave → (`status=paid_held`)
+3. Fonds bloqués en escrow virtuel.
+4. Libération manuelle/automatique → (`status=released`)
+5. Commission 5 % déduite, reste transféré au wallet vendeur.
+
+### 5.2 Sécurité du flux
+
+* Vérification de signature Wave webhook (HMAC).
+* Aucune logique de paiement côté mobile.
+* Toutes les transactions validées par Edge Function avec service role key.
+* Historique horodaté pour audit.
+
+### 5.3 Protection contre fraudes
+
+* Double vérification montant / transaction ID.
+* Blocage auto si incohérence entre payload Wave et DB.
+* Limitation du nombre de tentatives (max 3 paiements simultanés / utilisateur).
+
+---
+
+## 6. Téléchargements sécurisés
+
+* URLs presignées Cloudflare R2 avec JWT signé.
+* Vérification : `transactions.status = paid` ou `paid_held`.
+* Journalisation de chaque téléchargement (`download_logs`).
+* Blocage après 3 téléchargements max ou expiration TTL.
+* Détection d’usage anormal (ex. IP différentes) → suspension token.
+
+---
+
+## 7. API & Edge Functions
+
+### 7.1 Bonnes pratiques
+
+* Toujours vérifier `auth.uid()` au début.
+* Jamais d’accès direct à la DB sans RLS.
+* Inputs validés et typés (`zod` recommandé).
+* Erreurs masquées (jamais de stack trace brute).
+* Logging via Sentry (`captureException`).
+
+### 7.2 Limites & quotas
+
+| Endpoint             | Limite | Raison                      |
+| -------------------- | ------ | --------------------------- |
+| `/upload-request`    | 5/min  | Éviter abus stockage        |
+| `/generate-download` | 3/min  | Éviter génération spam URLs |
+| `/pay`               | 3/min  | Sécurité paiement           |
+| `/withdraw`          | 1/h    | Prévention fraude           |
+
+---
+
+## 8. Sécurité mobile
+
+* Stockage sécurisé via **SecureStore** ou **EncryptedStorage** (pas AsyncStorage brut).
+* Nettoyage complet des sessions au logout.
+* Aucune donnée sensible dans logs ou console.
+* Sentry activé pour crashs uniquement, pas pour données privées.
+* API Base URL dans `EXPO_PUBLIC_API_URL` (non secret).
+
+---
+
+## 9. Sécurité admin
+
+* Accès admin via JWT spécial (`role=admin`).
+* Fonctions protégées :
+
+  * `/api/admin/products/approve`
+  * `/api/admin/withdraw/confirm`
+* Journalisation de chaque action admin.
+* Possibilité de suspendre un utilisateur ou bloquer une transaction.
+* Audit mensuel des logs.
+
+---
+
+## 10. Monitoring & alerting
+
+* **Sentry** pour exceptions et erreurs.
+* **Supabase logs** : requêtes et Edge Functions.
+* **Cloudflare analytics** : trafic & anomalies stockage.
+* Alertes email/Slack :
+
+  * Erreurs 500 Edge Functions
+  * Tentatives d’upload invalides
+  * Téléchargements anormaux (> 5 IP / 24h)
+
+---
+
+## 11. Sauvegardes & reprise
+
+* Backup DB Supabase quotidien (automatique).
+* Sauvegarde R2 (liste objets + métadonnées).
+* Plan de reprise :
+
+  1. Restaurer DB snapshot
+  2. Vérifier cohérence fichiers R2
+  3. Réindexer transactions manuellement
+
+---
+
+## 12. Tests de sécurité & audits
+
+* Tests automatisés sur endpoints sensibles : `/pay`, `/download`, `/withdraw`.
+* Audit code trimestriel (RLS, Edge Functions, permissions R2).
+* Revue manuelle migrations SQL pour détection d’injections.
+* Tests d’intrusion simulés (pentest interne).
+
+---
+
+## 13. Politique utilisateur
+
+* L’utilisateur doit valider les CGU et accepter que :
+
+  * les ventes passent par escrow,
+  * les transactions sont vérifiables,
+  * tout contenu illégal peut être supprimé.
+* Droit d’accès, rectification, suppression (RGPD).
+* Suppression complète du compte à la demande (table `users.deleted_at`).
+
+---
+
+## 14. Conformité légale
+
+* Respect RGPD (données UE).
+* Conformité CNRA / SODAV (musique, droit d’auteur).
+* Paiements gérés par opérateurs agréés (Wave / OM).
+* CGU et politique de confidentialité affichées dans l’app.
+
+---
+
+## 15. Processus d’incident
+
+1. Détection via logs / alertes.
+2. Notification automatique admin.
+3. Suspension utilisateur ou service impacté.
+4. Communication interne (statut incident).
+5. Correctif déployé via CI/CD.
+6. Rapport post-mortem documenté (audit trail).
+
+---
+
+## 16. Bonnes pratiques développeur
+
+* Pas de `console.log()` avec données utilisateur.
+* Ne jamais exposer les tokens R2 ou service role.
+* Toujours valider les inputs avec schéma.
+* Utiliser HTTPS, jamais HTTP.
+* Revoir les permissions RLS à chaque ajout de table.
+* Changer régulièrement les clés d’accès R2 (rotation mensuelle).
+* Revue sécurité obligatoire avant merge en production.
+
+---
+
+## 17. Checklists déploiement sécurisé
+
+### Avant mise en prod :
+
+* [ ] RLS activées
+* [ ] Secrets configurés
+* [ ] Presigned URLs testées
+* [ ] Webhooks signés (Wave)
+* [ ] Tests e2e passés
+* [ ] Sauvegarde récente DB
+* [ ] Sentry actif
+* [ ] CI/CD sans secrets exposés
+
+

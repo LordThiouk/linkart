@@ -1,0 +1,289 @@
+---
+alwaysApply: true
+---
+Parfait ⚙️
+Voici le contenu complet et clair du **`tech_stack_document.mdc`**, version **v1.0** — ton document de référence technique global pour **Linkart**.
+Il présente chaque technologie choisie, les raisons du choix, les interactions entre les couches et les alternatives prévues.
+
+---
+
+# Linkart — Tech Stack Document
+
+> Version: v1.0
+> Auteur : Papa Diop
+> Objectif : Définir la pile technologique complète de Linkart, les dépendances entre les modules et les choix d’architecture justifiés pour garantir performance, scalabilité et coût maîtrisé.
+
+---
+
+## 1. Architecture générale
+
+**Architecture cible : Serverless + Modular + Cloud-native**
+
+```
+     ┌────────────────────────────────────────┐
+     │                Mobile App              │
+     │      React Native + Expo + NativeBase  │
+     └────────────────────────────────────────┘
+                     │  (REST)
+                     ▼
+     ┌────────────────────────────────────────┐
+     │        Supabase Edge Functions         │
+     │     Auth / Payments / Storage Logic    │
+     └────────────────────────────────────────┘
+                     │  (SQL / RPC)
+                     ▼
+     ┌────────────────────────────────────────┐
+     │        Supabase Postgres Database      │
+     │     Tables, RLS, Policies, Functions   │
+     └────────────────────────────────────────┘
+                     │
+                     ▼
+     ┌────────────────────────────────────────┐
+     │        Cloudflare R2 (Storage)         │
+     │  Beats / Previews / Contracts / Avatars│
+     └────────────────────────────────────────┘
+```
+
+---
+
+## 2. Frontend (Mobile)
+
+| Domaine                | Outil / Lib                         | Rôle                            |
+| ---------------------- | ----------------------------------- | ------------------------------- |
+| **Framework**          | React Native (Expo SDK)             | Développement cross-platform    |
+| **Langage**            | TypeScript                          | Sécurité du typage              |
+| **UI Framework**       | NativeBase                          | Composants design + thèmes      |
+| **Styling utilitaire** | NativeWind                          | Rapidité d’intégration visuelle |
+| **Navigation**         | React Navigation v7                 | Stack + Tabs                    |
+| **État global**        | Zustand                             | Gestion légère et persistente   |
+| **Réseau**             | Axios                               | Appels API typés                |
+| **Audio**              | expo-av                             | Pré-écoute (30s)                |
+| **Stockage local**     | SecureStore / EncryptedStorage      | Sessions sécurisées             |
+| **Erreurs**            | Sentry                              | Tracking runtime                |
+| **Build**              | EAS (Expo Application Services)     | CI/CD mobile                    |
+| **Tests**              | Jest + React Native Testing Library | Vérification UI & hooks         |
+
+---
+
+## 3. Backend
+
+| Domaine                  | Technologie                                                            | Détails                          |
+| ------------------------ | ---------------------------------------------------------------------- | -------------------------------- |
+| **Backend principal**    | Supabase Edge Functions                                                | Deno runtime serverless          |
+| **Langage**              | TypeScript                                                             | Uniformité front/back            |
+| **Base de données**      | Postgres (Supabase)                                                    | Schéma SQL modulaire             |
+| **ORM / Query Layer**    | SQL direct via Supabase JS SDK                                         | Simplicité et sécurité           |
+| **Auth**                 | Supabase Auth (OTP)                                                    | Téléphone & Email                |
+| **Règles sécurité**      | Row Level Security (RLS)                                               | Contrôle d’accès par utilisateur |
+| **Storage**              | Cloudflare R2                                                          | Fichiers lourds                  |
+| **Paiement**             | Wave / Orange Money API                                                | Transactions escrow              |
+| **Logging / Monitoring** | Sentry + Supabase Logs                                                 | Alertes erreurs                  |
+| **Fonctions critiques**  | `/upload-request`, `/pay`, `/generate-download`, `/withdraw`, `/boost` | Core Business                    |
+
+---
+
+## 4. Stockage & fichiers
+
+### 4.1 Cloudflare R2
+
+* S3-compatible, coût minimal (~0.015$/GB/mois).
+* Utilisé pour :
+
+  * Beats complets
+  * Previews 30s
+  * Contrats PDF
+  * Avatars utilisateurs
+* URLs presignées avec TTL 5–15 min.
+* Upload via Edge Function sécurisée.
+
+### 4.2 Alternatives (évolutives)
+
+| Option           | Raison d’usage futur                       |
+| ---------------- | ------------------------------------------ |
+| AWS S3           | Scalabilité extrême (phase internationale) |
+| Supabase Storage | Simplification dev (si faible volume)      |
+
+---
+
+## 5. Paiement
+
+| Élément      | Détail                                             |
+| ------------ | -------------------------------------------------- |
+| Fournisseurs | Wave API, Orange Money                             |
+| Modèle       | Escrow (paiement bloqué avant libération)          |
+| Webhooks     | Signés HMAC (vérification transaction ID)          |
+| Commission   | 5 % sur toutes ventes                              |
+| Déblocage    | Automatique ou manuel via admin                    |
+| Contrats     | Générés et stockés sur R2 (`contracts/{txId}.pdf`) |
+
+---
+
+## 6. Authentification & autorisations
+
+| Élément      | Stack                                              |
+| ------------ | -------------------------------------------------- |
+| Auth         | Supabase Auth OTP                                  |
+| Tokens       | JWT                                                |
+| Autorisation | RLS + Capabilities                                 |
+| Capabilities | `can_buy`, `can_sell`, `can_withdraw`, `can_boost` |
+| Session      | Persistée localement, TTL 1h                       |
+| Middleware   | Vérification JWT sur chaque Edge Function          |
+
+---
+
+## 7. CI/CD & DevOps
+
+| Domaine            | Outil                       | Fonction                    |
+| ------------------ | --------------------------- | --------------------------- |
+| **Repo**           | GitHub                      | Versioning & collaboration  |
+| **CI/CD**          | GitHub Actions              | Lint, test, deploy Supabase |
+| **Build mobile**   | Expo EAS                    | Distribution Android/iOS    |
+| **Migrations DB**  | Supabase CLI                | Gestion schéma et types     |
+| **Environnements** | `.env` / Supabase secrets   | Config sécurisée            |
+| **Monitoring**     | Sentry                      | Logs backend & mobile       |
+| **Backup**         | Supabase auto + R2 metadata | Sauvegarde quotidienne      |
+
+---
+
+## 8. Types & génération automatique
+
+* **Commandes standardisées :**
+
+  ```bash
+  supabase migration new "add_new_table"
+  supabase gen types typescript --local > src/types/supabase.ts
+  ```
+* Types utilisés à la fois dans :
+
+  * Edge Functions
+  * Frontend API calls
+* Garantit cohérence totale entre DB et logique applicative.
+
+---
+
+## 9. Sécurité
+
+* RLS activé sur toutes les tables sensibles.
+* JWT validation sur chaque requête.
+* Presigned URLs avec TTL limité.
+* Aucun fichier public accessible sans token.
+* Sentry surveille erreurs et anomalies.
+* Webhooks paiements signés et vérifiés.
+* Transactions escrow jusqu’à validation.
+* Hash des IPs dans logs (`download_logs`).
+
+(→ Voir `security_guideline_document.mdc` pour détails complets)
+
+---
+
+## 10. Observabilité
+
+| Domaine      | Outil                | Fonction               |
+| ------------ | -------------------- | ---------------------- |
+| Logs erreurs | Sentry               | Stacktrace Edge + App  |
+| DB usage     | Supabase Studio      | Visualisation requêtes |
+| Stockage     | Cloudflare Dashboard | Trafic & quota         |
+| Metrics      | Power BI (v2)        | KPI business et usage  |
+| Alertes      | Slack / Email        | Incidents critiques    |
+
+---
+
+## 11. Architecture logicielle (philosophie)
+
+* **Feature-driven** : chaque module indépendant.
+* **Atomic design** pour UI (atoms → organisms).
+* **Edge-first** : toute logique business côté Supabase Functions.
+* **Type-safe end-to-end** : DB → API → App typée.
+* **Zero redundancy** : tout code partagé centralisé dans `/lib/` ou `/services/`.
+* **Security by default** : aucune fonction publique sans auth.
+
+---
+
+## 12. Performance & optimisation
+
+* CDN Cloudflare pour static & R2 access.
+* Lazy loading produits et audio.
+* Cache client (Zustand persist).
+* Préchargement previews audio.
+* Bundles Expo optimisés via `expo-optimize`.
+* Cold start functions < 200 ms via Deno deploy.
+
+---
+
+## 13. Environnements
+
+| Environnement  | Usage          | URL / Config               |
+| -------------- | -------------- | -------------------------- |
+| **Local**      | Dev perso      | `supabase start` + Expo Go |
+| **Staging**    | Tests intégrés | Supabase project test      |
+| **Production** | Public stable  | Supabase main + R2 prod    |
+
+Secrets gérés via :
+
+* `.env.local` pour dev
+* `Supabase secrets` pour Edge Functions
+* `Vercel env` (si déploiement web admin)
+
+---
+
+## 14. Alternatives futures (Plan B)
+
+| Domaine   | Alternative               | Pourquoi / Quand               |
+| --------- | ------------------------- | ------------------------------ |
+| Auth      | Clerk / Firebase          | Si OTP Supabase instable       |
+| Payments  | PayDunya / Stripe Connect | Si Wave API limitée            |
+| Storage   | S3 / Supabase Storage     | Scalabilité extrême            |
+| Backend   | NestJS / Hono             | Si besoin orchestration custom |
+| Analytics | Mixpanel                  | Pour growth tracking           |
+| Infra     | Fly.io                    | Si besoin Edge multi-régions   |
+
+---
+
+## 15. Coûts estimés (MVP)
+
+| Ressource       | Fournisseur    | Estimation mensuelle |
+| --------------- | -------------- | -------------------- |
+| Supabase        | Pro plan       | 25 $                 |
+| Cloudflare R2   | 200 GB         | 3 $                  |
+| Wave / OM frais | Variable (~1%) | -                    |
+| Sentry          | Free plan      | 0 $                  |
+| Expo EAS        | Standard       | 10 $                 |
+| Total (MVP)     | —              | **≈ 40 $ / mois**    |
+
+---
+
+## 16. Maintenabilité
+
+* Monorepo simple : `/app` + `/supabase` + `/docs`.
+* Migrations auto (Supabase CLI).
+* Types synchronisés en continu.
+* Tests CI obligatoires avant merge.
+* Architecture modulaire : remplacement facile d’un module (paiement, storage…).
+
+---
+
+## 17. Documentation technique liée
+
+* `backend_structure_document.mdc` → Schéma DB + relations
+* `cursor_project_rules.mdc` → Règles d’implémentation AI
+* `frontend_guidelines_document.mdc` → UI/UX mobile
+* `security_guideline_document.mdc` → Sécurité & conformité
+* `implementation_plan.mdc` → Roadmap technique
+* `project_requirements_document.mdc` → Spécifications fonctionnelles
+
+---
+
+## 18. Résumé stratégique
+
+| Axe         | Choix stratégique                  |
+| ----------- | ---------------------------------- |
+| Simplicité  | Supabase + R2 = faible maintenance |
+| Sécurité    | RLS + JWT + Escrow                 |
+| Rapidité    | React Native + Expo                |
+| Coût        | < 50$/mois MVP                     |
+| Scalabilité | Cloud-native architecture          |
+| Cohérence   | Stack TypeScript end-to-end        |
+
+> “Linkart est conçu comme un système modulaire, serverless, typé, sécurisé et prêt à évoluer sans dette technique.”
+
+

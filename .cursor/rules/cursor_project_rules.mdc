@@ -1,0 +1,260 @@
+---
+alwaysApply: true
+---
+# Linkart — Cursor Project Rules
+
+> Version: v2.4
+> Purpose: Define Cursor AI workspace rules, coding standards, and conventions for Linkart backend and mobile app development. This version adds explicit rules about Supabase-managed migrations and Edge Functions.
+
+---
+
+## 1. General Guidelines
+
+* Cursor AI must always use this document as **project authority** when suggesting, generating, or modifying code.
+* All generated code must comply with:
+
+  * The architecture described in `backend_structure_document.mdc`
+  * App flow logic defined in `app_flow_document.mdc`
+  * Technical stack defined in `linkart.rules.md`
+* Prefer clarity, modularity, and maintainability over brevity.
+* All features should be designed using a **modular approach** with a clear separation between components, features, and UI primitives.
+
+---
+
+## 2. Project Stack Rules
+
+### Frontend (Mobile)
+
+* Framework: **React Native (Expo)**
+* Language: **TypeScript**
+* UI Library: **NativeBase** (primary)
+* Optional: **nativewind** for utility styles
+* Styling tokens: **centralized theme system** (from `theme/colors.ts`)
+* State management: **Zustand** or **Context API**
+* Audio playback: **expo-av**
+* File upload: **presigned PUT URLs to R2**
+* HTTP requests: **axios** or **fetch wrapper**
+* Auth: **Supabase Auth (OTP)**
+* Error tracking: **Sentry**
+
+### Backend
+
+* Environment: **Supabase Edge Functions** (Deno) — preferred for Linkart serverless logic.
+* Language: **TypeScript / JavaScript**
+* DB: **Postgres (Supabase)**
+* Storage: **Cloudflare R2** (S3-compatible)
+* Auth: **Supabase JWT**
+* Monitoring: **Sentry + Supabase logs**
+
+---
+
+## 3. File & Directory Structure
+
+```
+linkart/
+├── app/
+│   ├── components/        # Atoms, Molecules, Organisms
+│   ├── features/          # Feature-based folders
+│   ├── screens/
+│   ├── hooks/
+│   ├── services/          # API clients
+│   ├── store/             # Zustand or Context
+│   ├── theme/             # colors.ts, spacing.ts, index.ts
+│   └── App.tsx
+├── supabase/
+│   ├── migrations/        # SQL migrations managed by Supabase CLI
+│   ├── functions/         # Supabase Edge Functions (each folder is a function)
+├── docs/
+└── .env
+```
+
+> **Note:** `supabase/` is the canonical place for migrations and functions. Cursor must update files there when changing DB schema or server-side logic.
+
+---
+
+## 4. Theming and Design Tokens
+
+* All colors, fonts, and spacings must come from `app/theme/colors.ts` and `theme/index.ts`.
+* Never hardcode colors or typography in components.
+* The theme must support **light** and **dark** variants.
+* `NativeBase`’s `extendTheme()` is used to apply the theme globally via `NativeBaseProvider`.
+
+**Example:**
+
+```ts
+export const colors = {
+  primary: '#1E40AF',
+  accent: '#F59E0B',
+  background: '#FFFFFF',
+  surface: '#F8FAFC',
+  text: '#0F172A',
+  muted: '#64748B',
+  danger: '#EF4444',
+};
+```
+
+---
+
+## 5. Supabase: Migrations & Edge Functions (Key Rules)
+
+This section is new and mandatory. Supabase is the authoritative source for DB schema and Edge Functions. Cursor must follow these rules strictly.
+
+### 5.1 Migrations
+
+* All schema changes **must** be made as SQL migrations inside `supabase/migrations/` or via `supabase db diff` / `supabase db push` workflow.
+* **Use the Supabase CLI command** to create new migrations:
+
+  ```bash
+  supabase migration new "descriptive_name"  # creates a timestamped migration file
+  ```
+
+  This ensures consistent timestamped filenames. Example: `20251022123000_create_ratings_table.sql`.
+* Migration filenames must be timestamped and descriptive: `YYYYMMDDHHMMSS_create_products.sql` or `20251022120000_add_ratings_table.sql`.
+* **Never** modify `schema.sql` directly in production without creating a migration.
+* For any DB change, Cursor must:
+
+  1. Add a new migration file to `supabase/migrations/` using `supabase migration new`.
+  2. Update `supabase/schema.sql` (if using canonical schema).
+  3. Include a SQL rollback section where feasible.
+  4. Add tests or describe manual DB checks in the PR description.
+* Migrations must be idempotent (use `IF NOT EXISTS` for create statements when reasonable).
+* **TypeScript DB types generation:** after applying migrations or updating schema, generate TypeScript types from the database so Edge Functions and frontend have typed contracts.
+
+  * Example command (remote project):
+
+    ```bash
+    supabase gen types typescript --project-ref $SUPABASE_REF --schema public > src/types/supabase.ts
+    ```
+  * Example command (local):
+
+    ```bash
+    supabase gen types typescript --local > src/types/supabase.ts
+    ```
+  * Cursor MUST regenerate and commit the generated types whenever the DB schema changes. Use these types in Edge Functions and frontend code:
+
+    ```ts
+    import type { Database } from '../types/supabase'
+    import { createClient } from '@supabase/supabase-js'
+
+    const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
+    ```
+
+### 5.2 Edge Functions
+
+* Place Edge Functions in `supabase/functions/<function-name>/index.ts` (Deno-compatible).
+* Each function folder must include a README explaining purpose, input/output JSON examples, required env vars, and capabilities required.
+* Local development: use `supabase functions serve` to run functions locally. Cursor must provide a tested function before creating a PR.
+* When modifying an Edge Function that interacts with R2, use `lib/r2.ts` helper to centralize R2 client usage.
+
+### 5.3 CI/CD for Supabase
+
+* Use GitHub Actions to deploy migrations and functions:
+
+  * On `main` merge: run `supabase db push --project-ref $SUPABASE_REF` and `supabase functions deploy --project-ref $SUPABASE_REF --no-verify` (or equivalent).
+  * Protect the production branch and require code review for migrations.
+* Runner must use `SUPABASE_SERVICE_ROLE_KEY` only in CI secrets (not in PRs from forks).
+
+### 5.4 Local dev & testing
+
+* Developers should run `supabase start` (or `supabase functions serve`) and a local Postgres if needed.
+* Cursor must include minimal integration test for functions that mutate DB (using test DB or mock client).
+* Avoid destructive commands (`supabase db reset`) on production-like environments.
+
+---
+
+## 6. API Standards
+
+* All endpoints must use JSON.
+* Return consistent structure with `success`, `data`, and `error` keys.
+* HTTP status codes:
+
+  * 200 Success
+  * 201 Created
+  * 400 Bad request
+  * 401 Unauthorized
+  * 403 Forbidden (missing capability)
+  * 404 Not found
+  * 500 Internal error
+
+---
+
+## 7. Modular Architecture Rules
+
+* Each **feature** must have its own folder in `/features/` (e.g. `features/products`, `features/payments`).
+* Shared UI primitives live in `/components/atoms` and `/components/molecules`.
+* Larger composite sections (cards, product forms) are in `/components/organisms`.
+* Features can only depend on:
+
+  * components
+  * hooks
+  * services
+  * theme
+* No circular imports.
+
+---
+
+## 8. Security & Error Handling
+
+* Use **try/catch** everywhere network calls occur.
+* Log all caught errors with Sentry.
+* Never expose keys or tokens client-side.
+* Presigned URLs only for upload/download.
+* TTLs:
+
+  * Upload: 5min
+  * Download: 15min
+
+---
+
+## 9. Version Control & CI/CD
+
+* Branch naming: `feat/`, `fix/`, `api/`, `chore/`.
+* Commits: Conventional Commits style.
+* Auto-deploy to Supabase Edge and Expo EAS on `main` (after PR approvals).
+* Pre-commit lint & test via GitHub Actions.
+
+---
+
+## 10. Testing Rules
+
+| Layer       | Tool         | Goal                                 |
+| :---------- | :----------- | :----------------------------------- |
+| Unit        | Jest         | Verify business logic                |
+| Integration | Supertest    | Validate API endpoints               |
+| E2E         | Playwright   | Test flows upload → buy → download   |
+| UI          | Storybook RN | Build and verify reusable components |
+
+Test results must be green before deployment to production.
+
+---
+
+## 11. Cursor AI Behaviors
+
+* Cursor must prioritize modular code generation and proper imports.
+* Always use existing helpers (`lib/r2.ts`, `lib/payment.ts`).
+* Never hardcode credentials.
+* Must enforce 5% commission rule in all payment-related flows.
+* Must validate user `capabilities` for all protected endpoints.
+* Suggest test coverage when creating new features.
+* Use theme tokens for any UI component.
+* When changing DB schema, Cursor must generate a SQL migration and add it to `supabase/migrations/`.
+* When adding or editing server logic, Cursor must add/update the corresponding Edge Function under `supabase/functions/` and a README for the function.
+
+---
+
+## 12. NativeBase & Theming Rules
+
+* All screens wrapped with `NativeBaseProvider` and `SafeAreaView`.
+* Custom components use `useTheme()` hook for consistent color and spacing.
+* Common variants: `ButtonPrimary`, `InputField`, `Card`, `Badge`, `Avatar`.
+* Use color tokens and font scale defined in theme.
+* When possible, abstract repetitive patterns into hooks or reusable components.
+
+---
+
+## 13. Future Enhancements
+
+* Add multi-theme switching (dark/light)
+* Add Storybook RN integration
+* Generate automatic docs for API endpoints
+* Add continuous design token sync between mobile/web

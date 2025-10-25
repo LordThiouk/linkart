@@ -1,0 +1,264 @@
+---
+alwaysApply: true
+---
+
+# Linkart — Documentation Strategy
+
+> Version: v2.0
+> Auteur : Papa Diop
+> Dernière mise à jour: 2025-10-22
+> Objet : Définir la structure, la maintenance et la gouvernance de la documentation Linkart.
+
+---
+
+## 1. Vision
+
+La documentation de Linkart est un **système vivant**.
+Elle doit évoluer au même rythme que le code, être accessible, compréhensible et traçable par tout membre du projet — développeurs, partenaires, ou utilisateurs.
+
+> “Un projet n’est jamais vraiment prêt tant que sa documentation ne l’est pas.”
+
+---
+
+## 2. Objectifs
+
+1. Centraliser **toute la connaissance** du projet (technique, produit, design, business).
+2. Garantir **une cohérence permanente** entre la documentation et le code.
+3. Rendre la documentation **utile, mesurable et actionnable**.
+4. Automatiser autant que possible la génération, la vérification et la publication.
+
+---
+
+## 3. Organisation de la documentation
+
+### 3.1 Arborescence générale
+
+```
+docs/
+├── internal/        ← Documentation technique interne (dev, archi, tests, sécurité)
+├── product/         ← Documentation fonctionnelle (roadmap, user flow, UX, marketing)
+├── api/             ← Documentation API (endpoints, webhooks, schemas)
+├── public/          ← Documentation externe (README, CGU, support)
+└── generated/       ← Documentation compilée automatiquement (en lecture seule)
+```
+
+### 3.2 Principes
+
+* Chaque dossier est autonome et versionné.
+* Chaque fichier doit être :
+
+  * daté,
+  * versionné,
+  * et contenir une section “Changelog”.
+* Les documents ne se chevauchent pas : un sujet = un fichier unique.
+
+---
+
+## 4. Typologie des documents
+
+| Type                  | Destinataire               | Contenu                                             | Mise à jour         |
+| --------------------- | -------------------------- | --------------------------------------------------- | ------------------- |
+| **Technique interne** | Dev / DevOps               | Stack, backend, sécurité, migrations, CI            | Automatique (build) |
+| **Produit**           | Équipe projet              | Fonctionnalités, parcours utilisateur, vision       | Trimestrielle       |
+| **API**               | Intégrateurs / Partenaires | Endpoints, auth, formats, erreurs                   | Continue            |
+| **Public**            | Utilisateurs finaux        | Guides, CGU, FAQs, support                          | Selon release       |
+| **Générée**           | CI / Plateforme            | Docs extraites automatiquement du code ou des specs | Post-build          |
+
+---
+
+## 5. Format et structure
+
+### 5.1 Format commun
+
+* Format Markdown (.md) universel.
+* Sections recommandées :
+
+  ```
+  # Titre
+  > Version: vX.X
+  > Auteur: ...
+  > Dernière mise à jour: ...
+  > Objet: ...
+
+  ## 1. Contexte
+  ## 2. Structure / Architecture
+  ## 3. Bonnes pratiques
+  ## 4. Processus
+  ## 5. Changelog
+  ```
+
+### 5.2 Convention de nommage
+
+| Type               | Format              |
+| ------------------ | ------------------- |
+| Document technique | `tech_<theme>.md`   |
+| API                | `api_<endpoint>.md` |
+| Produit            | `prd_<module>.md`   |
+| Public             | `guide_<topic>.md`  |
+
+---
+
+## 6. Gouvernance documentaire
+
+### 6.1 Responsabilités
+
+| Rôle              | Responsabilité                                     |
+| ----------------- | -------------------------------------------------- |
+| **Tech Lead**     | Valide la documentation technique et sécurité      |
+| **Product Owner** | Valide la documentation produit et roadmap         |
+| **Développeurs**  | Maintiennent les docs techniques qu’ils modifient  |
+| **CI/CD Bot**     | Génère et vérifie la cohérence de la documentation |
+| **Admin Projet**  | Supervise la cohérence globale et versioning       |
+
+### 6.2 Règle de commit
+
+* Tout changement de code doit inclure la doc associée.
+* Le reviewer ne valide pas une PR si la doc liée n’est pas à jour.
+* Le CI bloque les merges si la doc est manquante ou obsolète.
+
+---
+
+## 7. Cycle de vie documentaire
+
+| Étape           | Action                                    | Responsable |
+| --------------- | ----------------------------------------- | ----------- |
+| **Création**    | Rédiger un nouveau document clair et daté | Auteur      |
+| **Révision**    | Relire / corriger pour cohérence et style | Reviewer    |
+| **Validation**  | Approbation technique ou produit          | Lead        |
+| **Publication** | Push vers la doc publique ou interne      | CI          |
+| **Archivage**   | Déprécier ou fusionner les docs anciennes | Admin       |
+
+---
+
+## 8. Génération et automatisation
+
+* Un script interne (`generate-docs`) compile la documentation :
+
+  * Génère les versions simplifiées pour la publication.
+  * Met à jour le sommaire global.
+  * Archive automatiquement les anciennes versions.
+* Les métadonnées (version, auteur, date) sont extraites et vérifiées.
+* Les documents générés sont placés dans `/docs/generated/` (lecture seule).
+* CI vérifie que :
+
+  * les versions sont valides,
+  * les documents clés sont présents,
+  * et les fichiers obsolètes sont archivés.
+
+---
+
+## 9. Documentation API
+
+* L’API est documentée avec **OpenAPI (YAML/JSON)**.
+* Chaque endpoint doit avoir :
+
+  * Description
+  * Auth requise
+  * Exemple de requête/réponse
+  * Codes d’erreur
+* Génération automatique à partir du code (Edge Functions → OpenAPI → Markdown).
+* Doc API publiée dans `/docs/api/` + Swagger UI.
+
+---
+
+## 10. Documentation produit
+
+Contient :
+
+* La vision stratégique du projet.
+* Les parcours utilisateurs (Buyer, Seller, Admin).
+* Les modules clés (Booking, Beat Store, Wallet, etc.).
+* Les business rules (commissions, escrow, paiements).
+* Les indicateurs de succès (KPI, objectifs).
+
+Ces documents servent aussi de base à la roadmap technique et marketing.
+
+---
+
+## 11. Documentation publique (utilisateurs)
+
+Contient :
+
+* Guides de démarrage (création compte, upload, achat).
+* FAQ techniques et support.
+* Conditions d’utilisation, politique de confidentialité.
+* Documentation en plusieurs langues (FR, EN).
+* Hébergement sur un site statique / CMS (Notion, Docusaurus, etc.).
+
+> Publication automatique lors des releases stables.
+
+---
+
+## 12. Processus de mise à jour
+
+### 12.1 Révision continue
+
+* Les docs critiques (paiement, sécurité, stack) sont revues chaque sprint.
+* Les docs produit et utilisateur sont révisées chaque trimestre.
+* Les API docs sont régénérées à chaque build.
+
+### 12.2 Changelog interne
+
+* Chaque doc contient une section “Changelog” listant les versions et modifications.
+* CI vérifie qu’une date et version sont présentes avant merge.
+
+---
+
+## 13. Outils et intégrations
+
+| Outil                       | Rôle                                              |
+| --------------------------- | ------------------------------------------------- |
+| **GitHub**                  | Versioning + CI/CD                                |
+| **VSCode / Cursor**         | Édition et auto-vérification syntaxe              |
+| **Prettier / Markdownlint** | Formatage standardisé                             |
+| **generate-docs script**    | Compilation et synchronisation                    |
+| **Swagger / Redoc**         | Docs API                                          |
+| **Docusaurus / Notion**     | Publication publique                              |
+| **Sentry**                  | Liens doc → erreurs en prod (doc inline via code) |
+
+---
+
+## 14. Standards de qualité documentaire
+
+* ✅ Clair et concis (pas plus de 500 lignes par document).
+* ✅ Structuré (titres hiérarchiques et sections uniformes).
+* ✅ Actionnable (procédures, pas de généralités).
+* ✅ Vérifiable (liens directs vers le code ou endpoints).
+* ✅ Daté et versionné.
+* ❌ Pas de doublons ni d’incohérences.
+
+---
+
+## 15. Vision long terme
+
+> La documentation de Linkart doit être un **système d’intelligence collective** :
+> une mémoire technique vivante qui guide aussi bien les développeurs humains que les outils automatisés.
+
+Objectif final :
+
+* **100 % de couverture documentaire** des modules actifs.
+* **0 doc obsolète > 90 jours**.
+* **Docs générées automatiquement à chaque build stable.**
+
+---
+
+## 16. Règles de maintenance rapide
+
+| Fréquence     | Vérification                              |
+| ------------- | ----------------------------------------- |
+| À chaque PR   | Doc technique correspondante mise à jour  |
+| Hebdomadaire  | Validation cohérence interne              |
+| Mensuelle     | Audit doc produit / API                   |
+| Trimestrielle | Revue complète (tous dossiers / versions) |
+
+---
+
+## 17. Conclusion
+
+La documentation n’est pas un accessoire :
+c’est le **code non-exécutable** qui maintient la cohérence du projet,
+préserve la connaissance collective, et accélère chaque décision future.
+
+> “Un bon code se lit, mais une bonne documentation se transmet.”
+
+

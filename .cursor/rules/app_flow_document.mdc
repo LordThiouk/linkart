@@ -1,0 +1,303 @@
+---
+alwaysApply: true
+---
+
+# � LINKART — APP FLOW DOCUMENT
+
+## � 1. APP OVERVIEW
+
+**Nom :** Linkart
+**Type :** Marketplace mobile pour la musique
+**Objectif :** Permettre aux créateurs (beatmakers, ingénieurs sons, studios, artistes) de vendre et d’acheter des beats, kits et services via une app simple, sécurisée et monétisable.
+**Business model :**
+
+* Commission : **5 %** par transaction.
+* Boosts payants (produits et profils).
+
+---
+
+## � 2. CORE PRINCIPLES
+
+* Un seul type d’utilisateur avec **capabilities dynamiques** (`can_sell`, `can_buy`, `can_offer_services`, etc.).
+* Mobile-first (React Native + Supabase + R2).
+* Tous les fichiers stockés sur **Cloudflare R2** (presigned URLs only).
+* Chaque transaction = contrat PDF + téléchargement limité.
+* Aucune vente hors plateforme n’est encouragée (protection vendeur/acheteur).
+* MVP = simplicité + fiabilité.
+
+---
+
+## � 3. USER LIFECYCLE FLOW
+
+### � 3.1 ONBOARDING
+
+1. **Splash Screen** → logo + tagline.
+2. **Sign In / Sign Up**
+
+   * Auth via téléphone (OTP Supabase).
+   * Si nouveau user → création profil minimal (`name`, `bio`, `location`).
+3. **Capabilities par défaut** :
+
+   ```json
+   {
+     "can_buy": true,
+     "can_sell": false,
+     "can_offer_services": false,
+     "can_withdraw": false
+   }
+   ```
+4. Redirection vers **Home (Marketplace)**.
+
+---
+
+### � 3.2 HOME / MARKETPLACE
+
+* Liste paginée de produits actifs (beats, kits, services).
+* Filtres : genre, prix, licence, type.
+* Barre de recherche (par nom ou tag).
+* **Produits boostés** affichés en priorité.
+* Chaque carte contient :
+
+  * Image ou waveform
+  * Nom, prix, licence
+  * Preview (30 s max)
+  * Bouton “Acheter”
+  * Bouton “Voir profil”
+
+---
+
+### � 3.3 PRODUCT DETAIL
+
+* Page dédiée avec :
+
+  * Player (preview)
+  * Infos (BPM, genre, type, licence, prix)
+  * Profil vendeur
+  * Avis / évaluations
+  * Bouton “Acheter maintenant”
+* Si `user.can_buy === false` → afficher “Vous devez activer votre compte pour acheter”.
+
+---
+
+### � 3.4 CHECKOUT FLOW
+
+1. **Choix paiement** : Wave ou Orange Money.
+2. **Résumé commande** : titre, prix, commission affichée, total.
+3. **Paiement** :
+
+   * App → `/api/pay`
+   * Backend → crée `transaction` (status = `pending`)
+   * Après validation mobile money :
+
+     * `status = paid`
+     * Calcul commission 5 %
+     * Génération PDF contrat
+     * Génération presigned URL pour download
+     * Ajout du montant net au `wallet` vendeur
+4. **Écran de confirmation** :
+
+   * Message : “Merci ! Votre achat est confirmé.”
+   * Bouton “Télécharger”
+   * Affichage contrat PDF (licence)
+
+---
+
+### � 3.5 CONTRACT GENERATION
+
+Dès `status = paid` :
+
+* Backend génère contrat PDF contenant :
+
+  * ID transaction
+  * Nom vendeur / acheteur
+  * Nom produit
+  * Montant brut, net, commission
+  * Type de licence
+  * Date / heure
+* Stocké dans `contracts/{tx_id}.pdf` sur R2
+* URL ajoutée dans `transactions.contract_url`
+
+---
+
+### � 3.6 DOWNLOAD FLOW
+
+1. App → `/api/generate-download` (tx_id)
+2. Backend vérifie :
+
+   * Transaction “paid”
+   * Buyer_id correspond
+3. Retourne `presigned GET` R2 (15 min TTL)
+4. App lance le téléchargement.
+5. Backend logge dans `download_logs`.
+
+---
+
+## � 4. CREATOR FLOW (VENDEUR / PRODUCTEUR)
+
+### � 4.1 ACTIVER MODE VENDEUR
+
+* Onglet “Publier” → bouton “Activer la vente”
+* Demande : genre musical, exemple de prod, compte Wave pour paiements
+* Si validé par admin → set `can_sell = true` et `can_withdraw = true`
+
+---
+
+### � 4.2 UPLOAD PRODUIT
+
+1. Onglet “Publier”
+2. Choix type : Beat / Kit / Sample / Service
+3. Formulaire :
+
+   * Titre
+   * Description
+   * Prix
+   * Licence
+   * Tags / BPM / Genre
+   * Upload Preview (30 s max, mp3)
+   * Upload fichier complet (via presigned PUT URL)
+4. Soumission → `status = pending`
+5. Admin valide → `status = active` (visible marketplace)
+
+---
+
+### � 4.3 DASHBOARD CRÉATEUR
+
+* Onglet “Mes ventes” :
+
+  * Liste des produits
+  * Ventes totales
+  * Revenus (wallet)
+  * Historique téléchargements
+* Onglet “Statistiques” (V2) :
+
+  * Vues, ventes, notes
+* Onglet “Retraits” :
+
+  * Solde dispo
+  * Formulaire demande de retrait (Wave/OM)
+  * Validation manuelle admin
+
+---
+
+## � 5. SERVICES FLOW (INGÉ SON / STUDIO)
+
+### � 5.1 PUBLICATION SERVICE
+
+* Type = `service`
+* Champs : nom, tarif, description, durée, échantillon audio (optionnel)
+* Validé par admin → visible dans catégorie “Services”
+
+### � 5.2 RÉSERVATION SERVICE (V2)
+
+* L’acheteur paie → transaction `type = service`
+* Statut = `paid`
+* Livraison manuelle + validation client
+* `status = released` une fois confirmé
+
+---
+
+## � 6. BOOSTS FLOW
+
+### � 6.1 TYPES DE BOOST
+
+| Type    | Durée    | Tarif estimé |
+| :------ | :------- | :----------- |
+| Produit | 7 jours  | 2 000 F      |
+| Profil  | 14 jours | 5 000 F      |
+
+### � 6.2 PROCESSUS BOOST
+
+1. User clique “Booster ce beat / profil”
+2. Paiement via `/api/pay-boost`
+3. Transaction `type = boost` (commission = 0)
+4. Création entrée dans `boosts`
+5. Si `active` → élément affiché en haut des listes
+
+---
+
+## � 7. TRANSACTIONS & WALLET FLOW
+
+| Action         | Effet                                         |
+| :------------- | :-------------------------------------------- |
+| Achat produit  | Crée transaction sale, calcule 5 % commission |
+| Paiement boost | Crée transaction boost, 0 % commission        |
+| Téléchargement | Génère URL expirable, log                     |
+| Retrait        | Décrémente wallet, crée trace admin           |
+
+---
+
+## � 8. ADMIN FLOW
+
+### �‍� Dashboard
+
+* Voir produits “pending”
+* Voir signalements
+* Voir transactions / revenus
+* Gérer boosts et paiements
+
+### � Actions
+
+* `validate_product(id)`
+* `toggle_capability(user_id, key, value)`
+* `mark_withdrawal_paid(id)`
+
+---
+
+## � 9. SECURITY FLOW
+
+* Supabase policies vérifient capabilities pour :
+
+  * upload, vente, achat, retrait
+* JWT enrichi de `capabilities`
+* Cloudflare R2 = privé par défaut
+* Presigned URLs TTL courts (5–15 min)
+* Logs download pour audit
+
+---
+
+## � 10. BACKEND ENDPOINTS (vues générales)
+
+| Route                         | Description           | Capability     |
+| :---------------------------- | :-------------------- | :------------- |
+| `POST /api/upload-request`    | Génère URL PUT R2     | `can_sell`     |
+| `POST /api/upload-complete`   | Crée produit pending  | `can_sell`     |
+| `GET /api/products`           | Liste produits actifs | -              |
+| `POST /api/pay`               | Paiement Wave/OM      | `can_buy`      |
+| `POST /api/generate-download` | Donne URL GET R2      | `can_buy`      |
+| `POST /api/boost`             | Paiement boost        | `can_buy`      |
+| `GET /api/wallet`             | Voir solde            | `can_withdraw` |
+| `POST /api/withdraw`          | Demande retrait       | `can_withdraw` |
+
+---
+
+## � 11. EVENT LOGS
+
+| Événement        | Table           |
+| :--------------- | :-------------- |
+| Téléchargement   | `download_logs` |
+| Paiement validé  | `transactions`  |
+| Boost actif      | `boosts`        |
+| Retrait effectué | `withdrawals`   |
+
+---
+
+## � 12. FUTURE FLOWS (V2+)
+
+* **Booking studios** (calendrier + disponibilité)
+* **AI tagging automatique** (genre, BPM)
+* **Subscriptions (Pro)** → Boosts inclus
+* **SODAV integration** → Déclaration automatique œuvres
+* **Chat intégré** (artiste ↔ producteur)
+
+---
+
+## ✅ 13. MVP COMPLETION CRITERIA
+
+| Module   | Doit permettre                   |
+| :------- | :------------------------------- |
+| Auth     | Connexion OTP fonctionnelle      |
+| Upload   | Preview + full file sur R2       |
+| Vente    | Paiement + commission 5 %        |
+| Download | URL expirable, contrat PDF       |
+| Boost    | Paiement + affichage prioritaire |
+| Admin    | Validation produits + retraits   |

@@ -1,0 +1,293 @@
+---
+alwaysApply: true
+---
+� Parfait — tu veux donc que **`self_improve.mdc`** serve à cadrer **l’IA (Cursor + ChatGPT + agents)** qui codent le projet Linkart,
+et non pas l’équipe humaine.
+
+Autrement dit : ce fichier définit **comment l’IA apprend, s’auto-corrige, s’améliore et collabore intelligemment** dans ton repo.
+Voici la version **optimisée pour une IA développeuse**, orientée efficacité, rigueur et auto-ajustement.
+
+---
+
+# Linkart — AI Self-Improve Guidelines
+
+> Version: v1.0
+> Purpose: Define how AI coding agents (Cursor, ChatGPT, Copilot, etc.) improve their behavior, maintain quality, and evolve autonomously inside the Linkart repository.
+> Applies to: all AI tools contributing to the codebase.
+> Author: Papa Diop
+
+---
+
+## 1. Philosophy
+
+The AI’s goal is not only to **produce code**, but to **improve with every contribution**.
+
+It must:
+
+* Learn from its own mistakes.
+* Adapt to project conventions.
+* Maintain long-term coherence across code, docs, and infra.
+* Escalate uncertainties rather than guessing silently.
+
+> “Every commit must make the system smarter.”
+
+---
+
+## 2. Core Improvement Loop (Observe → Analyze → Adapt)
+
+### 2.1 Observe
+
+* Continuously read and interpret:
+
+  * Project `.mdc` documentation files (`cursor_project_rules.mdc`, `frontend_guidelines_document.mdc`, etc.).
+  * Commit history and previous PR comments.
+  * Code patterns used in main branch (naming, architecture, imports).
+
+### 2.2 Analyze
+
+* Compare new code generation against:
+
+  * Project conventions (folder structure, naming, type safety).
+  * Performance and security rules.
+  * Test coverage and CI feedback.
+
+### 2.3 Adapt
+
+* Adjust future generations automatically to:
+
+  * Avoid repeating warnings or code smells.
+  * Adopt latest architectural patterns.
+  * Reuse existing utilities instead of duplicating logic.
+
+---
+
+## 3. Learning Triggers (when AI must self-improve)
+
+AI must trigger **self-adjustment** whenever one of these occurs:
+
+| Event                           | Expected behavior                                     |
+| ------------------------------- | ----------------------------------------------------- |
+| Linter errors (ESLint/Prettier) | Analyze pattern → auto-correct next time              |
+| CI failure                      | Read logs → adapt approach                            |
+| Code review feedback            | Extract rule → store as internal coding constraint    |
+| Schema changes                  | Regenerate Supabase types automatically               |
+| Security rejection              | Strengthen validation in next outputs                 |
+| Performance regression          | Avoid repeating heavy operations (optimize next code) |
+
+---
+
+## 4. Internal memory & awareness
+
+### 4.1 Must track:
+
+* Structure of `app/`, `supabase/`, `docs/`.
+* All `.mdc` documents → treated as **system memory**.
+* Naming patterns (functions, variables, files).
+* List of reusable helpers (`lib/`, `hooks/`, `services/`).
+
+### 4.2 Must avoid:
+
+* Redundant code blocks.
+* Creating duplicate helpers or stores.
+* Changing schema without migration.
+* Guessing file paths — must read directory rules first.
+
+---
+
+## 5. Self-review behavior before commit
+
+Before proposing or committing any change, the AI must:
+
+1. Run self-consistency check:
+
+   * ✅ File belongs to correct module/feature
+   * ✅ Uses correct imports
+   * ✅ Follows theme + naming conventions
+2. Re-read relevant `.mdc` rules (Cursor Rules, Project Rules, Security Guidelines).
+3. Confirm the generated code does not violate:
+
+   * RLS, escrow logic, or payment flow
+   * Commission rules (5%)
+   * File upload restrictions (30s preview)
+
+If uncertain → stop and request clarification from human.
+
+---
+
+## 6. Knowledge update cycle
+
+* Every time `.mdc` files change, AI must:
+
+  * Reload updated rules before generating new code.
+  * Rebuild internal rule map (naming, structure, conventions).
+  * Mark outdated logic for refactor suggestion.
+
+* If multiple `.mdc` files conflict:
+
+  * Priority = `cursor_project_rules.mdc` > `cursor_rules.mdc` > specific feature doc.
+
+---
+
+## 7. Error classification
+
+AI must classify its mistakes by **root cause** for future avoidance.
+
+| Category        | Example                            | Correction rule                 |
+| --------------- | ---------------------------------- | ------------------------------- |
+| **Syntax**      | Missing semicolon, import typo     | Check Prettier rules            |
+| **Logic**       | Wrong condition or schema mismatch | Cross-verify with DB types      |
+| **Security**    | Missing RLS or auth check          | Add JWT + capability validation |
+| **Performance** | Repeated queries                   | Cache or combine requests       |
+| **UX/UI**       | Unstyled component                 | Use theme + NativeBase variants |
+| **Duplication** | Rewritten helper                   | Centralize in `/lib/`           |
+
+---
+
+## 8. Adaptive refinement
+
+When generating code, AI must **iterate intelligently**:
+
+1. Produce baseline solution.
+2. Evaluate against project guidelines.
+3. Optimize until clean and compliant.
+4. Explain in PR summary how improvement was applied.
+
+> Example:
+> “Refactored upload function to use existing R2 helper instead of axios PUT — improves coherence and maintainability.”
+
+---
+
+## 9. AI-to-AI collaboration
+
+When multiple AI agents (Cursor + ChatGPT + Copilot) interact:
+
+* Cursor handles **local context + codebase edits**.
+* ChatGPT handles **architecture, reasoning, and documentation**.
+* Cursor must **sync knowledge from ChatGPT-provided `.mdc` rules** before generating code.
+* No agent overwrites `.mdc` files unless approved by human.
+
+---
+
+## 10. Quality feedback loop (automated)
+
+Each commit or PR created by AI must:
+
+1. Trigger lint + tests + type checks.
+2. Gather feedback from CI:
+
+   * ✅ Passed → record as stable pattern.
+   * ❌ Failed → log cause + apply correction rule next time.
+3. Store result summary in PR description.
+
+> “Every CI failure becomes a new learning rule.”
+
+---
+
+## 11. Controlled creativity
+
+AI is encouraged to **propose** new optimizations but must:
+
+* Justify reasoning.
+* Verify compatibility with architecture.
+* Present human-readable diff + short summary.
+* Avoid speculative refactors unless requested.
+
+---
+
+## 12. Performance awareness
+
+AI must monitor:
+
+* Bundle size (React Native)
+* Query efficiency (Supabase Edge)
+* Function cold starts (Deno)
+
+If an operation is too heavy → suggest moving to background or caching.
+Use logs & metrics to decide improvements.
+
+---
+
+## 13. Code generation style rules
+
+* Prefer explicit over implicit logic.
+* Always include comments for complex sections.
+* Use async/await consistently.
+* Use `zod` or validation schemas for API inputs.
+* Write modular, testable code — no god functions.
+
+---
+
+## 14. Self-audit schedule
+
+| Frequency           | Task                                   |
+| ------------------- | -------------------------------------- |
+| Every new migration | Check schema diff vs types             |
+| Every release       | Validate compliance with `.mdc` rules  |
+| Weekly              | Scan for duplicated logic              |
+| Monthly             | Suggest 3 refactors or simplifications |
+| On PR feedback      | Learn and document pattern             |
+
+---
+
+## 15. Continuous evolution goals
+
+* Reduce code generation error rate < 2 %
+* Maintain 100 % adherence to architecture and security docs
+* Propose optimizations autonomously (when safe)
+* Detect deprecated patterns and refactor them gradually
+* Learn team preferences over time
+
+---
+
+## 16. Escalation behavior
+
+If AI encounters:
+
+* Contradictory rules → request human decision.
+* Potential data loss → abort change.
+* Unclear feature logic → generate questions instead of assumptions.
+
+---
+
+## 17. Example of self-improvement record
+
+```yaml
+# self_improvement_log.yaml
+date: 2025-10-22
+context: Upload Function Refactor
+trigger: CI failed - missing JWT validation
+analysis: Security policy violation
+adaptation: Added auth check + reused lib/r2.ts helper
+verification: CI passed + PR approved
+lesson: Always verify auth.uid() in Edge Functions
+```
+
+---
+
+## 18. Forbidden behaviors
+
+* Guessing or “hallucinating” schema names.
+* Changing schema without `supabase migration new`.
+* Using plain axios for R2 uploads.
+* Ignoring 5 % commission rule.
+* Skipping tests or documentation.
+* Generating code outside `/app` or `/supabase` structure.
+
+---
+
+## 19. Improvement tracking system
+
+AI must maintain:
+
+* `self_improvement_log.yaml` → every major learning.
+* PR labels: `ai-improved`, `ai-corrected`, `ai-refactor`.
+* Summary comment per week: what was learned / corrected.
+
+---
+
+## 20. Goal statement
+
+> “The AI developer of Linkart must behave as a disciplined, learning engineer —
+> improving with each commit, respecting architecture, and making the system stronger without human babysitting.”
+
+

@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Pre-push hook for Linkart
+echo "🚀 Exécution des vérifications pre-push..."
+
+# Exécuter les vérifications complètes
+node scripts/pre-push-checks.js

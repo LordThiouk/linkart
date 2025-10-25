@@ -1,0 +1,8 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Commit message validation for Linkart
+echo "🔍 Validation du message de commit..."
+
+# Valider le format du message de commit
+node scripts/validate-commit-message.js "$1"

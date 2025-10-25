@@ -1,0 +1,276 @@
+---
+alwaysApply: true
+---
+
+# Linkart — Project Requirements Document
+
+> Version: v1.0
+> Auteur : Papa Diop
+> Objet : Spécifier les exigences fonctionnelles, techniques, de performance et de sécurité du projet Linkart avant le développement complet du MVP.
+
+---
+
+## 1. Contexte du projet
+
+Le marché musical sénégalais connaît une forte croissance, mais reste fragmenté et peu digitalisé.
+**Linkart** vise à créer une **plateforme de référence pour les professionnels du son** :
+
+* Beatmakers, artistes, studios, ingénieurs du son, compositeurs, producteurs.
+* Un espace pour **vendre, acheter, collaborer et gérer la visibilité** des créations musicales.
+
+L’application doit combiner **marketplace**, **outil de gestion**, et **plateforme de valorisation** des talents.
+
+---
+
+## 2. Objectifs généraux
+
+1. Offrir une **marketplace musicale mobile** fluide et sécurisée.
+2. Permettre à tout acteur de vendre ses productions ou services.
+3. Garantir la **propriété intellectuelle** via contrats automatiques et URLs sécurisées.
+4. Mettre en avant les créateurs via un système de **boosts** et **notations**.
+5. Favoriser la **monétisation équitable** : 5 % de commission plateforme.
+6. Préparer l’intégration future avec la **SODAV** pour la télé-déclaration et le monitoring.
+
+---
+
+## 3. Utilisateurs cibles
+
+| Type d’utilisateur            | Description                                   | Objectif principal      |
+| ----------------------------- | --------------------------------------------- | ----------------------- |
+| **Beatmaker**                 | Crée et vend ses beats, samples, kits         | Monétiser ses créations |
+| **Artiste**                   | Achète des beats ou services (mix, mastering) | Produire des morceaux   |
+| **Ingénieur du son / Studio** | Propose services audio                        | Trouver des clients     |
+| **Manager / Label**           | Supervise achats et ventes                    | Centraliser gestion     |
+| **Admin**                     | Valide produits, retraits, modère contenus    | Assure la conformité    |
+
+---
+
+## 4. Portée fonctionnelle (MVP)
+
+### 4.1 Authentification & profil
+
+* Auth via **OTP (téléphone / email)** avec Supabase Auth.
+* Profil utilisateur minimal : nom, bio, localisation.
+* Capabilities : `can_buy`, `can_sell` (activables par l’utilisateur ou admin).
+* Gestion du wallet (solde, retraits).
+* Image de profil (R2 bucket `avatars/`).
+
+### 4.2 Produits
+
+* Types : `beat`, `sample`, `kit`, `service`.
+* Statuts : `pending`, `active`, `rejected`.
+* Upload :
+
+  * Preview (30s max)
+  * Fichier complet (mp3, zip, wav)
+* Stockage :
+
+  * R2 via presigned PUT.
+* Lecture :
+
+  * Preview audio via `expo-av`.
+
+### 4.3 Vente / Achat
+
+* Parcourir produits (recherche, filtre, tri).
+
+* Voir détail produit (prix, licence, rating, vendeur).
+
+* Achat :
+
+    *Paiement Wave / OM intégré
+
+    *Mécanisme escrow (séquestre) :
+
+        *Lorsqu’un acheteur paie, le montant est bloqué dans un compte virtuel (transaction.status = paid_held).
+
+        *Le vendeur n’est pas immédiatement crédité.
+
+        *L’acheteur reçoit un accès au fichier complet (ou prestation planifiée).
+
+        *Lorsque la transaction est confirmée (par validation ou délai automatique), le montant est libéré vers le wallet du vendeur (status = released).
+
+    *Contrat PDF généré et stocké (R2) à la création du paiement.
+
+    *Téléchargement fichier complet via lien presigné (TTL 15 min).
+
+    *En cas de litige, admin peut bloquer ou rembourser la transaction (status = disputed ou refunded).
+
+* 5 % commission plateforme prélevée lors de la libération des fonds.
+
+* Historique d’achat, de téléchargement, et d’états de paiement.
+
+### 4.4 Boosts
+
+* Achat de visibilité :
+
+  * Boost produit ou profil
+  * Durée (24h, 7j, 30j)
+* Effet : mise en avant dans les résultats de recherche.
+
+### 4.5 Ratings
+
+* Notation (1–5) et commentaire après achat confirmé.
+* Moyenne affichée sur les profils et produits.
+* Signalement possible des abus.
+* Admin peut masquer un rating (`status=hidden`).
+
+### 4.6 Wallet & Retraits
+
+* Crédit automatique **uniquement après libération escrow**.
+* Retrait manuel via admin (Wave/OM).
+* Historique retraits & transactions.
+* Statut : `pending`, `paid`, `rejected`.
+* � **État supplémentaire pour escrow :**
+
+  * `held` : fonds bloqués, en attente de validation.
+  * `released` : fonds libérés au vendeur.
+  * `disputed` : transaction contestée (suspension temporaire).
+
+### 4.7 Administration
+
+* Tableau de bord web minimal (ou Supabase Studio).
+* Actions :
+
+  * Validation produits
+  * Validation retraits
+  * Suspension utilisateurs
+  * Consultation transactions
+
+---
+
+## 5. Contraintes techniques
+
+| Domaine            | Exigence                                   |
+| ------------------ | ------------------------------------------ |
+| **Backend**        | Supabase (Postgres, Edge Functions)        |
+| **Frontend**       | React Native (Expo, TypeScript)            |
+| **Stockage**       | Cloudflare R2 (beats, previews, contrats)  |
+| **Paiements**      | Wave API + Orange Money API                |
+| **Notifications**  | Toasts + e-mails (future phase)            |
+| **CI/CD**          | GitHub Actions (tests, migrations, deploy) |
+| **Monitoring**     | Sentry (app + backend)                     |
+| **Sécurité**       | RLS activé, JWT Supabase, presigned URLs   |
+| **Commission**     | 5 % fixe sur ventes                        |
+| **Langue**         | FR (v1), EN (v2)                           |
+| **Appareil cible** | Android / iOS (mobile uniquement v1)       |
+| **Paiements**    | Wave / OM + Escrow virtuel (transactions bloquées avant libération) |
+| **Transactions** | États : `pending`, `paid_held`, `released`, `disputed`, `refunded`  |
+| **Contrats**     | Générés automatiquement à chaque achat                              |
+| **Commissions**  | Prélevées lors de la libération escrow (5%)                         |
+| **Admin tools**  | Capable de libérer ou bloquer un paiement manuellement              |
+
+
+## 6. Contraintes non fonctionnelles
+
+| Type              | Exigence                                          |
+| ----------------- | ------------------------------------------------- |
+| **Performance**   | Chargement page < 3 s, audio preview instantané   |
+| **Disponibilité** | 99.9 % uptime Edge Functions                      |
+| **Scalabilité**   | Cloud-native (Supabase + R2)                      |
+| **Sécurité**      | Chiffrement, RLS, audit logs                      |
+| **UX**            | Fluidité, cohérence visuelle (NativeBase + thème) |
+| **Support**       | Téléphones Android 8+ / iOS 14+                   |
+| **Maintenance**   | Code modulaire (features + atomic design)         |
+
+---
+
+## 7. Modèle économique
+
+* **Commission plateforme** : 5 % sur toutes les ventes.
+* **Mise en avant payante** (produit ou profil).
+* **Frais de service (retraits)** : à définir selon fournisseur.
+* **Aucun abonnement au lancement** (MVP freemium).
+
+---
+
+## 8. Sécurité & conformité
+
+* Auth Supabase + RLS sur toutes les tables sensibles.
+* URLs presignées Cloudflare R2 (TTL max 15 min).
+* Hash IP dans logs (`download_logs`).
+* Backup DB quotidien.
+* Chiffrement des communications HTTPS.
+* RGPD minimal : consentement stockage données, suppression compte sur demande.
+* Journalisation (Sentry + Supabase logs).
+* � Escrow géré par la plateforme : aucun transfert instantané au vendeur avant validation.
+* Données transactions signées (timestamp + signature interne).
+* Possibilité d’audit et d’export des logs de paiement.
+* Remboursement possible sur intervention admin.
+* Préparation à une intégration future avec un **fournisseur escrow externe** (Wave Business API ou service tiers).
+---
+
+## 9. Scalabilité & futur
+
+Préparation à la croissance :
+
+* Table `capabilities` extensible (JSONB).
+* Architecture modulaire (upload, payments, boosts isolés).
+* File processing asynchrone (pour IA audio tagging).
+* API publique future (`/api/v1/public/...`).
+* Booking system et télé-déclaration SODAV (phase 2).
+
+---
+
+## 10. Dépendances & intégrations
+
+| Composant                   | Intégration  | But                                |
+| --------------------------- | ------------ | ---------------------------------- |
+| **Supabase Auth**           | OTP Login    | Authentification                   |
+| **Supabase DB**             | Postgres     | Données utilisateurs/produits      |
+| **Supabase Edge Functions** | Deno         | API serverless                     |
+| **Cloudflare R2**           | Stockage     | Fichiers lourds                    |
+| **Wave / OM API**           | Paiement     | Ventes et retraits                 |
+| **Sentry**                  | Monitoring   | Logs & erreurs                     |
+| **Expo / EAS**              | Build mobile | Distribution app                   |
+| **GitHub Actions**          | CI/CD        | Automatisation tests & déploiement |
+
+---
+
+## 11. Tests & validation
+
+* **Unit tests** : logique JS/TS (Zustand, hooks).
+* **Integration tests** : Edge Functions & API.
+* **End-to-end** : upload → achat → téléchargement.
+* **Manuel QA** : validation paiement, wallet, boost, rating.
+* **Admin QA** : validation produits et retraits.
+
+---
+
+## 12. Livrables attendus
+
+1. Application mobile (Expo build Android + iOS).
+2. Backend fonctionnel (Supabase + R2).
+3. Admin minimal (validation + stats).
+4. Documentation technique complète :
+
+   * `backend_structure_document.mdc`
+   * `frontend_guidelines_document.mdc`
+   * `cursor_project_rules.mdc`
+   * `cursor_rules.mdc`
+   * `implementation_plan.mdc`
+5. CI/CD GitHub + Sentry actifs.
+
+---
+
+## 13. Conditions de réussite
+
+* MVP fonctionnel, utilisable par 50+ créateurs réels.
+* Transactions réelles réussies via Wave/OM.
+* Temps de téléchargement < 15 s / fichier.
+* Aucun incident de sécurité majeur.
+* Codebase documentée et testée.
+* Intégration possible avec SODAV (v2).
+* MVP fonctionnel avec **escrow simulé** (blocage virtuel dans DB).
+* Validation manuelle ou automatique des transactions réussies.
+* Aucun transfert prématuré de fonds.
+* Système stable sous 50 transactions simultanées.
+---
+
+## 14. Prochaines étapes
+
+1. Validation du document & cadrage final.
+2. Setup environnement Supabase + R2 + CI.
+3. Lancement Phase 1 (backend & mobile base).
+4. Tests internes (alpha).
+5. Préparation du lancement public (beta fermée).

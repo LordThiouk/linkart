@@ -1,0 +1,95 @@
+---
+alwaysApply: true
+---
+flowchart TD
+  %% App Flowchart for Linkart (app_flowchart.mdc)
+  %% Legend: users = buyer/seller as single user with capabilities
+
+  %% Start
+  Start([Start]) --> Splash[/"Splash Screen: Linkart"/]
+  Splash --> Auth{Is user authenticated?}
+  Auth -- No --> SignUp["Sign Up / Sign In (OTP)"]
+  SignUp --> CreateProfile["Create minimal profile\n(name, bio, location)"]
+  CreateProfile --> SetDefaults["Set default capabilities:\ncan_buy=true, others=false"]
+  SetDefaults --> Home
+  Auth -- Yes --> Home[/Home / Marketplace/]
+
+  %% Home / Marketplace
+  Home --> Browse["Browse / Search / Filters"]
+  Browse --> ProductCard["Product Card (preview, price, seller)"]
+  ProductCard --> ProductDetail["Open Product Detail"]
+  ProductDetail --> Preview["Play Preview (30s)"]
+
+  %% Buying flow
+  ProductDetail --> BuyClick{"User clicks Buy?"}
+  BuyClick -- Yes --> CheckCanBuy{user.capabilities.can_buy?}
+  CheckCanBuy -- No --> PromptEnableSellOrBuy["Prompt: Activate buying capability"]
+  CheckCanBuy -- Yes --> Checkout["Checkout: show price, commission (5%), total"]
+  Checkout --> SelectPayment["Select payment method\n(Wave / Orange Money)"]
+  SelectPayment --> CreateTx["POST /api/pay -> create transaction (pending)"]
+  CreateTx --> PaymentProcessing["Process mobile money payment"]
+  PaymentProcessing -->|Success| TxPaid["transaction.status = paid"]
+  PaymentProcessing -->|Failure| TxFailed["transaction.status = failed"]
+  TxFailed --> NotifyFail["Notify user: payment failed"]
+  TxPaid --> CalcCommission["Calculate commission (5%)\nnet = gross - commission"]
+  CalcCommission --> UpdateWallet["Update seller.wallet += net"]
+  CalcCommission --> GenerateContract["Generate contract PDF -> store R2\ntransactions.contract_url"]
+  GenerateContract --> GenerateDownload["Generate presigned GET URL (TTL 15m)"]
+  GenerateDownload --> ReturnToApp["Return download URL to app"]
+  ReturnToApp --> DownloadStart["App downloads/streams file"]
+  DownloadStart --> LogDownload["Log entry in download_logs"]
+  LogDownload --> ShowContract["Display contract & receipt"]
+  ShowContract --> EndBuyFlow([Purchase complete])
+
+  %% Upload / Seller flow
+  Home --> PublishCTA["Publish / Sell button"]
+  PublishCTA --> CheckCanSell{user.capabilities.can_sell?}
+  CheckCanSell -- No --> ActivateSell["Activate seller (form: genres, payment account)"]
+  ActivateSell --> RequestSellApproval["Admin validation step\n(set can_sell true on approval)"]
+  RequestSellApproval --> CheckCanSell
+  CheckCanSell -- Yes --> UploadRequest["POST /api/upload-request -> presigned PUT URL (5m)"]
+  UploadRequest --> UploadClient["Client PUT upload (preview + full file)"]
+  UploadClient --> UploadComplete["POST /api/upload-complete -> create product (status=pending)"]
+  UploadComplete --> AdminQueue["Product in admin moderation queue"]
+  AdminQueue --> AdminDecision{"Admin approves?"}
+  AdminDecision -- Approve --> ProductActive["product.status = active"]
+  AdminDecision -- Reject --> ProductRejected["product.status = rejected\nnotify seller"]
+  ProductActive --> VisibleInMarketplace["Visible in marketplace (boosted if active)"]
+
+  %% Boosts flow
+  ProductDetail --> BoostCTA["User clicks 'Boost' (product/profile)"]
+  BoostCTA --> CheckCanBuy
+  CheckCanBuy -- Yes --> BoostCheckout["Checkout for boost (type/duration)"]
+  BoostCheckout --> CreateBoostTx["Create boost transaction (type=boost)"]
+  CreateBoostTx --> BoostPayment["Process payment (boost)"]
+  BoostPayment -->|Success| ActivateBoost["Insert record in boosts\nstart_at -> end_at"]
+  ActivateBoost --> UpdateRanking["Boost affects listing order / featured slots"]
+
+  %% Admin flows
+  AdminPanel["Admin Panel"] --> ViewPending["View pending products / reports"]
+  ViewPending --> AdminDecision
+  AdminPanel --> ToggleCapabilities["Toggle user.capabilities (e.g., can_withdraw)"]
+  AdminPanel --> ProcessWithdrawals["Process withdrawal requests (manual)"]
+
+  %% Wallet & Withdrawals
+  UserMenu["User Menu"] --> Wallet["View Wallet Balance"]
+  Wallet --> RequestWithdraw["Request Withdrawal (Wave/OM)"]
+  RequestWithdraw --> CreateWithdrawTx["Create withdrawal record (pending)"]
+  CreateWithdrawTx --> AdminPanel
+  AdminPanel --> MarkWithdrawPaid["Admin marks withdrawal as paid"]
+  MarkWithdrawPaid --> UpdateWalletAfterWithdraw["Deduct from wallet & notify user"]
+
+  %% Error / edge cases
+  DownloadStart -->|Expired URL| Expired["Download URL expired"]
+  Expired --> RenewDownload["User requests new download -> POST /api/generate-download"]
+  RenewDownload --> GenerateDownload
+
+  AdminDecision -->|Suspicious content| SuspendUser["Suspend seller / revoke can_sell\nnotify support"]
+
+  %% Misc & end
+  EndBuyFlow --> Home
+  ProductRejected --> Home
+  VisibleInMarketplace --> Home
+
+  style Start fill:#f9f,stroke:#333,stroke-width:1px
+  style EndBuyFlow fill:#9f9,stroke:#333,stroke-width:1px

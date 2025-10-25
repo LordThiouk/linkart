@@ -1,0 +1,279 @@
+---
+alwaysApply: true
+---
+
+# TESTING — Stratégie et Plan de Tests pour Linkart
+
+> Version: v1.0
+> But : définir la stratégie de tests complète pour garantir qualité, sécurité et stabilité de Linkart (MVP).
+
+---
+
+## 1. Objectifs des tests
+
+* Garantir que les features critiques (upload, paiement, escrow, téléchargement) fonctionnent.
+* Empêcher les régressions via CI.
+* Vérifier la sécurité et la conformité (RLS, webhooks).
+* Mesurer la performance (concurrence, latence).
+* Permettre à l’IA de produire code fiable et auto-testé.
+
+---
+
+## 2. Pyramide de tests (priorité)
+
+1. **Unit tests** (Jest) — logique pure, hooks, helpers.
+2. **Integration tests** (Supertest / Supabase test) — Edge Functions ↔ DB ↔ R2 mocks.
+3. **End-to-End (E2E)** (Playwright / Detox / Expo) — parcours utilisateur complets.
+4. **Load tests** (k6) — montée en charge des endpoints critiques.
+5. **Security tests** — vérifications RLS, webhooks sign, input validation.
+
+---
+
+## 3. Outils recommandés
+
+* Unit / Integration : **Jest** + **ts-jest** + **testing-library/react-native**
+* API integration : **Supertest** (Node) ou tests via Supabase client en Node/Deno
+* E2E mobile : **Playwright (web admin)** + **Expo E2E** ou **Detox** pour mobile natif
+* Load testing : **k6** (scénarios JS)
+* Security static : **npm audit**, **snyk** (optionnel)
+* Contract tests : **Pact** (optionnel) pour webhooks paiement
+* Mocking payments & R2 : **nock** (Node) / fixtures (local) / test doubles
+
+---
+
+## 4. Environnements de test
+
+* **local-dev** : `supabase start` + Expo (dev) + mocked R2 (local file or MinIO)
+* **ci** : ephemeral test DB (Supabase project staging) + CI secrets read-only for test webhooks (use sandbox mode)
+* **staging** : intégration complète (Wave sandbox)
+
+> Important : ne jamais exécuter tests destructifs sur prod.
+
+---
+
+## 5. Données de test & fixtures
+
+* Jeu de fixtures minimal :
+
+  * 3 users : buyer, seller, admin (OTP mocked)
+  * 5 products (beat, sample, service) with preview keys pointing to small audio samples
+  * 3 transactions : pending, paid_held, released
+  * 2 boosts active/expired
+* Stocker fixtures SQL dans `supabase/seed.test.sql`.
+* Scripts helpers : `scripts/reset-test-db.sh` qui restaure un snapshot propre avant suite CI.
+
+---
+
+## 6. Mocks & doubles
+
+* **Payments**: mock Wave/OM webhooks and API using `nock` or local stub server; include HMAC signature check.
+* **Cloudflare R2**: either use local MinIO or mock presigned URL generation (test the logic that uses presigned URL; for upload flow, assert the function generates URL and that client PUT is done to that URL — actual storage can be stubbed).
+* **Supabase**: use test project or Supabase's local emulate; ensure RLS policies active in integration tests.
+* **Time**: use fake timers for expiry flows (jest.useFakeTimers) to simulate TTL expirations or escrow timeouts.
+
+---
+
+## 7. Test types & exemples de cas
+
+### 7.1 Unit tests (Jest)
+
+* Test helpers : calcul commission (5%), génération filename R2, validation licence.
+* Test hooks : `useWallet` store logic (ajout / retrait / erreurs).
+* Coverage threshold : **>= 80%** pour modules critiques.
+
+Exemple test:
+
+```ts
+test('calculateCommission returns 5% and net amount', () => {
+  const { commission, net } = calculateCommission(20000);
+  expect(commission).toBe(1000);
+  expect(net).toBe(19000);
+});
+```
+
+### 7.2 Integration tests (Edge Functions + DB)
+
+* `/api/upload-request` :
+
+  * require `can_sell` capability → 403 sinon
+  * returns presigned PUT URL + key (assert key pattern)
+* `/api/upload-complete` :
+
+  * verifies object exists (simulate HEAD) → creates product status=pending
+* `/api/pay` + webhook simulation :
+
+  * transaction created pending
+  * simulate webhook signed → transaction.status = paid_held, platform_earnings created, contract URL set
+* `/api/generate-download` :
+
+  * buyer only, status paid_held or released → returns presigned GET
+
+### 7.3 E2E tests (flows)
+
+* Flow complet : signup -> activate seller -> upload preview -> admin approve -> buyer checkout -> payment webhook -> download file -> rating post-purchase
+* Edge cases : attempt download without payment (403), preview playback works offline (caching), boost purchase affects ordering on product listing.
+
+### 7.4 Load tests (k6)
+
+* Scénarios ciblés :
+
+  * `/api/generate-download` : 500 concurrent users requesting download tokens (mesurer latence, CPU, DB locks)
+  * `/api/products` : simuler 200 RPS lecture listing
+* KPIs acceptés : p95 latency < 800ms, no 5xx under target load.
+
+### 7.5 Security tests
+
+* RLS tests : user A cannot insert product for user B (use Supabase auth context)
+* Webhook signature: reject invalid signature (403)
+* SQL-injection simulation via malicious inputs (assert prepared queries or parameterized usage)
+* Pen-test checklist (manual): retrieve sensitive env vars, try to access direct R2 object w/o token.
+
+---
+
+## 8. Tests pour l’escrow (modèle held)
+
+* Scénarios :
+
+  * paiement success -> status `paid_held` (buyer gets download, seller not credited)
+  * release action (admin or auto after X days) -> status `released`, net added to seller wallet, commission recorded
+  * dispute : admin sets `disputed` -> funds locked, buyer refund possible
+* Vérifier que commission est calculée et enregistrée au moment de `released` (et non à `paid_held`).
+
+---
+
+## 9. Test automation & CI pipeline
+
+CI job (GitHub Actions) example stages:
+
+1. checkout
+2. install deps
+3. `npm run lint`
+4. `npm run test:unit` (jest) — fail if coverage below threshold
+5. `supabase db push --project-ref $TEST_REF` (optional protected) or use test DB snapshot
+6. `npm run test:integration` — spin supabase functions serve or call staging functions
+7. `npm run e2e` (tagged: run on nightly or PR for main features)
+8. `npm run loadtest` (scheduled, not per PR)
+9. `supabase gen types typescript --local > src/types/supabase.ts` and assert no diff (CI step ensures types up-to-date)
+
+> CI must fail if:
+>
+> * Unit tests fail or coverage < threshold
+> * Integration tests fail
+> * Types regenerated but not committed
+
+---
+
+## 10. Test data cleanup & isolation
+
+* Each test suite must run in transaction or create isolated resources (unique user ids, product ids).
+* After run, cleanup DB rows created (or reset DB snapshot).
+* For parallel CI jobs, use per-run test schema/namespace or ephemeral Supabase project.
+
+---
+
+## 11. Test naming & structure
+
+* Unit tests under `__tests__/unit/`
+* Integration tests under `__tests__/integration/` with `setupTestDB()` helper
+* E2E under `e2e/` with Playwright configs
+* Load tests under `load/` (k6 scripts)
+
+---
+
+## 12. Test reporting & observability
+
+* Collect coverage reports (lcov) and upload to Codecov or artifact.
+* Export CI test reports (JUnit XML) for visibility.
+* For E2E failures, capture screenshots and logs (Playwright).
+* Store k6 result JSON and aggregate metrics (p95/p99).
+
+---
+
+## 13. How Cursor / AI must handle tests
+
+* For any code change, Cursor must generate corresponding tests (unit + integration minimal).
+* Cursor must run unit tests locally (in its dev environment) before creating PR.
+* If CI fails, Cursor must:
+
+  * fetch logs,
+  * classify error (lint/test/type/security),
+  * update code and tests,
+  * re-run locally and iterate.
+* Cursor must never produce PRs that reduce coverage or skip tests without human approval.
+
+---
+
+## 14. Test checklist before merge (PR template)
+
+* [ ] Unit tests added for new logic
+* [ ] Integration tests for new Edge Functions / DB changes
+* [ ] Tests pass locally and in CI
+* [ ] Types regenerated and committed (if migration)
+* [ ] Lint & Prettier passed
+* [ ] Security checks (webhook signatures, RLS) included
+* [ ] Manual QA steps included for payment-related changes
+
+---
+
+## 15. Sample commands (scripts)
+
+```bash
+# unit tests
+npm run test:unit
+
+# integration (requires test DB or supabase serve)
+npm run test:integration
+
+# e2e (Playwright)
+npm run test:e2e
+
+# run k6 load test
+k6 run load/k6_downloads.js
+
+# regenerate types
+supabase gen types typescript --local > src/types/supabase.ts
+```
+
+---
+
+## 16. Coverage targets
+
+* Unit + integration combined: **>= 80%** on critical modules (payments, uploads, auth).
+* Global project target: **>= 70%**.
+
+---
+
+## 17. Test ownership & cadence
+
+* Every PR touches tests.
+* Nightly: run full E2E + load tests in staging.
+* Weekly: security test sweep (vulnerabilities, RLS drift).
+* Monthly: test plan review, update fixtures and thresholds.
+
+---
+
+## 18. Recovery & flakiness
+
+* Mark flaky tests with `@flaky` tag and exclude from gating pipeline until stabilized.
+* Maintain a **flaky tests dashboard** listing flaky tests and owners.
+* Investigate failing tests within 24h.
+
+---
+
+## 19. Documentation & dev-experience
+
+* `README_TESTING.md` with run instructions, env variables needed for test runs and how to start local supabase & functions.
+* Provide Postman collections or curl examples for integration testing payment webhooks.
+
+---
+
+## 20. Exemple de cas concret de test d’intégration (pseudocode)
+
+1. Seed DB with seller & product.
+2. Buyer calls `/api/pay` → returns payment instruction + tx_id.
+3. Simulate Wave webhook (signed) → call `/api/payment-callback`.
+4. Assert transaction.status === 'paid_held', contract_url not null.
+5. Buyer requests `/api/generate-download` → returns presigned GET.
+6. Assert download_logs has entry after consumption.
+7. Simulate admin release → transaction.status === 'released', seller.wallet increased by net.
+

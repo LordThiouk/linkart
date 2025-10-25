@@ -1,0 +1,185 @@
+---
+alwaysApply: true
+---
+## 2. Objectif MVP
+
+### Livrables prioritaires (MVP)
+
+1. **Compte utilisateur** (auth OTP via Supabase)
+2. **Profils** avec capabilities : `can_buy`, `can_sell`
+3. **Catalogue produits** (beats, samples, kits, services)
+4. **Paiement intégré (Wave / OM)** avec commission 5 %
+5. **Téléchargement sécurisé via URL presignée**
+6. **Système de wallet et retraits manuels**
+7. **Mécanisme de boost payant (produit ou profil)**
+8. **Système de notation (ratings)**
+9. **Back-office admin minimal (approbation produits, retraits)**
+
+---
+
+## 3. Phase 1 — Infrastructure & Base technique
+
+### 3.1 Backend setup
+
+* [ ] Créer projet Supabase (auth + db)
+* [ ] Configurer R2 Cloudflare (buckets : `beats`, `previews`, `contracts`)
+* [ ] Créer tables selon `backend_structure_document.mdc`
+* [ ] Configurer RLS policies (auth.uid, capabilities)
+* [ ] Créer fonctions Edge principales :
+
+  * `/upload-request`
+  * `/upload-complete`
+  * `/pay`
+  * `/generate-download`
+  * `/boost`
+  * `/withdraw`
+* [ ] CI/CD GitHub Actions : migrations + functions deploy
+
+### 3.2 Frontend setup
+
+* [x] Expo project init (TypeScript)
+* [x] Setup NativeBase + NativeWind
+* [x] Créer thème global (`colors.ts`, `theme/index.ts`)
+* [x] Navigation (AuthStack, MainTabs, ProductStack)
+* [x] Setup Zustand store
+* [x] Services axios (API layer)
+* [x] Setup Sentry & .env config
+* [x] Bibliothèque de composants (Atoms, Molecules, Organisms)
+* [x] Configuration de Storybook pour la documentation visuelle
+
+### 3.3 Tooling & pipeline
+
+* [x] ESLint + Prettier + TypeScript strict
+* [ ] GitHub Actions lint/test
+* [x] Jest + Testing Library config
+* [ ] Supabase CLI + local serve
+
+---
+
+## 4. Phase 2 — Core Features
+
+### 4.1 Upload & produit
+
+* [x] UI Upload (formulaire beat/sample/service)
+* [ ] Edge Function `/upload-request` → presigned PUT
+* [ ] Edge Function `/upload-complete` → insert product (status=pending)
+* [ ] Admin validation (manual)
+
+### 4.2 Achat & paiement
+
+* [ ] Flow achat produit
+* [ ] Function `/pay` → transaction pending
+* [ ] Webhook paiement → status=paid → wallet update
+* [ ] Génération contrat PDF + R2 upload
+* [ ] Function `/generate-download` → URL presignée (15 min)
+* [ ] Téléchargement fichier (preview 30s / complet payant)
+
+### 4.3 Wallet & retraits
+
+* [ ] Function `/withdraw`
+* [ ] Admin validation (manual)
+* [ ] Mise à jour wallet
+* [ ] Historique retraits
+
+### 4.4 Boosts
+
+* [ ] Function `/boost` → transaction type=boost
+* [ ] Classement boosté sur `/api/products`
+* [ ] UI boost avec durée/prix
+
+### 4.5 Ratings
+
+* [x] Table `ratings` (déjà ajoutée)
+* [ ] Edge Function `/ratings/create`
+* [x] Affichage moyenne sur produit / profil
+* [ ] Modération admin
+
+---
+
+## 5. Phase 3 — UI/UX polish
+
+* [ ] Loader, feedback visuel cohérent (React Native Paper Toast)
+* [x] Design système uniforme (typographie, spacing)
+* [x] Player audio fluide (expo-av)
+* [ ] Gestion d’erreurs centralisée (hook useErrorHandler)
+* [ ] Écran onboarding & profil setup
+* [ ] Traductions (fr/en)
+* [ ] Mode sombre
+
+---
+
+## 6. Phase 4 — Admin & outils internes
+
+* [ ] Dashboard admin minimal (Supabase Studio ou React Web)
+* [ ] CRUD : produits, transactions, retraits, utilisateurs
+* [ ] Filtrage produits par statut (pending/active/rejected)
+* [ ] Suivi des revenus plateforme
+* [ ] Export CSV (revenus, transactions, retraits)
+
+---
+
+## 7. Phase 5 — Intégrations futures
+
+| Intégration               | Description                                                 | Priorité       |
+| ---- | ----- | ----- |
+| **SODAV Monitor**         | Lier métadonnées produits à système de suivi des diffusions | ⚙️ Moyen terme |
+| **SODAV TeleDéclaration** | Déclaration automatique des œuvres vendues                  | ⚙️ Moyen terme |
+| **Booking module**        | Permettre réservation studio / ingénieur / beatmaker        | ⚙️ Long terme  |
+| **AI tagging**            | Analyse automatique du BPM, genre, tonalité des beats       | ⚙️ Long terme  |
+| **API publique**          | Pour intégration avec autres apps musicales                 | ⚙️ Long terme  |
+
+---
+
+## 8. Sécurité et conformité
+
+* RLS activé sur toutes les tables sensibles
+* Auth via Supabase JWT
+* URLs presignées avec TTL
+* Hashing des IP dans `download_logs`
+* Sauvegardes automatiques quotidiennes (DB + R2 index)
+* Logs Sentry + alertes erreurs critiques
+* Mentions légales et CGU (à ajouter avant déploiement public)
+
+---
+
+## 9. Roadmap temporelle
+
+| Phase   | Durée estimée | Responsable    | Livrables             |
+| :--- | :--- | :---- | :----- |
+| Phase 1 | 3 semaines    | Backend lead   | Infra + base code     |
+| Phase 2 | 5 semaines    | Fullstack team | Core features         |
+| Phase 3 | 2 semaines    | Frontend/UI    | UI & expérience       |
+| Phase 4 | 2 semaines    | Admin/DevOps   | Back-office           |
+| Phase 5 | 3 semaines+   | R&D            | Intégrations avancées |
+
+---
+
+## 10. MVP Checklist
+
+* [ ] Auth fonctionnelle (OTP)
+* [x] Upload produit avec preview
+* [ ] Paiement 5 % commission
+* [ ] Téléchargement sécurisé
+* [x] Wallet opérationnel
+* [x] Boost actif
+* [x] Notation active
+* [ ] Admin valide produit & retrait
+* [x] Logs & Sentry en place
+* [ ] CI/CD opérationnel
+
+---
+
+## 11. Livraison & post-MVP
+
+### Cible :
+
+* **Alpha test** : beatmakers & ingénieurs proches du réseau
+* **Beta publique** : sélection d’artistes sénégalais
+* **Production** : ouverture à tous les créateurs audio en Afrique francophone
+
+### Post-MVP focus :
+
+* UX améliorée
+* Retrait instantané via API Wave/OM
+* Reco AI (top beats, profils)
+* Publication automatique sur réseaux sociaux

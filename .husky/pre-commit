@@ -1,0 +1,11 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Pre-commit hook for Linkart
+echo "🚀 Exécution des vérifications pre-commit..."
+
+# Exécuter les vérifications rapides
+node scripts/pre-commit-checks.js
+
+# Exécuter lint-staged pour les fichiers modifiés
+npx lint-staged

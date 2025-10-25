@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+web-build/
+
+# History files
+.history/
+
+# Generated files
+coverage/
+*.log
+
+# Supabase types (generated)
+src/types/supabase.ts
+
+# Documentation files with formatting issues
+docs/public/README.md
+docs/generated/**/*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+
+# Temporary files
+*.tmp
+*.temp

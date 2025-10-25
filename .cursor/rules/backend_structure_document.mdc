@@ -1,0 +1,341 @@
+# Linkart — Backend Structure Document
+
+> Version: v2.2
+
+Ce document décrit l'**architecture backend**, les **tables**, les **endpoints**, les **politiques de sécurité**, les **processus asynchrones** et les **ops** nécessaires pour implémenter Linkart (MVP → scale). Il sert de référentiel pour les devs backend, les fonctions Edge et Cursor AI.
+
+---
+
+## 1. Principes généraux
+
+* **Serverless-first** : privilégier Supabase Edge Functions / Vercel Lambdas pour logique métier (stateless).
+* **DB-centric** : Supabase Postgres est la source de vérité (RLS + migrations).
+* **Storage** : Cloudflare R2 ; accès via presigned PUT/GET uniquement.
+* **Secrets** : stocker uniquement dans vault / env variables (Vercel / Supabase secrets).
+* **Observabilité** : logs applicatifs + Sentry + métriques basiques (errors, tx/s, download/s).
+* **Security by design** : presigned URLs, TTL courts, capability-based access control, RLS.
+
+---
+
+## 2. Environnements & infra
+
+* **envs** : dev / staging / prod
+* **services** :
+
+  * Supabase (Auth, Postgres, Edge Functions)
+  * Cloudflare R2 (storage)
+  * Vercel (web, optional Edge funcs)
+  * Sentry (error tracking)
+  * Github Actions (CI)
+* **secrets to set** (exemples):
+
+  * `R2_ACCESS_KEY_ID`, `R2_SECRET_ACCESS_KEY`, `R2_BUCKET`
+  * `SUPABASE_URL`, `SUPABASE_SERVICE_ROLE_KEY`
+  * `PAYMENT_WAVE_CLIENT_ID`, `PAYMENT_WAVE_SECRET` (or OM provider)
+  * `JWT_SECRET_DOWNLOAD` (if using signed tokens separate from JWT)
+
+---
+
+## 3. Database schema (core tables)
+
+> Utiliser migrations SQL (eg. `pg-migrate`, `sqitch`, `supabase migration`) — garder versions et rollback.
+
+### 3.1 `users`
+
+* `id uuid primary key` (auth uid)
+* `phone text`
+* `email text`
+* `name text`
+* `bio text`
+* `location text`
+* `capabilities jsonb` -- default `{"can_buy":true,...}`
+* `wallet_balance numeric default 0` -- en centimes/FCFA units
+* `verified boolean default false`
+* `created_at timestamptz default now()`
+
+### 3.2 `products`
+
+* `id uuid pk`
+* `user_id uuid references users(id)`
+* `title text`
+* `type text` CHECK (beat|kit|sample|service)
+* `price numeric` -- currency smallest unit
+* `license text` (exclusive/non-exclusive/basic)
+* `preview_key text` (R2 object key)
+* `file_key text` (R2 object key)
+* `status text` CHECK (draft|pending|active|rejected)
+* `metadata jsonb` (bpm, genre, duration, tags)
+* `created_at timestamptz default now()`
+
+### 3.3 `transactions`
+
+* `id uuid pk`
+* `buyer_id uuid` references users(id)
+* `seller_id uuid` references users(id) NULLABLE
+* `product_id uuid` references products(id) NULLABLE
+* `type text` CHECK (sale|boost|withdrawal|refund)
+* `gross_amount numeric`
+* `commission_amount numeric`
+* `net_amount numeric`
+* `status text` CHECK (pending|paid|released|failed|refunded)
+* `contract_url text` (R2 key)
+* `provider_payload jsonb` (raw callback from Wave/OM)
+* `created_at timestamptz default now()`
+
+### 3.4 `boosts`
+
+* `id uuid pk`
+* `user_id uuid` who bought the boost
+* `target_type text` (product|profile)
+* `target_id uuid` nullable
+* `start_at timestamptz`
+* `end_at timestamptz`
+* `amount_paid numeric`
+* `status text` (active|expired|cancelled)
+* `created_at timestamptz default now()`
+
+### 3.5 `download_tokens` (option: if using token-based downloads)
+
+* `token text pk` (random or jwt)
+* `tx_id uuid references transactions(id)`
+* `user_id uuid` buyer
+* `file_key text`
+* `expires_at timestamptz`
+* `max_downloads int default 3`
+* `downloads int default 0`
+* `revoked boolean default false`
+* `created_at timestamptz default now()`
+
+### 3.6 `download_logs`
+
+* `id serial pk`
+* `token text` nullable
+* `tx_id uuid` nullable
+* `user_id uuid` nullable
+* `file_key text`
+* `ip text`
+* `ua text`
+* `created_at timestamptz default now()`
+
+### 3.7 `withdrawals`
+
+* `id uuid pk`
+* `user_id uuid`
+* `amount numeric`
+* `status text` (pending|paid|rejected)
+* `provider_ref text` (Wave transfer id)
+* `created_at timestamptz default now()`
+
+### 3.8 `platform_earnings`
+
+* `id serial pk`
+* `tx_id uuid references transactions(id)`
+* `type text` (commission|boost)
+* `amount numeric`
+* `created_at timestamptz default now()`
+
+### 3.9 Indexes
+
+* indexes on `products(status)`, `products(user_id)`, `transactions(status)`, `download_tokens(expires_at)`, `users(phone)`
+
+### 3.10 Ratings / Reviews
+
+Add a dedicated table to store user ratings and comments about products or services. This enables reputation, sorting by rating, and moderation workflows.
+
+**`ratings`**
+
+* `id serial pk`
+* `user_id uuid references users(id)` -- author of the rating
+* `target_type text` -- `product` | `service` | `profile`
+* `target_id uuid` -- id of the target entity (product_id or user_id for profile)
+* `score int` CHECK (score >=1 AND score <=5)
+* `comment text` nullable
+* `tx_id uuid` nullable references transactions(id) -- optional link to transaction
+* `status text` CHECK (visible|hidden|flagged) DEFAULT 'visible'
+* `created_at timestamptz default now()`
+
+**Indexes & notes**
+
+* index on `(target_type, target_id)` for fast lookup per product/profile
+* allow `tx_id` nullable so users can leave reviews only after purchase (enforced by backend)
+* plan for moderation flags and automatic hiding on multiple reports
+
+---
+
+## 4. Row-Level Security (RLS) & Policies
+
+* **General**: Enable RLS on critical tables and create policies using `auth.uid()` and capabilities stored in JWT/DB.
+* **Example policies**:
+
+  * `products`: insert allowed only if `auth.uid() = new.user_id` and `auth.jwt() -> 'capabilities' ->> 'can_sell' = 'true'`.
+  * `transactions`: insert only via server role (service key) or via Edge Function after auth.
+  * `download_tokens`/`download_logs`: token creation only from server; token consumption validated via Edge Function or Worker.
+
+---
+
+## 5. Core endpoints & behavior
+
+> All endpoints require JWT auth where applicable; server-only operations must use service role key.
+
+### 5.1 Auth-related
+
+* `POST /auth/signup` — handled by Supabase Auth (OTP).
+* `POST /auth/profile-update` — update profile fields.
+
+### 5.2 Product lifecycle
+
+* `POST /api/upload-request`
+
+  * Input: `{ filename, size, contentType, preview:boolean }`
+  * Check: user has `can_sell` (or allow request to create product then admin approve to enable can_sell)
+  * Action: generate presigned PUT for preview/file (R2 key convention) TTL 5min
+  * Return: `{ uploadUrl, key }`
+
+* `POST /api/upload-complete`
+
+  * Input: `{ key, metadata }`
+  * Action: verify object exists (HEAD), create `products` row `status=pending`
+  * Notify admin (email/webhook)
+
+* `GET /api/products`
+
+  * Public: paginated list; boosted items first; filters (genre, licence, bpm, price)
+
+* `GET /api/products/:id`
+
+  * Returns product info, preview GET presigned URL (short TTL) for playback
+
+### 5.3 Purchase & payment
+
+* `POST /api/pay`
+
+  * Input: `{ product_id, payment_method }`
+  * Action: create `transactions` row `status=pending`, generate payment payload & redirect/flow to Wave/OM
+  * Return: payment instructions (deeplink or API response)
+
+* `POST /api/payment-callback` (webhook from provider) — **server-only**
+
+  * Validate signature
+  * Update `transactions.status = paid/failed`
+  * If `paid`: calculate commission = gross * 0.05, net = gross - commission
+  * Create `platform_earnings` row
+  * Update seller `wallet_balance += net`
+  * Generate contract PDF and store in R2; update `transactions.contract_url`
+  * If product: generate presigned GET for buyer (or create `download_token`)
+  * Notify buyer & seller
+
+### 5.4 Download management
+
+* `POST /api/generate-download`
+
+  * Input: `{ tx_id }`
+  * Check: `transactions.status = paid` and caller is buyer
+  * Action: either generate presigned GET R2 (TTL 15m) or create a `download_token` record and return worker URL `https://download.linkart.app/download?token=xxx`
+  * Log in `download_logs` upon consumption
+
+### 5.5 Boosts
+
+* `POST /api/boost`
+
+  * Input: `{ target_type, target_id, duration, amount }`
+  * Creates `transactions` type=boost `status=pending`
+  * On `payment-callback`, create `boosts` row with `start_at` and `end_at` and update `status=active`
+  * No commission taken (platform keeps full amount)
+
+### 5.6 Wallet & Withdrawals
+
+* `GET /api/wallet`
+
+  * Return wallet balance & pending withdrawals
+* `POST /api/withdraw`
+
+  * Input: `{ amount, provider_account }`
+  * Create `withdrawals` row `status=pending` and notify admin
+* `POST /api/withdraw/confirm` (admin)
+
+  * Process transfer via Wave/OM, mark `withdrawals.status=paid`, deduct user wallet
+
+### 5.7 Admin endpoints
+
+* `GET /api/admin/products/pending`
+* `POST /api/admin/products/:id/approve`
+* `POST /api/admin/products/:id/reject`
+* `POST /api/admin/users/:id/toggle-capability`
+* `GET /api/admin/transactions`
+* `POST /api/admin/withdrawals/:id/mark-paid`
+
+---
+
+## 6. Background jobs & cron
+
+* **Daily job**: expire boosts (set status expired where end_at < now).
+* **Nightly backup job**: snapshot critical tables + list new objects to archive to cold storage.
+* **Periodic reclaim job**: check products referencing missing R2 keys; notify sellers.
+* **Billing reconciliation**: daily/weekly reconcile `platform_earnings` vs provider payouts.
+
+---
+
+## 7. File naming conventions & bucket structure
+
+* `previews/{userId}/{productId}_{uuid}_preview.mp3`
+* `beats/{userId}/{productId}_{uuid}.zip or .mp3`
+* `contracts/{txId}.pdf`
+* `avatars/{userId}.jpg`
+
+Naming must include `userId` + `productId` + timestamp/uuid to avoid collisions.
+
+---
+
+## 8. Security & anti-abuse
+
+* Rate-limit presigned URL generation: max 5/min per user.
+* Max file size limits enforced at upload (client + server HEAD verification).
+* Previews limited to 30s / 5MB.
+* Monitor unusual download volumes per token -> auto-revoke token and flag account.
+* Admin action for disputes: freeze tx, revoke presigned URLs, suspend seller.
+
+---
+
+## 9. Testing strategy
+
+* Unit tests for Edge Functions (jest).
+* Integration tests for payment flows (mock provider).
+* End-to-end tests for upload → admin approve → purchase → download (Cypress or Playwright for web).
+* Load test core endpoints (GET products, generate-download) with k6.
+
+---
+
+## 10. Observability & SLAs
+
+* Sentry for errors; alert on >5 errors/min.
+* DB slow queries monitoring; index tuning.
+* Uptime target for Edge functions: 99.9%.
+* Retain logs 90 days for audit.
+
+---
+
+## 11. Migration & future-proofing
+
+* Keep `capabilities` JSONB to add flags without migrations.
+* Use feature flags for toggling heavy features (booking, wallet auto).
+* Plan migration from R2 → S3 if needed by writing abstracted storage layer.
+
+---
+
+## 12. SODAV integration (future)
+
+* Design hook points to export transactions & product metadata in the format SODAV needs (CSV or API).
+* Add `is_registered_with_sodav boolean` on `products` or `users`.
+* Implement scheduled export job once partnership established.
+
+---
+
+## 13. Checklist before production
+
+* [ ] RLS policies implemented + tested
+* [ ] Payment provider integration tested + webhooks secured
+* [ ] R2 keys rotated & env stored securely
+* [ ] Monitoring & alerts configured (Sentry + logs)
+* [ ] Backups automated
+* [ ] Admin panel basic flows implemented
+* [ ] Legal: CGU / seller attestation clause

@@ -1,0 +1,194 @@
+---
+alwaysApply: true
+---
+# Cursor Rules — Operational & Prompting Guide for Linkart
+
+> Version: v1.0
+> Purpose: Provide precise operational rules, prompting conventions and do/don'ts for Cursor AI when working on the Linkart codebase. This file complements `cursor_project_rules.mdc` and is intended to be the single source-of-truth for Cursor's behavior, prompts format, CI interactions and production safety.
+
+---
+
+## 1. Scope & Intent
+
+This document tells Cursor exactly how to behave when editing Linkart source code, DB schema and infra files. It is *strict*. Cursor must follow these rules when generating code, migrations, documentation, tests, or PRs.
+
+Cursor must treat this file as **authoritative** and check it before producing outputs.
+
+---
+
+## 2. High-level rules (non-negotiable)
+
+1. **Never** make change that bypasses RLS, capability checks or security constraints.
+2. **Always** generate a timestamped Supabase migration using `supabase migration new "desc"` for DB schema changes and commit it.
+3. **Always** regenerate TypeScript DB types after any schema migration and commit them (`supabase gen types typescript ...`).
+4. **Never** embed secrets/keys in code. Use env variables and reference `process.env` or `Deno.env.get` as appropriate.
+5. **All** payment logic must enforce the **5% commission** for sales and 0% for boosts; do not alter this rule unless asked explicitly by the human.
+6. **All** file access must use presigned URLs (R2). No proxying of file contents through the app server by default.
+7. **Always** add tests for new logic (unit or integration) and description in PR.
+8. **All** Edge Functions must include a README header describing purpose, input, output, env vars, and required capabilities.
+
+---
+
+## 3. Prompting Format (how humans must provide tasks to Cursor)
+
+To get consistent outputs from Cursor, use the following structured prompt pattern. Cursor will refuse prompts that do not use the pattern for code-level changes.
+
+### 3.1 Minimal required template
+
+```md
+#context
+<short, relevant context or a link to the .mdc spec this change relates to>
+
+#task
+<clear single task description — e.g. 'Add ratings table and API endpoints'>
+
+#constraints
+- list constraints (DB command required, TTL values, capability check etc.)
+
+#output
+- files to modify (paths)
+- tests to add
+- brief PR description
+```
+
+### 3.2 Example
+
+```md
+#context
+Update to support user ratings for products. See backend_structure_document.mdc -> Ratings section.
+
+#task
+Create SQL migration to add `ratings` table, generate types, and add Edge Function `ratings/create` (Deno) to allow authenticated users to submit a rating after purchase.
+
+#constraints
+- Use `supabase migration new "add_ratings_table"` to create migration file.
+- Enforce `score` between 1 and 5.
+- Only allow insert if user purchased product (backend must validate transaction exists and status=paid).
+
+#output
+- supabase/migrations/<timestamp>_add_ratings_table.sql
+- supabase/functions/ratings-create/index.ts
+- unit test file for ratings function
+- update src/types/supabase.ts (regenerated)
+- PR description with DB checks and manual test steps
+```
+
+Cursor must follow this template and return the exact artifacts requested in `#output`.
+
+---
+
+## 4. File generation & edits rules
+
+* **Migrations**: create via `supabase migration new "desc"`. Add SQL only in the generated file. Do not edit other migration files.
+* **Types**: run `supabase gen types typescript --local > src/types/supabase.ts` and commit. If CI detects mismatched types, the PR must be fixed.
+* **Edge Functions**: create function folder under `supabase/functions/<name>/` with `index.ts` entry and `README.md` describing inputs/outputs/env/capabilities. Use Deno style (no Node-only libs unless using Vercel).
+* **Helpers**: use central helpers in `backend/lib/` or `supabase/functions/_shared/` for R2, pdf, and payment logic. Don’t duplicate code.
+
+---
+
+## 5. Security & privacy rules
+
+* Env secrets must be referenced only via `process.env` (Node) or `Deno.env.get` (Deno) and never printed in logs.
+* For dev examples, use placeholders like `SUPABASE_SERVICE_ROLE_KEY_PLACEHOLDER` — never real keys.
+* When creating presigned URLs include TTL constants: upload 5min, download 15min.
+* Sanitize any user-provided strings before inserting into SQL (use parameterized queries).
+* All endpoints that modify state must verify JWT and capabilities. Respond with 403 if missing.
+
+---
+
+## 6. Testing & CI integration
+
+* Cursor must produce tests when adding functionality. Tests should run locally and in GitHub Actions.
+
+* Add a CI step to regenerate and compare DB types; fail CI if changed types were not committed. Example GH job steps:
+
+  1. `supabase gen types typescript --local > tmp/types.ts`
+  2. `git diff --exit-code tmp/types.ts src/types/supabase.ts || (echo 'Types changed — regenerate and commit' && exit 1)`
+
+* For migrations: CI runs `supabase db push --project-ref $SUPABASE_REF` only in protected deploy step; PRs must not run destructive commands.
+
+---
+
+## 7. Code review & PR requirements
+
+Every PR generated by Cursor must include:
+
+* Title with `[feat]`, `[fix]` prefix.
+* Clear description linking to the relevant `.mdc` docs.
+* List of changed files and rationale.
+* Migration files added (if any).
+* Generated types committed.
+* Tests added and passing locally.
+* Manual QA steps to validate (for payments or admin flows).
+
+No PR can be merged without at least one human approving the migration and the Edge Function README.
+
+---
+
+## 8. Operational rules (runtime)
+
+* Cursor must not suggest running `supabase db reset` in environments with data.
+* For additive maintenance tasks (e.g., reindexing), Cursor must provide safe SQL (wrapped in transaction).
+* When writing data migration SQL (backfills), Cursor must generate idempotent scripts and include a `WHERE` guard and small preview SELECT to verify row counts.
+
+---
+
+## 9. Prompt examples for common tasks
+
+### 9.1 Add new migration
+
+```
+#context
+Add ratings table.
+#task
+Create migration using supabase migration new "add_ratings_table" with SQL to create ratings table.
+#constraints
+- rating score int 1-5
+- reference transactions optional
+#output
+- supabase/migrations/<timestamp>_add_ratings_table.sql
+```
+
+### 9.2 Create Edge Function
+
+```
+#context
+Create Edge Function to generate presigned upload URL
+#task
+Add function supabase/functions/upload-request/index.ts which validates can_sell and returns PUT URL.
+#constraints
+- use lib/r2.ts helper
+- TTL 5min
+#output
+- supabase/functions/upload-request/index.ts
+- supabase/functions/upload-request/README.md
+- test file
+```
+
+---
+
+## 10. Escalation & human checks
+
+Cursor must flag the following for human review:
+
+* Any change to payment flows or commission logic.
+* Any change to RLS policies.
+* Any data migration that modifies existing rows in production tables.
+* Anything that touches user funds (wallet, withdrawals).
+
+When flagged, Cursor must produce a short risk summary and suggested rollback steps.
+
+---
+
+## 11. Versioning & change log
+
+* Cursor must add a one-paragraph changelog entry at the top of any PR altering the codebase, migrations or functions.
+* Keep `cursor_rules.mdc` under source control and update version when rules change.
+
+---
+
+## 12. Acceptance
+
+By using Cursor with this repository, Cursor acknowledges these rules and must follow them strictly. If the user requests a change that violates these rules, Cursor must refuse and explain why, then present alternative safe options.
+
+

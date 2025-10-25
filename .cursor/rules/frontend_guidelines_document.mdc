@@ -1,0 +1,232 @@
+---
+alwaysApply: true
+---
+# Linkart — Frontend Guidelines Document
+
+> Version: v1.0
+> Objectif : définir les standards techniques, l’architecture, les conventions UI/UX et les bonnes pratiques de développement pour l’application mobile Linkart (React Native + Expo).
+
+---
+
+## 1. Objectif général
+
+L’application mobile **Linkart** permet aux artistes, beatmakers, studios et ingénieurs du son de vendre des beats, des samples, des kits ou des services (mixage, mastering, enregistrement).
+Elle doit être **rapide, modulaire, fiable, cohérente visuellement** et facile à maintenir à long terme.
+
+---
+
+## 2. Stack technique
+
+| Catégorie              | Outil choisi                   | Détails                                             |
+| ---------------------- | ------------------------------ | --------------------------------------------------- |
+| Framework              | React Native (Expo SDK)        | Build Android & iOS                                 |
+| Langage                | TypeScript                     | Typage strict                                       |
+| UI                     | NativeBase + NativeWind        | NativeBase pour structure, NativeWind pour rapidité |
+| State management       | Zustand                        | Léger, scalable, persistant                         |
+| Navigation             | React Navigation v7            | Stack + Tab navigators                              |
+| Auth                   | Supabase Auth (OTP)            | Téléphone & email                                   |
+| API                    | Supabase Edge Functions (REST) | Toutes les opérations backend                       |
+| Téléversement fichiers | Presigned URLs (R2)            | Via `upload-request`                                |
+| Audio                  | expo-av                        | Pré-écoute 30s                                      |
+| Erreurs                | Sentry                         | Crash & logs                                        |
+| Linter                 | ESLint + Prettier              | Qualité de code                                     |
+| Tests UI               | Jest + Testing Library         | Composants clés                                     |
+
+---
+
+## 3. Architecture du code
+
+```
+app/
+├── components/          # UI partagée
+│   ├── atoms/           # Boutons, Inputs, Text
+│   ├── molecules/       # Cards, Player, Forms
+│   ├── organisms/       # Listes, Header, Footer
+│   └── index.ts
+├── features/
+│   ├── auth/
+│   ├── products/
+│   ├── wallet/
+│   ├── uploads/
+│   ├── boosts/
+│   └── index.ts
+├── hooks/               # Hooks réutilisables
+├── screens/             # Pages principales
+│   ├── HomeScreen.tsx
+│   ├── ProductDetailScreen.tsx
+│   ├── UploadScreen.tsx
+│   ├── WalletScreen.tsx
+│   ├── ProfileScreen.tsx
+│   └── SettingsScreen.tsx
+├── store/               # Zustand stores
+├── services/            # Appels API (axios/fetch)
+├── theme/               # couleurs.ts, spacing.ts, index.ts
+└── App.tsx
+```
+
+* Chaque **feature** a ses composants + logique isolée.
+* Les **stores Zustand** ne doivent jamais contenir de logique réseau.
+* Les **services/** contiennent uniquement des appels HTTP typés.
+
+---
+
+## 4. Thème et design tokens
+
+* Le thème global est défini dans `app/theme/colors.ts`.
+* Aucun code hex ne doit apparaître ailleurs.
+* `theme/index.ts` crée un objet `nativeBaseTheme` via `extendTheme()`.
+* Tous les composants utilisent `useTheme()` pour accéder aux couleurs et tailles.
+
+### Exemple :
+
+```ts
+export const colors = {
+  primary: '#1E40AF',
+  accent: '#F59E0B',
+  background: '#FFFFFF',
+  surface: '#F8FAFC',
+  text: '#0F172A',
+  muted: '#64748B',
+  danger: '#EF4444',
+};
+```
+
+---
+
+## 5. Composants réutilisables
+
+### 5.1 Atoms
+
+* `ButtonPrimary`, `InputField`, `TextLabel`, `Badge`, `Avatar`.
+* Tous acceptent `variant`, `size`, et props d’accessibilité.
+
+### 5.2 Molecules
+
+* `ProductCard`, `AudioPlayer`, `RatingStars`, `BoostBadge`.
+* Règle : aucune logique réseau.
+
+### 5.3 Organisms
+
+* `ProductList`, `CheckoutForm`, `UploadForm`, `ProfileHeader`.
+* Peuvent gérer de la logique locale (state/UI).
+
+---
+
+## 6. Navigation
+
+* Stack principale : `AuthStack`, `MainTabs`, `ProductStack`.
+* Redirection automatique vers Home si utilisateur déjà logué.
+* Routes protégées (middleware Auth) pour pages Wallet, Upload.
+
+---
+
+## 7. Bonnes pratiques UX
+
+* Transitions fluides, feedback immédiat sur actions.
+* Utiliser `Toast` de NativeBase pour toutes confirmations/erreurs.
+* Loader visible pour actions > 1s.
+* Pré-écoute audio max 30s, autoplay interdit.
+* Utiliser les icônes Lucide (`lucide-react-native`).
+
+---
+
+## 8. Gestion des données & API
+
+### 8.1 Services
+
+* Tous les appels réseau passent par `/services/api.ts` :
+
+```ts
+import axios from 'axios';
+export const api = axios.create({
+  baseURL: process.env.EXPO_PUBLIC_API_URL,
+  headers: { 'Content-Type': 'application/json' },
+});
+```
+
+### 8.2 Exemple d’appel
+
+```ts
+export const fetchProducts = async () => {
+  const { data } = await api.get('/api/products');
+  return data;
+};
+```
+
+### 8.3 Erreurs
+
+* Catch global avec `Toast.show()` + log Sentry.
+
+---
+
+## 9. Authentification
+
+* Auth par OTP (téléphone ou email).
+* Lors de la première connexion → création profil minimal (`users` table).
+* Stocker `session` dans Zustand (persistée via AsyncStorage).
+* Token JWT est injecté automatiquement dans `axios` headers.
+
+---
+
+## 10. Gestion du média
+
+* Upload via `/api/upload-request` → obtention URL PUT.
+* Le fichier complet (zip/mp3) envoyé sur R2, preview 30s max.
+* Lien de téléchargement presigné généré après paiement.
+
+---
+
+## 11. Performances
+
+* Pagination infinie (FlatList avec `onEndReached`).
+* Lazy load images avec `expo-image`.
+* Utiliser `React.memo` et `useCallback` sur les listes longues.
+* Bundles optimisés avec EAS Build.
+
+---
+
+## 12. Sécurité
+
+* Ne jamais stocker les clés API ou service key localement.
+* Utiliser variables `EXPO_PUBLIC_*` et config `.env`.
+* Téléchargement uniquement via presigned URLs (15 min).
+* Nettoyage des states sensibles au logout.
+
+---
+
+## 13. Tests
+
+| Type | Outil           | Description                    |
+| ---- | --------------- | ------------------------------ |
+| Unit | Jest            | Test des hooks et stores       |
+| UI   | Testing Library | Test composants interactifs    |
+| E2E  | Playwright      | Scénarios achat, upload, login |
+
+---
+
+## 14. Accessibilité
+
+* Tous les boutons doivent avoir `accessibilityLabel`.
+* Texte lisible en dark/light mode.
+* Support clavier et lecteurs d’écran sur Android/iOS.
+
+---
+
+## 15. CI/CD mobile
+
+* Build via **EAS Build** sur chaque tag.
+* Version bump auto via `expo-version`.
+* Tests exécutés avant build.
+* Upload sur Play Store / TestFlight via EAS submit.
+
+---
+
+## 16. Futur (phases suivantes)
+
+* Mode offline (caching produits).
+* Thème sombre auto.
+* Multi-langue (i18n + fr/en).
+* Notifications push (Expo Push API).
+* Dashboard web React (admin).
+
+
