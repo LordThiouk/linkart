@@ -15,10 +15,11 @@ studio, Linkart vous connecte dans un écosystème sécurisé et profitable.
 
 ### 🎵 Ce que vous pouvez faire sur Linkart
 
-- **Vendre** vos beats, samples, kits et services audio
+- **Vendre** vos beats, samples et kits (commission 5%)
+- **Offrir** vos services audio gratuitement (mix, mastering, studio)
 - **Acheter** des créations de qualité de producteurs locaux
+- **Réserver** des services professionnels sans commission
 - **Collaborer** avec d'autres professionnels de l'industrie
-- **Monétiser** vos talents avec des paiements sécurisés
 - **Booster** votre visibilité pour plus de ventes
 
 ---
@@ -41,7 +42,7 @@ studio, Linkart vous connecte dans un écosystème sécurisé et profitable.
 
 #### Uploader votre premier beat
 1. Allez dans **Upload** → **Nouveau produit**
-2. **Choisissez** le type : Beat, Sample, Kit ou Service
+2. **Choisissez** le type : Beat, Sample ou Kit
 3. **Ajoutez** les informations :
    - Titre du beat
    - Prix (en FCFA)
@@ -52,6 +53,19 @@ studio, Linkart vous connecte dans un écosystème sécurisé et profitable.
    - Preview de 30 secondes (MP3)
    - Fichier complet (ZIP/WAV)
 5. **Soumettez** pour validation admin
+
+#### Publier votre premier service
+1. Allez dans **Upload** → **Nouveau service**
+2. **Choisissez** le type : Mixage, Mastering, Enregistrement, etc.
+3. **Configurez** la tarification :
+   - Prix fixe (ex: 15,000F/heure)
+   - À la demande ("Contactez-moi")
+   - Multi-tarifs (Basic/Standard/Premium)
+4. **Ajoutez** les informations :
+   - Description du service
+   - Durée estimée
+   - Disponibilités
+5. **Publiez** directement (pas de validation admin)
 
 ### 2.2 Pour les Artistes (Acheteurs)
 
@@ -71,6 +85,44 @@ studio, Linkart vous connecte dans un écosystème sécurisé et profitable.
 7. **Confirmez** le paiement
 8. **Téléchargez** votre beat après validation
 
+#### Réserver votre premier service
+1. **Explorez** les services dans **Services**
+2. **Filtrez** par type (mix, mastering, studio)
+3. **Consultez** les tarifs et disponibilités
+4. **Sélectionnez** un créneau disponible
+5. **Créez** votre réservation (gratuit)
+6. **Attendez** la confirmation du prestataire
+7. **Chattez** pour coordonner les détails
+8. **Payez** directement le prestataire (Wave/cash)
+9. **Recevez** le service et laissez un avis
+
+### 2.3 Pour les Prestataires de Services
+
+#### Créer votre compte prestataire
+1. **Téléchargez** l'application Linkart
+2. **Inscrivez-vous** avec votre numéro de téléphone
+3. **Vérifiez** votre compte via SMS
+4. **Complétez** votre profil professionnel
+5. **Activez** les services dans **Profil** → **Services**
+
+#### Configurer vos services
+1. **Définissez** vos spécialités (mix, mastering, studio)
+2. **Choisissez** votre modèle tarifaire :
+   - **Prix fixe** : Tarif unique (ex: 15,000F/heure)
+   - **À la demande** : Négociation selon projet
+   - **Multi-tarifs** : Plusieurs options (Basic/Standard/Premium)
+3. **Configurez** vos disponibilités
+4. **Ajoutez** des exemples de votre travail
+
+#### Gérer vos réservations
+1. **Recevez** les demandes de réservation
+2. **Consultez** les détails du projet
+3. **Confirmez** ou refusez la réservation
+4. **Chattez** avec le client pour coordonner
+5. **Effectuez** le service
+6. **Marquez** comme complété
+7. **Recevez** les paiements directement (pas de commission)
+
 ---
 
 ## 3. FAQ - Questions Fréquentes
@@ -89,8 +141,7 @@ R: Contactez le support. Nous supprimerons vos données conformément au RGPD.
 ### 3.2 Ventes & Uploads
 
 **Q: Combien coûte la commission ?**
-R: Linkart prélève **5%** sur chaque vente. C'est l'une des commissions les
-plus faibles du marché.
+R: Linkart prélève **5%** sur les ventes de beats, samples et kits UNIQUEMENT. Les services sont gratuits, pas de commission.
 
 **Q: Quand suis-je payé ?**
 R: Les fonds sont bloqués en escrow jusqu'à validation de la transaction. Vous
@@ -121,19 +172,29 @@ R: La transaction est annulée automatiquement. Vous pouvez réessayer ou choisi
 **Q: Puis-je me faire rembourser ?**
 R: En cas de problème, contactez le support. Nous gérons les litiges au cas par cas.
 
-### 3.4 Licences & Droits
+### 3.5 Services & Réservations
 
-**Q: Quels types de licences proposez-vous ?**
-R:
-- **Exclusive** : Droits exclusifs pour l'acheteur
-- **Non-exclusive** : Le beat peut être vendu plusieurs fois
-- **Lease** : Utilisation limitée dans le temps
+**Q: Pourquoi les services sont gratuits ?**
+R: Les services sont gratuits pour attirer plus d'utilisateurs. Linkart monétise uniquement les beats et kits.
 
-**Q: Qui possède les droits d'auteur ?**
-R: Le beatmaker conserve les droits d'auteur. La licence définit les droits d'utilisation de l'acheteur.
+**Q: Comment sont payés les prestataires de services ?**
+R: Les paiements se font directement entre client et prestataire (Wave, Orange Money, cash). Linkart ne prend aucune commission.
 
-**Q: Puis-je utiliser un beat acheté pour un projet commercial ?**
-R: Cela dépend du type de licence. Vérifiez les conditions avant l'achat.
+**Q: Comment réserver un service ?**
+R: 1. Trouvez le service qui vous intéresse
+2. Sélectionnez un créneau disponible
+3. Créez votre réservation (gratuit)
+4. Attendez la confirmation du prestataire
+5. Chattez pour coordonner les détails
+
+**Q: Puis-je laisser un avis sur un service ?**
+R: Oui, après avoir reçu le service, vous pouvez laisser une note et un commentaire. Cela aide les autres clients.
+
+**Q: Que se passe-t-il si le prestataire ne confirme pas ?**
+R: La réservation reste en attente. Vous pouvez l'annuler et chercher un autre prestataire.
+
+**Q: Puis-je négocier le prix d'un service ?**
+R: Oui, via le chat intégré. Les prix affichés sont indicatifs pour les services "à la demande".
 
 ---
 
@@ -180,6 +241,26 @@ En utilisant Linkart, vous acceptez nos conditions d'utilisation. Lisez-les atte
 - **Ne publiez pas** de contenu illégal ou offensant
 - **Respectez** les droits d'auteur
 - **Utilisez** la plateforme conformément à sa destination
+
+### 5.2 Services Gratuits
+
+**Services audio professionnels :**
+- Mixage, mastering, enregistrement
+- Production musicale, coaching vocal
+- Arrangement, sound design
+
+**Conditions spéciales :**
+- Pas de commission Linkart
+- Paiements directs client ↔ prestataire
+- Réservations gratuites
+- Chat intégré pour coordination
+- Système d'avis post-prestation
+
+**Responsabilité :**
+- Linkart facilite la mise en relation
+- Les paiements sont gérés directement
+- En cas de litige, médiation possible
+- Prestataires responsables de leurs services
 
 ### 5.3 Propriété Intellectuelle
 - Les créateurs conservent leurs droits d'auteur
@@ -228,7 +309,16 @@ Vous avez le droit de :
 
 ## 7. Changelog
 
+### v2.1 (2025-10-27)
+
+- **Nouvelle stratégie services gratuits** : Commission 5% uniquement sur beats/kits
+- **Guide prestataires** : Documentation complète pour services
+- **FAQ services** : Questions spécifiques aux réservations et paiements
+- **Conditions services** : CGU adaptées aux paiements externes
+- **Messagerie conditionnelle** : Chat uniquement pour services
+
 ### v2.0 (2025-10-27)
+
 - Documentation complète selon les règles du projet
 - Guides détaillés pour vendeurs et acheteurs
 - FAQ exhaustive avec réponses pratiques

@@ -96,9 +96,10 @@ flowchart TD
 
 ### 4.2 Système de Paiement & Escrow
 
-- **Paiements** : Wave, Orange Money intégrés
+- **Paiements** : Wave, Orange Money intégrés (beats/kits uniquement)
 - **Escrow** : Fonds bloqués jusqu'à validation
-- **Commission** : 5% fixe sur toutes ventes
+- **Commission** : 5% fixe sur beats et kits UNIQUEMENT
+- **Services** : Paiements externes, pas de commission
 - **Retraits** : Validation manuelle admin
 
 ### 4.3 Upload & Gestion Produits
@@ -125,9 +126,20 @@ flowchart TD
 ### 4.6 Système de Ratings
 
 - **Notation** : 1-5 étoiles + commentaires
-- **Validation** : Achat confirmé requis
+- **Validation** : Achat confirmé requis (beats/kits) ou réservation complétée (services)
 - **Modération** : Signalement + masquage admin
 - **Impact** : Visibilité vendeur + confiance acheteur
+
+### 4.7 Modules Services (Gratuits)
+
+- **Réservation** : Système de booking intégré
+- **Tarification** : Prix fixe, à la demande, ou multi-tarifs
+- **Messagerie** : Chat 1-to-1 pour services uniquement
+- **Paiements** : Externes à la plateforme (Wave direct, cash)
+- **Avis** : Système d'évaluation post-prestation
+- **Disponibilités** : Gestion calendrier prestataires
+
+> **Documentation complète** : Voir [Modèle Services Gratuits](./services-model.md)
 
 ---
 
@@ -135,9 +147,10 @@ flowchart TD
 
 ### 5.1 Commission & Monétisation
 
-- **Commission plateforme** : 5% fixe sur toutes ventes
+- **Commission plateforme** : 5% fixe sur beats et kits UNIQUEMENT
+- **Services** : Gratuits, pas de commission, paiements externes
 - **Boost** : 0% commission (revenus directs)
-- **Escrow** : Fonds bloqués jusqu'à validation
+- **Escrow** : Fonds bloqués jusqu'à validation (beats/kits)
 - **Retraits** : Validation manuelle admin
 
 ### 5.2 Sécurité & Conformité
@@ -168,9 +181,11 @@ flowchart TD
 ### 6.2 Métriques Produit
 
 - **DAU/MAU** : Utilisateurs actifs quotidiens/mensuels
-- **Conversion rate** : % visiteurs → acheteurs
+- **Conversion rate** : % visiteurs → acheteurs (beats/kits)
 - **Upload success rate** : % uploads validés
 - **Time to first sale** : Temps première vente
+- **Services bookings** : Réservations créées/mois
+- **Cross-selling rate** : % utilisateurs services → acheteurs beats
 
 ### 6.3 Métriques Qualité
 
@@ -194,10 +209,11 @@ flowchart TD
 
 ### Phase 2 - Growth (Q2 2025)
 
+- 🔄 Services gratuits + réservation
+- 🔄 Messagerie conditionnelle (services uniquement)
 - 🔄 Boosts avancés
 - 🔄 Analytics vendeurs
 - 🔄 Notifications push
-- 🔄 Chat intégré
 - 🔄 API publique
 
 ### Phase 3 - Scale (Q3-Q4 2025)
@@ -228,6 +244,14 @@ flowchart TD
 ---
 
 ## 9. Changelog
+
+### v2.1 (2025-10-27)
+
+- **Nouvelle stratégie services gratuits** : Commission 5% uniquement sur beats/kits
+- **Système de réservation** : Booking intégré pour services
+- **Messagerie conditionnelle** : Chat uniquement pour services
+- **Modèle économique clarifié** : Services = acquisition, Beats/Kits = monétisation
+- **Documentation services** : Ajout du modèle services gratuits
 
 ### v2.0 (2025-10-27)
 

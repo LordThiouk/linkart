@@ -11,7 +11,8 @@ alwaysApply: true
 **Objectif :** Permettre aux créateurs (beatmakers, ingénieurs sons, studios, artistes) de vendre et d’acheter des beats, kits et services via une app simple, sécurisée et monétisable.
 **Business model :**
 
-* Commission : **5 %** par transaction.
+* Commission : **5 %** par transaction (beats/kits uniquement).
+* Services : **Gratuits** (pas de commission).
 * Boosts payants (produits et profils).
 
 ---
@@ -21,8 +22,10 @@ alwaysApply: true
 * Un seul type d’utilisateur avec **capabilities dynamiques** (`can_sell`, `can_buy`, `can_offer_services`, etc.).
 * Mobile-first (React Native + Supabase + R2).
 * Tous les fichiers stockés sur **Cloudflare R2** (presigned URLs only).
-* Chaque transaction = contrat PDF + téléchargement limité.
-* Aucune vente hors plateforme n’est encouragée (protection vendeur/acheteur).
+* Chaque transaction = contrat PDF + téléchargement limité (beats/kits).
+* Services = réservation gratuite + paiement externe.
+* Aucune vente hors plateforme n'est encouragée (protection vendeur/acheteur).
+* Messagerie conditionnelle : chat uniquement pour services.
 * MVP = simplicité + fiabilité.
 
 ---
@@ -61,8 +64,8 @@ alwaysApply: true
   * Image ou waveform
   * Nom, prix, licence
   * Preview (30 s max)
-  * Bouton “Acheter”
-  * Bouton “Voir profil”
+  * Bouton "Acheter" (beats/kits) ou "Réserver" (services)
+  * Bouton "Voir profil"
 
 ---
 
@@ -74,12 +77,12 @@ alwaysApply: true
   * Infos (BPM, genre, type, licence, prix)
   * Profil vendeur
   * Avis / évaluations
-  * Bouton “Acheter maintenant”
+  * Bouton "Acheter maintenant" (beats/kits) ou "Réserver" (services)
 * Si `user.can_buy === false` → afficher “Vous devez activer votre compte pour acheter”.
 
 ---
 
-### � 3.4 CHECKOUT FLOW
+### � 3.4 CHECKOUT FLOW (Beats & Kits uniquement)
 
 1. **Choix paiement** : Wave ou Orange Money.
 2. **Résumé commande** : titre, prix, commission affichée, total.
@@ -96,13 +99,44 @@ alwaysApply: true
      * Ajout du montant net au `wallet` vendeur
 4. **Écran de confirmation** :
 
-   * Message : “Merci ! Votre achat est confirmé.”
-   * Bouton “Télécharger”
+   * Message : "Merci ! Votre achat est confirmé."
+   * Bouton "Télécharger"
    * Affichage contrat PDF (licence)
 
 ---
 
-### � 3.5 CONTRACT GENERATION
+### � 3.4bis SERVICE BOOKING FLOW (Services uniquement)
+
+1. **Sélection service** : choix du prestataire et du type de service.
+2. **Consultation tarifs** : prix fixe, à la demande, ou multi-tarifs.
+3. **Demande de réservation** :
+
+   * App → `/api/bookings/create`
+   * Backend → crée `booking` (status = `pending`)
+   * Notification au prestataire
+4. **Confirmation prestataire** :
+
+   * Prestataire confirme ou refuse
+   * Si confirmé → `status = confirmed`
+   * Activation du chat 1-to-1
+5. **Coordination** :
+
+   * Chat intégré pour détails
+   * Échange coordonnées si nécessaire
+   * Négociation prix (si "à la demande")
+6. **Prestation & Paiement** :
+
+   * Service effectué hors plateforme
+   * Paiement direct (cash, Wave, OM)
+   * Prestataire marque `status = completed`
+7. **Évaluation** :
+
+   * Client peut laisser avis et note
+   * Améliore réputation prestataire
+
+---
+
+### � 3.5 CONTRACT GENERATION (Beats & Kits uniquement)
 
 Dès `status = paid` :
 
@@ -119,16 +153,35 @@ Dès `status = paid` :
 
 ---
 
-### � 3.6 DOWNLOAD FLOW
+### � 3.6 DOWNLOAD FLOW (Beats & Kits uniquement)
 
 1. App → `/api/generate-download` (tx_id)
 2. Backend vérifie :
 
-   * Transaction “paid”
+   * Transaction "paid"
    * Buyer_id correspond
 3. Retourne `presigned GET` R2 (15 min TTL)
 4. App lance le téléchargement.
 5. Backend logge dans `download_logs`.
+
+---
+
+### � 3.6bis MESSAGING FLOW (Services uniquement)
+
+1. **Activation** : Chat activé uniquement après confirmation de réservation.
+2. **Participants** : Client + Prestataire uniquement.
+3. **Fonctionnalités** :
+
+   * Échange de messages texte
+   * Partage coordonnées (téléphone, adresse)
+   * Négociation prix (services "à la demande")
+   * Coordination logistique
+4. **Restrictions** :
+
+   * Pas de partage de fichiers audio
+   * Pas de liens externes vers autres plateformes
+   * Modération automatique des messages
+5. **Fin** : Chat fermé après `status = completed`.
 
 ---
 
@@ -144,55 +197,83 @@ Dès `status = paid` :
 
 ### � 4.2 UPLOAD PRODUIT
 
-1. Onglet “Publier”
+1. Onglet "Publier"
 2. Choix type : Beat / Kit / Sample / Service
 3. Formulaire :
 
    * Titre
    * Description
-   * Prix
-   * Licence
+   * Prix (beats/kits) ou Tarification (services)
+   * Licence (beats/kits uniquement)
    * Tags / BPM / Genre
    * Upload Preview (30 s max, mp3)
-   * Upload fichier complet (via presigned PUT URL)
+   * Upload fichier complet (beats/kits) ou Portfolio (services)
 4. Soumission → `status = pending`
 5. Admin valide → `status = active` (visible marketplace)
 
 ---
 
+### � 4.2bis CONFIGURATION SERVICES
+
+1. **Type de tarification** :
+
+   * Prix fixe : montant unique
+   * À la demande : "Contactez-moi"
+   * Multi-tarifs : plusieurs options
+2. **Disponibilités** :
+
+   * Calendrier des créneaux
+   * Zones géographiques
+   * Types de prestations
+3. **Portfolio** :
+
+   * Exemples de travaux
+   * Témoignages clients
+   * Certifications
+
+---
+
 ### � 4.3 DASHBOARD CRÉATEUR
 
-* Onglet “Mes ventes” :
+* Onglet "Mes ventes" :
 
-  * Liste des produits
+  * Liste des produits (beats/kits)
   * Ventes totales
   * Revenus (wallet)
   * Historique téléchargements
-* Onglet “Statistiques” (V2) :
+* Onglet "Mes services" :
+
+  * Réservations reçues
+  * Calendrier disponibilités
+  * Historique prestations
+  * Avis clients
+* Onglet "Statistiques" (V2) :
 
   * Vues, ventes, notes
-* Onglet “Retraits” :
+* Onglet "Retraits" :
 
-  * Solde dispo
+  * Solde dispo (beats/kits uniquement)
   * Formulaire demande de retrait (Wave/OM)
   * Validation manuelle admin
 
 ---
 
-## � 5. SERVICES FLOW (INGÉ SON / STUDIO)
+## � 5. SERVICES FLOW (INGÉ SON / STUDIO) - GRATUIT
 
 ### � 5.1 PUBLICATION SERVICE
 
 * Type = `service`
-* Champs : nom, tarif, description, durée, échantillon audio (optionnel)
-* Validé par admin → visible dans catégorie “Services”
+* Champs : nom, tarification flexible, description, portfolio
+* **Aucune commission** → service gratuit pour la plateforme
+* Validé par admin → visible dans catégorie "Services"
 
-### � 5.2 RÉSERVATION SERVICE (V2)
+### � 5.2 RÉSERVATION SERVICE
 
-* L’acheteur paie → transaction `type = service`
-* Statut = `paid`
-* Livraison manuelle + validation client
-* `status = released` une fois confirmé
+* Le client fait une demande → `booking` créé
+* Statut = `pending` → `confirmed` → `completed`
+* **Paiement externe** : cash, Wave direct, Orange Money direct
+* Chat activé pour coordination
+* Avis possible après prestation
 
 ---
 
@@ -207,7 +288,7 @@ Dès `status = paid` :
 
 ### � 6.2 PROCESSUS BOOST
 
-1. User clique “Booster ce beat / profil”
+1. User clique "Booster ce beat / kit / service / profil"
 2. Paiement via `/api/pay-boost`
 3. Transaction `type = boost` (commission = 0)
 4. Création entrée dans `boosts`
@@ -219,7 +300,8 @@ Dès `status = paid` :
 
 | Action         | Effet                                         |
 | :------------- | :-------------------------------------------- |
-| Achat produit  | Crée transaction sale, calcule 5 % commission |
+| Achat beat/kit | Crée transaction sale, calcule 5 % commission |
+| Réservation service | Crée booking, aucun paiement plateforme    |
 | Paiement boost | Crée transaction boost, 0 % commission        |
 | Téléchargement | Génère URL expirable, log                     |
 | Retrait        | Décrémente wallet, crée trace admin           |
@@ -240,6 +322,8 @@ Dès `status = paid` :
 * `validate_product(id)`
 * `toggle_capability(user_id, key, value)`
 * `mark_withdrawal_paid(id)`
+* `moderate_service(id)` (nouveau)
+* `resolve_booking_dispute(id)` (nouveau)
 
 ---
 
@@ -262,11 +346,15 @@ Dès `status = paid` :
 | `POST /api/upload-request`    | Génère URL PUT R2     | `can_sell`     |
 | `POST /api/upload-complete`   | Crée produit pending  | `can_sell`     |
 | `GET /api/products`           | Liste produits actifs | -              |
-| `POST /api/pay`               | Paiement Wave/OM      | `can_buy`      |
+| `POST /api/pay`               | Paiement Wave/OM (beats/kits) | `can_buy`      |
 | `POST /api/generate-download` | Donne URL GET R2      | `can_buy`      |
 | `POST /api/boost`             | Paiement boost        | `can_buy`      |
 | `GET /api/wallet`             | Voir solde            | `can_withdraw` |
 | `POST /api/withdraw`          | Demande retrait       | `can_withdraw` |
+| `POST /api/bookings/create`  | Crée réservation service | -              |
+| `GET /api/bookings`          | Liste réservations    | -              |
+| `POST /api/conversations/create` | Crée chat service | -              |
+| `POST /api/messages/send`    | Envoie message        | -              |
 
 ---
 
@@ -278,16 +366,19 @@ Dès `status = paid` :
 | Paiement validé  | `transactions`  |
 | Boost actif      | `boosts`        |
 | Retrait effectué | `withdrawals`   |
+| Réservation créée | `bookings`     |
+| Message envoyé   | `messages`      |
 
 ---
 
 ## � 12. FUTURE FLOWS (V2+)
 
-* **Booking studios** (calendrier + disponibilité)
+* **Services gratuits + réservation** (Phase 1) ✅
+* **Messagerie conditionnelle** (services uniquement) ✅
 * **AI tagging automatique** (genre, BPM)
 * **Subscriptions (Pro)** → Boosts inclus
 * **SODAV integration** → Déclaration automatique œuvres
-* **Chat intégré** (artiste ↔ producteur)
+* **Chat intégré** (artiste ↔ producteur) - **RESTREINT aux services**
 
 ---
 
@@ -297,7 +388,15 @@ Dès `status = paid` :
 | :------- | :------------------------------- |
 | Auth     | Connexion OTP fonctionnelle      |
 | Upload   | Preview + full file sur R2       |
-| Vente    | Paiement + commission 5 %        |
+| Vente    | Paiement + commission 5 % (beats/kits) |
+| Services | Réservation gratuite + chat      |
 | Download | URL expirable, contrat PDF       |
 | Boost    | Paiement + affichage prioritaire |
-| Admin    | Validation produits + retraits   |
+| Admin    | Validation produits + retraits + services |
+
+---
+
+## 📝 Changelog
+
+* **v2.1** - Ajout du modèle services gratuits avec réservation et messagerie conditionnelle
+* **v1.0** - Version initiale du document de flux

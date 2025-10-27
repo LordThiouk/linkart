@@ -30,11 +30,13 @@ flowchart TD
   %% MARKETPLACE flow
   MarketplaceTab --> BeatsList
   MarketplaceTab --> SamplesList["Samples & Kits"]
+  MarketplaceTab --> ServicesList
   BeatsList -->|select| BeatDetails
+  SamplesList -->|select| BeatDetails
   BeatDetails --> Checkout["Checkout / Cart"]
   ServiceDetails --> BookingForm["Booking Form"]
 
-  %% PAYMENT / ESCROW flow
+  %% PAYMENT / ESCROW flow (Beats & Kits uniquement)
   Checkout --> Payment["Payment Provider\n(Wave/OM)"]
   Payment --> PaymentWebhook["Payment Callback\n(validate + set paid_held)"]
   PaymentWebhook --> PaymentSuccess["Payment Success\n(status=paid_held)"]
@@ -42,6 +44,17 @@ flowchart TD
   GenerateDownload --> DownloadViewer["Download Viewer / Player"]
   PaymentWebhook -->|admin| Dispute["Dispute / Refund"]
   Dispute --> AdminPanel["Admin: Dispute Management"]
+
+  %% SERVICE BOOKING flow (Services uniquement)
+  BookingForm --> BookingRequest["Booking Request\n(status=pending)"]
+  BookingRequest --> ProviderNotification["Provider Notification"]
+  ProviderNotification --> ProviderResponse["Provider Response\n(confirm/refuse)"]
+  ProviderResponse -->|confirmed| BookingConfirmed["Booking Confirmed\n(status=confirmed)"]
+  ProviderResponse -->|refused| BookingCancelled["Booking Cancelled"]
+  BookingConfirmed --> ServiceChat["Service Chat\n(1-to-1 messaging)"]
+  ServiceChat --> ServiceDelivery["Service Delivery\n(external payment)"]
+  ServiceDelivery --> ServiceCompleted["Service Completed\n(status=completed)"]
+  ServiceCompleted --> ServiceReview["Service Review\n(rating & feedback)"]
 
   %% UPLOAD / SELL flow
   UploadTab --> UploadCenter["Upload Center\n(preview 30s)"]
@@ -51,16 +64,29 @@ flowchart TD
   ProductActive --> MyProducts["My Products"]
   MyProducts --> BoostScreen["Boost Product / Profile"]
 
-  %% WALLET flow
+  %% SERVICE CONFIGURATION flow
+  UploadTab --> ServiceConfig["Service Configuration"]
+  ServiceConfig --> PricingType["Pricing Type\n(fixed/on-demand/multi-tier)"]
+  PricingType --> AvailabilitySetup["Availability Setup\n(calendar & zones)"]
+  AvailabilitySetup --> PortfolioUpload["Portfolio Upload\n(examples & testimonials)"]
+  PortfolioUpload --> ServiceActive["Service Active"]
+
+  %% WALLET flow (Beats & Kits uniquement)
   WalletTab --> Wallet["Wallet\n(balance, history)"]
   Wallet --> WithdrawReq["Withdraw Request"]
   WithdrawReq --> WithdrawPending["Withdraw Pending (admin)"]
   WithdrawPending -->|confirm| WithdrawPaid["Withdraw Paid"]
 
-  %% PURCHASES / LICENSES
+  %% PURCHASES / LICENSES (Beats & Kits uniquement)
   ProfileTab --> MyPurchases["My Purchases"]
   MyPurchases --> DownloadViewer
   MyPurchases --> Contracts["Contracts (PDF)"]
+
+  %% SERVICE BOOKINGS (Services uniquement)
+  ProfileTab --> MyBookings["My Bookings"]
+  MyBookings --> BookingDetails["Booking Details"]
+  BookingDetails --> ServiceChat
+  MyBookings --> ServiceHistory["Service History"]
 
   %% PROFILE / RATINGS
   ProfileTab --> ProfileView["Profile View\n(public & self)"]
@@ -68,17 +94,21 @@ flowchart TD
   ProfileView --> Ratings["Ratings & Reviews"]
   Ratings --> RespondReview["Respond (seller)"]
 
-  %% COMMUNICATION
+  %% COMMUNICATION (Services uniquement)
   HomeTab --> Notifications["Notifications"]
   Notifications --> Inbox["Inbox / Messages"]
-  BeatDetails -->|contact seller| Inbox
   ServiceDetails -->|contact| Inbox
   BookingForm --> Inbox
+  ServiceChat --> Inbox
 
   %% ADMIN flows (separate)
-  AdminPanel --> AdminDashboard["Admin Dashboard\n(products, transactions)"]
+  AdminPanel --> AdminDashboard["Admin Dashboard\n(products, transactions, services)"]
   AdminDashboard --> PendingProducts["Pending Products"]
+  AdminDashboard --> PendingServices["Pending Services"]
+  AdminDashboard --> BookingDisputes["Booking Disputes"]
   PendingProducts -->|approve/reject| AdminActions["Approve / Reject"]
+  PendingServices -->|approve/reject| AdminActions
+  BookingDisputes --> AdminActions
 
   %% ERRORS & STATES
   AppRoot --> Offline["Offline / Error"]
@@ -87,11 +117,18 @@ flowchart TD
   %% Special states & links
   PaymentSuccess --> MyPurchases
   ProductActive --> BeatsList
+  ServiceActive --> ServicesList
   MyProducts --> EditProduct["Edit Product"]
   EditProduct --> UploadCenter
+  ServiceActive --> EditService["Edit Service"]
+  EditService --> ServiceConfig
 
   %% Visual grouping
   classDef auth fill:#f7fafc,stroke:#cbd5e1;
   classDef main fill:#ffffff,stroke:#e2e8f0;
+  classDef service fill:#e0f2fe,stroke:#0277bd;
+  classDef payment fill:#fff3e0,stroke:#f57c00;
   class Splash,Onboarding,Login,OTP,ProfileSetup auth;
   class Tabs,HomeTab,MarketplaceTab,UploadTab,WalletTab,ProfileTab main;
+  class ServiceDetails,BookingForm,BookingRequest,ProviderNotification,ProviderResponse,BookingConfirmed,ServiceChat,ServiceDelivery,ServiceCompleted,ServiceReview,ServiceConfig,PricingType,AvailabilitySetup,PortfolioUpload,ServiceActive,MyBookings,BookingDetails,ServiceHistory,EditService service;
+  class Checkout,Payment,PaymentWebhook,PaymentSuccess,GenerateDownload,DownloadViewer,Dispute,Wallet,WithdrawReq,WithdrawPending,WithdrawPaid,MyPurchases,Contracts payment;

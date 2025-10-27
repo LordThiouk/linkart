@@ -183,7 +183,9 @@ Récupère la liste des produits actifs avec filtres.
 
 **Capability requise** : `can_buy`
 
-Initie un paiement pour un produit.
+Initie un paiement pour un produit (beats et kits uniquement).
+
+**⚠️ Restriction importante :** Les services ne peuvent PAS être achetés via cet endpoint.
 
 **Request:**
 
@@ -195,7 +197,7 @@ Initie un paiement pour un produit.
 }
 ```
 
-**Response:**
+**Response (Succès):**
 
 ```json
 {
@@ -207,6 +209,22 @@ Initie un paiement pour un produit.
     "amount": 50000,
     "commission": 2500,
     "netAmount": 47500
+  }
+}
+```
+
+**Response (Erreur - Service):**
+
+```json
+{
+  "success": false,
+  "error": {
+    "code": "SERVICE_NOT_PURCHASABLE",
+    "message": "Services cannot be purchased through Linkart. Use booking system instead.",
+    "details": {
+      "productType": "service",
+      "alternative": "Use /api/bookings/create for service reservations"
+    }
   }
 }
 ```
@@ -362,21 +380,260 @@ Achète un boost pour un produit ou profil.
 }
 ```
 
-### 3.7 Ratings
+### 3.7 Réservations & Services
+
+#### `POST /api/bookings/create`
+
+**Capability requise** : `can_buy`
+
+Crée une réservation pour un service (gratuit).
+
+**Request:**
+
+```json
+{
+  "serviceId": "uuid",
+  "bookingDate": "2025-11-01T14:00:00Z",
+  "duration": 120,
+  "notes": "Session de mixage pour mon album"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "bookingId": "uuid",
+    "status": "pending",
+    "message": "Réservation créée, en attente de confirmation du prestataire"
+  }
+}
+```
+
+#### `GET /api/bookings`
+
+**Capability requise** : Aucune (utilisateur authentifié)
+
+Liste les réservations de l'utilisateur.
+
+**Query Parameters:**
+
+- `status`: `pending` | `confirmed` | `completed` | `cancelled`
+- `role`: `client` | `provider`
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "bookings": [
+      {
+        "id": "uuid",
+        "service": {
+          "title": "Mix & Mastering Pro",
+          "provider": { "name": "SoundMaster" }
+        },
+        "bookingDate": "2025-11-01T14:00:00Z",
+        "duration": 120,
+        "status": "confirmed",
+        "notes": "Session de mixage"
+      }
+    ]
+  }
+}
+```
+
+#### `PATCH /api/bookings/:id/confirm`
+
+**Capability requise** : `can_sell` (prestataire uniquement)
+
+Confirme une réservation.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "bookingId": "uuid",
+    "status": "confirmed",
+    "message": "Réservation confirmée, chat activé"
+  }
+}
+```
+
+#### `PATCH /api/bookings/:id/complete`
+
+**Capability requise** : `can_sell` (prestataire uniquement)
+
+Marque une réservation comme complétée.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "bookingId": "uuid",
+    "status": "completed",
+    "message": "Service terminé, client peut laisser un avis"
+  }
+}
+```
+
+#### `PATCH /api/bookings/:id/cancel`
+
+**Capability requise** : `can_buy` ou `can_sell`
+
+Annule une réservation.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "bookingId": "uuid",
+    "status": "cancelled",
+    "message": "Réservation annulée"
+  }
+}
+```
+
+### 3.8 Messagerie (Services uniquement)
+
+#### `POST /api/conversations/create`
+
+**Capability requise** : Aucune (utilisateur authentifié)
+
+Crée une conversation liée à une réservation.
+
+**Request:**
+
+```json
+{
+  "bookingId": "uuid",
+  "otherUserId": "uuid"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "conversationId": "uuid",
+    "message": "Conversation créée"
+  }
+}
+```
+
+#### `POST /api/messages/send`
+
+**Capability requise** : Aucune (utilisateur authentifié)
+
+Envoie un message dans une conversation.
+
+**Request:**
+
+```json
+{
+  "conversationId": "uuid",
+  "content": "Bonjour, j'aimerais discuter des détails de la session"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "messageId": "uuid",
+    "message": "Message envoyé"
+  }
+}
+```
+
+#### `GET /api/conversations`
+
+**Capability requise** : Aucune (utilisateur authentifié)
+
+Liste les conversations de l'utilisateur.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "conversations": [
+      {
+        "id": "uuid",
+        "otherUser": { "name": "SoundMaster", "avatar": "url" },
+        "booking": { "service": "Mix & Mastering Pro" },
+        "lastMessage": "Parfait, on se voit samedi",
+        "unreadCount": 2
+      }
+    ]
+  }
+}
+```
+
+#### `GET /api/conversations/:id/messages`
+
+**Capability requise** : Aucune (utilisateur authentifié)
+
+Récupère les messages d'une conversation.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "messages": [
+      {
+        "id": "uuid",
+        "senderId": "uuid",
+        "content": "Bonjour, j'aimerais discuter des détails",
+        "createdAt": "2025-10-27T10:30:00Z",
+        "readAt": "2025-10-27T10:35:00Z"
+      }
+    ]
+  }
+}
+```
+
+### 3.9 Ratings
 
 #### `POST /api/ratings`
 
 **Capability requise** : `can_buy`
 
-Soumet une évaluation après achat.
+Soumet une évaluation après achat (beats/kits) ou réservation complétée (services).
 
-**Request:**
+**Request (Beats/Kits):**
 
 ```json
 {
   "transactionId": "uuid",
   "rating": 5,
   "comment": "Excellent beat, très professionnel!"
+}
+```
+
+**Request (Services):**
+
+```json
+{
+  "bookingId": "uuid",
+  "rating": 5,
+  "comment": "Service de qualité, prestataire très professionnel!"
 }
 ```
 
@@ -429,6 +686,10 @@ Soumet une évaluation après achat.
 - `PAYMENT_FAILED` : Échec du paiement
 - `UPLOAD_FAILED` : Échec de l'upload
 - `INVALID_CAPABILITY` : Capability manquante
+- `SERVICE_NOT_PURCHASABLE` : Tentative d'achat d'un service
+- `BOOKING_NOT_FOUND` : Réservation non trouvée
+- `BOOKING_ALREADY_CONFIRMED` : Réservation déjà confirmée
+- `CHAT_NOT_ALLOWED` : Messagerie non autorisée (beats/kits)
 
 ---
 
@@ -525,7 +786,7 @@ await fetch('/api/upload-complete', {
 });
 ```
 
-### 7.2 Flow Achat
+### 7.2 Flow Achat (Beats/Kits)
 
 ```typescript
 // 1. Initier paiement
@@ -551,9 +812,76 @@ const downloadResponse = await fetch('/api/generate-download', {
 });
 ```
 
+### 7.3 Flow Réservation Service
+
+```typescript
+// 1. Créer réservation
+const bookingResponse = await fetch('/api/bookings/create', {
+  method: 'POST',
+  headers: { Authorization: `Bearer ${token}` },
+  body: JSON.stringify({
+    serviceId: 'uuid',
+    bookingDate: '2025-11-01T14:00:00Z',
+    duration: 120,
+    notes: 'Session de mixage pour mon album',
+  }),
+});
+
+// 2. Prestataire confirme (côté prestataire)
+await fetch('/api/bookings/uuid/confirm', {
+  method: 'PATCH',
+  headers: { Authorization: `Bearer ${providerToken}` },
+});
+
+// 3. Créer conversation
+const conversationResponse = await fetch('/api/conversations/create', {
+  method: 'POST',
+  headers: { Authorization: `Bearer ${token}` },
+  body: JSON.stringify({
+    bookingId: 'uuid',
+    otherUserId: 'provider-uuid',
+  }),
+});
+
+// 4. Échanger messages
+await fetch('/api/messages/send', {
+  method: 'POST',
+  headers: { Authorization: `Bearer ${token}` },
+  body: JSON.stringify({
+    conversationId: 'uuid',
+    content: "Bonjour, j'aimerais discuter des détails",
+  }),
+});
+
+// 5. Prestataire marque comme complété
+await fetch('/api/bookings/uuid/complete', {
+  method: 'PATCH',
+  headers: { Authorization: `Bearer ${providerToken}` },
+});
+
+// 6. Client laisse un avis
+await fetch('/api/ratings', {
+  method: 'POST',
+  headers: { Authorization: `Bearer ${token}` },
+  body: JSON.stringify({
+    bookingId: 'uuid',
+    rating: 5,
+    comment: 'Service de qualité, prestataire très professionnel!',
+  }),
+});
+```
+
 ---
 
 ## 8. Changelog
+
+### v2.1 (2025-10-27)
+
+- **Nouveaux endpoints réservations** : Système de booking complet pour services
+- **Messagerie conditionnelle** : Chat uniquement pour services, pas pour beats/kits
+- **Restriction paiements** : Blocage des achats de services via `/api/pay`
+- **Ratings étendus** : Support des avis pour services (via réservations)
+- **Codes d'erreur** : Ajout des erreurs spécifiques aux services
 
 ### v2.0 (2025-10-27)
 

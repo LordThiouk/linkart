@@ -28,8 +28,9 @@ L’application doit combiner **marketplace**, **outil de gestion**, et **platef
 2. Permettre à tout acteur de vendre ses productions ou services.
 3. Garantir la **propriété intellectuelle** via contrats automatiques et URLs sécurisées.
 4. Mettre en avant les créateurs via un système de **boosts** et **notations**.
-5. Favoriser la **monétisation équitable** : 5 % de commission plateforme.
-6. Préparer l’intégration future avec la **SODAV** pour la télé-déclaration et le monitoring.
+5. Favoriser la **monétisation équitable** : 5 % de commission plateforme sur beats/kits uniquement.
+6. Offrir des **services gratuits** pour attirer maximum d'utilisateurs.
+7. Préparer l'intégration future avec la **SODAV** pour la télé-déclaration et le monitoring.
 
 ---
 
@@ -70,7 +71,7 @@ L’application doit combiner **marketplace**, **outil de gestion**, et **platef
 
   * Preview audio via `expo-av`.
 
-### 4.3 Vente / Achat
+### 4.3 Vente / Achat (Beats et Kits uniquement)
 
 * Parcourir produits (recherche, filtre, tri).
 
@@ -82,11 +83,11 @@ L’application doit combiner **marketplace**, **outil de gestion**, et **platef
 
     *Mécanisme escrow (séquestre) :
 
-        *Lorsqu’un acheteur paie, le montant est bloqué dans un compte virtuel (transaction.status = paid_held).
+        *Lorsqu'un acheteur paie, le montant est bloqué dans un compte virtuel (transaction.status = paid_held).
 
-        *Le vendeur n’est pas immédiatement crédité.
+        *Le vendeur n'est pas immédiatement crédité.
 
-        *L’acheteur reçoit un accès au fichier complet (ou prestation planifiée).
+        *L'acheteur reçoit un accès au fichier complet.
 
         *Lorsque la transaction est confirmée (par validation ou délai automatique), le montant est libéré vers le wallet du vendeur (status = released).
 
@@ -98,7 +99,24 @@ L’application doit combiner **marketplace**, **outil de gestion**, et **platef
 
 * 5 % commission plateforme prélevée lors de la libération des fonds.
 
-* Historique d’achat, de téléchargement, et d’états de paiement.
+* Historique d'achat, de téléchargement, et d'états de paiement.
+
+### 4.4 Services Gratuits & Réservations
+
+* **Services** : Mixage, mastering, enregistrement, production (gratuits).
+
+* **Réservation** : Système de booking intégré sans commission.
+
+* **Tarification flexible** :
+  * Prix fixe (ex: 15,000F/heure)
+  * À la demande ("Contactez-moi")
+  * Multi-tarifs (Basic/Standard/Premium)
+
+* **Paiements externes** : Direct entre client et prestataire (Wave, cash).
+
+* **Messagerie** : Chat 1-to-1 uniquement pour services.
+
+* **Avis** : Système d'évaluation post-prestation.
 
 ### 4.4 Boosts
 
@@ -110,14 +128,14 @@ L’application doit combiner **marketplace**, **outil de gestion**, et **platef
 
 ### 4.5 Ratings
 
-* Notation (1–5) et commentaire après achat confirmé.
+* Notation (1–5) et commentaire après achat confirmé (beats/kits) ou réservation complétée (services).
 * Moyenne affichée sur les profils et produits.
 * Signalement possible des abus.
 * Admin peut masquer un rating (`status=hidden`).
 
 ### 4.6 Wallet & Retraits
 
-* Crédit automatique **uniquement après libération escrow**.
+* Crédit automatique **uniquement après libération escrow** (beats/kits).
 * Retrait manuel via admin (Wave/OM).
 * Historique retraits & transactions.
 * Statut : `pending`, `paid`, `rejected`.
@@ -136,6 +154,7 @@ L’application doit combiner **marketplace**, **outil de gestion**, et **platef
   * Validation retraits
   * Suspension utilisateurs
   * Consultation transactions
+  * Modération services
 
 ---
 
@@ -177,7 +196,8 @@ L’application doit combiner **marketplace**, **outil de gestion**, et **platef
 
 ## 7. Modèle économique
 
-* **Commission plateforme** : 5 % sur toutes les ventes.
+* **Commission plateforme** : 5 % sur beats et kits UNIQUEMENT.
+* **Services** : Gratuits, pas de commission, paiements externes.
 * **Mise en avant payante** (produit ou profil).
 * **Frais de service (retraits)** : à définir selon fournisseur.
 * **Aucun abonnement au lancement** (MVP freemium).
@@ -208,7 +228,8 @@ Préparation à la croissance :
 * Architecture modulaire (upload, payments, boosts isolés).
 * File processing asynchrone (pour IA audio tagging).
 * API publique future (`/api/v1/public/...`).
-* Booking system et télé-déclaration SODAV (phase 2).
+* Système de réservation services (phase 1).
+* Télé-déclaration SODAV (phase 2).
 
 ---
 
@@ -231,9 +252,10 @@ Préparation à la croissance :
 
 * **Unit tests** : logique JS/TS (Zustand, hooks).
 * **Integration tests** : Edge Functions & API.
-* **End-to-end** : upload → achat → téléchargement.
+* **End-to-end** : upload → achat → téléchargement (beats/kits).
+* **End-to-end services** : réservation → chat → prestation → avis.
 * **Manuel QA** : validation paiement, wallet, boost, rating.
-* **Admin QA** : validation produits et retraits.
+* **Admin QA** : validation produits, retraits, modération services.
 
 ---
 

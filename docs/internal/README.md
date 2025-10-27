@@ -70,11 +70,19 @@ graph TB
 supabase/functions/
 ├── upload-request/     ← Génération URLs presignées
 ├── upload-complete/    ← Finalisation upload
-├── pay/               ← Initiation paiement
+├── pay/               ← Initiation paiement (beats/kits uniquement)
 ├── payment-callback/  ← Webhook paiement
 ├── generate-download/ ← URLs téléchargement
 ├── boost/             ← Système de boosts
 ├── withdraw/           ← Demandes de retrait
+├── bookings/          ← Système de réservations services
+│   ├── create/        ← Créer réservation
+│   ├── confirm/       ← Confirmer réservation
+│   ├── complete/      ← Marquer complété
+│   └── cancel/        ← Annuler réservation
+├── conversations/     ← Messagerie (services uniquement)
+│   ├── create/        ← Créer conversation
+│   └── messages/      ← Envoyer/récupérer messages
 └── _shared/           ← Utilitaires partagés
 ```
 
@@ -206,11 +214,18 @@ const presignedUrl = await getSignedUrl(s3Client, command, {
 
 - **users** : Utilisateurs et capabilities
 - **products** : Beats, samples, kits, services
-- **transactions** : Paiements et escrow
-- **ratings** : Évaluations produits/vendeurs
+- **transactions** : Paiements et escrow (beats/kits uniquement)
+- **ratings** : Évaluations produits/vendeurs/services
 - **boosts** : Mise en avant payante
 - **wallets** : Soldes et historique
 - **audit_logs** : Traçabilité des actions
+
+#### Tables Services (Nouvelles)
+
+- **bookings** : Réservations de services
+- **service_pricing** : Tarifs multiples pour services
+- **conversations** : Chat lié aux réservations
+- **messages** : Messages dans conversations
 
 #### Relations Clés
 
@@ -222,6 +237,15 @@ users (1) --> (N) transactions (seller)
 products (1) --> (N) transactions
 transactions (1) --> (N) ratings
 users (1) --> (1) wallets
+
+-- Relations services
+products (1) --> (N) bookings (service)
+users (1) --> (N) bookings (client)
+users (1) --> (N) bookings (provider)
+bookings (1) --> (N) service_pricing
+bookings (1) --> (1) conversations
+conversations (1) --> (N) messages
+bookings (1) --> (N) ratings (service)
 ```
 
 ### 3.2 Migrations
@@ -232,7 +256,12 @@ users (1) --> (1) wallets
 supabase/migrations/
 ├── 20250122000001_initial_schema.sql
 ├── 20250122000002_rls_policies.sql
-└── 20251022085946_create_notifications_table.sql
+├── 20251022085946_create_notifications_table.sql
+├── 20251027000001_create_bookings_table.sql
+├── 20251027000002_create_service_pricing_table.sql
+├── 20251027000003_create_conversations_table.sql
+├── 20251027000004_create_messages_table.sql
+└── 20251027000005_update_products_for_services.sql
 ```
 
 **Commandes de migration :**
@@ -259,6 +288,16 @@ CREATE INDEX idx_transactions_seller ON transactions(seller_id);
 CREATE INDEX idx_transactions_status ON transactions(status);
 CREATE INDEX idx_ratings_product ON ratings(product_id);
 CREATE INDEX idx_boosts_active ON boosts(status, expires_at);
+
+-- Index pour les services
+CREATE INDEX idx_bookings_client ON bookings(client_id);
+CREATE INDEX idx_bookings_provider ON bookings(provider_id);
+CREATE INDEX idx_bookings_service ON bookings(service_id);
+CREATE INDEX idx_bookings_status ON bookings(status);
+CREATE INDEX idx_bookings_date ON bookings(booking_date);
+CREATE INDEX idx_conversations_booking ON conversations(related_to_id);
+CREATE INDEX idx_messages_conversation ON messages(conversation_id);
+CREATE INDEX idx_service_pricing_service ON service_pricing(service_id);
 ```
 
 ---
@@ -279,7 +318,9 @@ src/
 │   ├── uploads/         # Upload fichiers
 │   ├── wallet/          # Portefeuille
 │   ├── boosts/          # Système boosts
-│   └── ratings/         # Évaluations
+│   ├── ratings/         # Évaluations
+│   ├── bookings/        # Réservations services
+│   └── conversations/   # Messagerie services
 ├── screens/             # Écrans principaux
 ├── navigation/          # Navigation React Navigation
 ├── services/            # Appels API
@@ -428,6 +469,61 @@ describe('POST /api/products', () => {
     expect(response.status).toBe(201);
     const data = await response.json();
     expect(data.success).toBe(true);
+  });
+});
+
+// Test système de réservation
+describe('POST /api/bookings/create', () => {
+  it('should create booking for service', async () => {
+    const bookingData = {
+      serviceId: 'service-uuid',
+      bookingDate: '2025-11-01T14:00:00Z',
+      duration: 120,
+      notes: 'Session de mixage',
+    };
+
+    const response = await fetch('/api/bookings/create', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${validToken}` },
+      body: JSON.stringify(bookingData),
+    });
+
+    expect(response.status).toBe(201);
+    const data = await response.json();
+    expect(data.data.status).toBe('pending');
+  });
+});
+
+// Test messagerie conditionnelle
+describe('POST /api/conversations/create', () => {
+  it('should create conversation for booking only', async () => {
+    const conversationData = {
+      bookingId: 'booking-uuid',
+      otherUserId: 'provider-uuid',
+    };
+
+    const response = await fetch('/api/conversations/create', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${validToken}` },
+      body: JSON.stringify(conversationData),
+    });
+
+    expect(response.status).toBe(201);
+  });
+
+  it('should reject conversation for beat product', async () => {
+    const conversationData = {
+      productId: 'beat-uuid', // Beat, pas booking
+      otherUserId: 'seller-uuid',
+    };
+
+    const response = await fetch('/api/conversations/create', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${validToken}` },
+      body: JSON.stringify(conversationData),
+    });
+
+    expect(response.status).toBe(400);
   });
 });
 ```
@@ -620,6 +716,14 @@ npx react-native start --reset-cache
 ---
 
 ## 9. Changelog
+
+### v2.1 (2025-10-27)
+
+- **Architecture services** : Ajout des Edge Functions pour réservations et messagerie
+- **Schéma base de données** : Nouvelles tables bookings, service_pricing, conversations, messages
+- **Tests intégration** : Tests pour système de réservation et messagerie conditionnelle
+- **Index performance** : Optimisations pour requêtes services
+- **Frontend modules** : Ajout des features bookings et conversations
 
 ### v2.0 (2025-10-27)
 
