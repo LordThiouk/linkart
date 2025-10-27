@@ -13,9 +13,8 @@ module.exports = stagedFiles => {
   const sqlFiles = filteredFiles.filter(file => file.match(/supabase\/.*\.sql$/)).join(' ');
 
   // Vérifier si des fichiers source ont été modifiés
-  const sourceFiles = filteredFiles.filter(file => 
-    file.match(/src\/.*\.(ts|tsx|js|jsx)$/) || 
-    file.match(/supabase\/.*\.sql$/)
+  const sourceFiles = filteredFiles.filter(
+    file => file.match(/src\/.*\.(ts|tsx|js|jsx)$/) || file.match(/supabase\/.*\.sql$/)
   );
 
   const commands = [];

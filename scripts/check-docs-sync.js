@@ -6,8 +6,6 @@
  */
 
 const { execSync } = require('child_process');
-const fs = require('fs');
-const path = require('path');
 
 const colors = {
   reset: '\x1b[0m',
@@ -26,14 +24,14 @@ function log(message, color = 'reset') {
 function checkDocsSync() {
   try {
     log('🔍 Vérification de la synchronisation de la documentation...', 'blue');
-    
+
     // Générer la documentation
     log('📝 Génération de la documentation...', 'blue');
     execSync('npm run docs:generate', { stdio: 'inherit' });
-    
+
     // Vérifier s'il y a des changements dans docs/generated/
     const result = execSync('git status --porcelain docs/generated/', { encoding: 'utf8' });
-    
+
     if (result.trim()) {
       log('❌ Documentation non synchronisée', 'red');
       log('Fichiers modifiés:', 'yellow');
@@ -53,9 +51,9 @@ function checkDocsSync() {
 
 function main() {
   log('🚀 Vérification de la synchronisation de la documentation Linkart...', 'magenta');
-  
+
   const isSync = checkDocsSync();
-  
+
   if (isSync) {
     log('\n🎉 Documentation à jour !', 'green');
     process.exit(0);

@@ -7,7 +7,6 @@
 
 const { execSync } = require('child_process');
 const fs = require('fs');
-const path = require('path');
 
 const colors = {
   reset: '\x1b[0m',
@@ -25,25 +24,19 @@ function log(message, color = 'reset') {
 
 function checkDocumentationStructure() {
   log('🔍 Vérification de la structure de documentation...', 'blue');
-  
-  const requiredDirs = [
-    'docs/internal',
-    'docs/product', 
-    'docs/api',
-    'docs/public',
-    'docs/generated'
-  ];
-  
+
+  const requiredDirs = ['docs/internal', 'docs/product', 'docs/api', 'docs/public', 'docs/generated'];
+
   const requiredFiles = [
     'docs/README.md',
     'docs/internal/README.md',
     'docs/product/README.md',
     'docs/api/README.md',
-    'docs/public/README.md'
+    'docs/public/README.md',
   ];
-  
+
   let allGood = true;
-  
+
   // Vérifier les dossiers
   for (const dir of requiredDirs) {
     if (!fs.existsSync(dir)) {
@@ -53,7 +46,7 @@ function checkDocumentationStructure() {
       log(`✅ ${dir}`, 'green');
     }
   }
-  
+
   // Vérifier les fichiers
   for (const file of requiredFiles) {
     if (!fs.existsSync(file)) {
@@ -63,13 +56,13 @@ function checkDocumentationStructure() {
       log(`✅ ${file}`, 'green');
     }
   }
-  
+
   return allGood;
 }
 
 function generateDocumentation() {
   log('📝 Génération de la documentation...', 'blue');
-  
+
   try {
     execSync('npm run docs:generate', { stdio: 'inherit' });
     log('✅ Documentation générée', 'green');
@@ -83,12 +76,12 @@ function generateDocumentation() {
 
 function validateDocumentation() {
   log('🔍 Validation de la documentation...', 'blue');
-  
+
   try {
     execSync('npm run docs:validate', { stdio: 'inherit' });
     log('✅ Documentation validée', 'green');
     return true;
-  } catch (error) {
+  } catch (_error) {
     log('❌ Erreur lors de la validation', 'red');
     return false;
   }
@@ -96,12 +89,12 @@ function validateDocumentation() {
 
 function checkDocumentationSync() {
   log('🔄 Vérification de la synchronisation...', 'blue');
-  
+
   try {
     execSync('npm run docs:check', { stdio: 'inherit' });
     log('✅ Documentation synchronisée', 'green');
     return true;
-  } catch (error) {
+  } catch (_error) {
     log('❌ Documentation non synchronisée', 'red');
     return false;
   }
@@ -109,12 +102,12 @@ function checkDocumentationSync() {
 
 function updateDocumentation() {
   log('🔄 Mise à jour de la documentation...', 'blue');
-  
+
   try {
     execSync('npm run docs:sync', { stdio: 'inherit' });
     log('✅ Documentation mise à jour', 'green');
     return true;
-  } catch (error) {
+  } catch (_error) {
     log('❌ Erreur lors de la mise à jour', 'red');
     return false;
   }
@@ -122,16 +115,16 @@ function updateDocumentation() {
 
 function main() {
   log('🚀 Maintenance de la documentation Linkart...', 'magenta');
-  
+
   const checks = [
     { name: 'Structure', fn: checkDocumentationStructure },
     { name: 'Génération', fn: generateDocumentation },
     { name: 'Validation', fn: validateDocumentation },
-    { name: 'Synchronisation', fn: checkDocumentationSync }
+    { name: 'Synchronisation', fn: checkDocumentationSync },
   ];
-  
+
   let allPassed = true;
-  
+
   for (const check of checks) {
     log(`\n🔍 ${check.name}...`, 'blue');
     if (!check.fn()) {
@@ -141,7 +134,7 @@ function main() {
       log(`✅ ${check.name} OK`, 'green');
     }
   }
-  
+
   if (!allPassed) {
     log('\n🔄 Tentative de mise à jour automatique...', 'yellow');
     if (updateDocumentation()) {
@@ -164,5 +157,5 @@ module.exports = {
   generateDocumentation,
   validateDocumentation,
   checkDocumentationSync,
-  updateDocumentation
+  updateDocumentation,
 };

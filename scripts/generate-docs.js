@@ -17,7 +17,7 @@ function loadEnvFile() {
   if (fs.existsSync(envPath)) {
     const envContent = fs.readFileSync(envPath, 'utf8');
     const envLines = envContent.split('\n');
-    
+
     envLines.forEach(line => {
       const trimmedLine = line.trim();
       if (trimmedLine && !trimmedLine.startsWith('#')) {
@@ -180,56 +180,72 @@ function generateAPIDocs() {
  */
 function generateTypes() {
   console.log('📝 Génération des types TypeScript depuis la base de données...');
-  
+
   // Debug : vérifier les variables d'environnement
-  console.log('🔍 Debug des variables d\'environnement :');
-  console.log('SUPABASE_ACCESS_TOKEN:', process.env.SUPABASE_ACCESS_TOKEN ? `${process.env.SUPABASE_ACCESS_TOKEN.substring(0, 10)}...` : 'NON DÉFINI');
-  console.log('SUPABASE_SERVICE_ROLE_KEY:', process.env.SUPABASE_SERVICE_ROLE_KEY ? `${process.env.SUPABASE_SERVICE_ROLE_KEY.substring(0, 10)}...` : 'NON DÉFINI');
-  console.log('SUPABASE_ANON_KEY:', process.env.SUPABASE_ANON_KEY ? `${process.env.SUPABASE_ANON_KEY.substring(0, 10)}...` : 'NON DÉFINI');
-  
+  console.log("🔍 Debug des variables d'environnement :");
+  console.log(
+    'SUPABASE_ACCESS_TOKEN:',
+    process.env.SUPABASE_ACCESS_TOKEN ? `${process.env.SUPABASE_ACCESS_TOKEN.substring(0, 10)}...` : 'NON DÉFINI'
+  );
+  console.log(
+    'SUPABASE_SERVICE_ROLE_KEY:',
+    process.env.SUPABASE_SERVICE_ROLE_KEY
+      ? `${process.env.SUPABASE_SERVICE_ROLE_KEY.substring(0, 10)}...`
+      : 'NON DÉFINI'
+  );
+  console.log(
+    'SUPABASE_ANON_KEY:',
+    process.env.SUPABASE_ANON_KEY ? `${process.env.SUPABASE_ANON_KEY.substring(0, 10)}...` : 'NON DÉFINI'
+  );
+
   try {
     // Utiliser le SUPABASE_ACCESS_TOKEN s'il est disponible
     if (process.env.SUPABASE_ACCESS_TOKEN) {
       console.log('🔍 Utilisation du SUPABASE_ACCESS_TOKEN');
       console.log('Token complet:', process.env.SUPABASE_ACCESS_TOKEN);
-      
+
       const env = {
         ...process.env,
-        SUPABASE_ACCESS_TOKEN: process.env.SUPABASE_ACCESS_TOKEN
+        SUPABASE_ACCESS_TOKEN: process.env.SUPABASE_ACCESS_TOKEN,
       };
-      
+
       console.log('🔍 Exécution de la commande Supabase CLI...');
-      execSync('npx supabase gen types typescript --project-id "tevnkidggpvqpislmhht" --schema public > src/types/supabase.ts', {
-        stdio: 'inherit',
-        env: env
-      });
+      execSync(
+        'npx supabase gen types typescript --project-id "tevnkidggpvqpislmhht" --schema public > src/types/supabase.ts',
+        {
+          stdio: 'inherit',
+          env: env,
+        }
+      );
       console.log('✅ Types TypeScript générés depuis la base de données distante');
       return;
     }
-    
+
     // Utiliser le SUPABASE_SERVICE_ROLE_KEY s'il est disponible
     if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
       console.log('🔍 Utilisation du SUPABASE_ACCESS_TOKEN');
       console.log('Token complet:', process.env.SUPABASE_ACCESS_TOKEN);
-      
+
       const env = {
         ...process.env,
-        SUPABASE_ACCESS_TOKEN: process.env.SUPABASE_ACCESS_TOKEN
+        SUPABASE_ACCESS_TOKEN: process.env.SUPABASE_ACCESS_TOKEN,
       };
-      
+
       console.log('🔍 Exécution de la commande Supabase CLI...');
-      execSync('npx supabase gen types typescript --project-id "tevnkidggpvqpislmhht" --schema public > src/types/supabase.ts', {
-        stdio: 'inherit',
-        env: env
-      });
+      execSync(
+        'npx supabase gen types typescript --project-id "tevnkidggpvqpislmhht" --schema public > src/types/supabase.ts',
+        {
+          stdio: 'inherit',
+          env: env,
+        }
+      );
       console.log('✅ Types TypeScript générés depuis la base de données distante');
       return;
     }
-    
+
     // Fallback : générer depuis les migrations si pas de token
     console.log('⚠️ Pas de SUPABASE_ACCESS_TOKEN disponible, génération depuis les migrations...');
     generateTypesFromMigrations();
-    
   } catch (_error) {
     console.error('❌ Erreur avec Supabase CLI, fallback vers les migrations...');
     console.error('Détails:', _error.message);
@@ -243,12 +259,12 @@ function generateTypes() {
 function generateTypesFromMigrations() {
   try {
     const allSchemaContent = getCombinedMigrations();
-    
+
     if (!allSchemaContent) {
       console.log('⚠️ Aucun schéma trouvé dans les migrations');
       return;
     }
-    
+
     let typesOutput = `// Types générés automatiquement depuis les migrations (fallback)
 // Généré le: ${CONFIG.date}
 // ⚠️ Ces types peuvent ne pas être synchronisés avec la base de données distante
@@ -257,19 +273,19 @@ export interface Database {
   public: {
     Tables: {
 `;
-    
+
     // Extraire les tables depuis les migrations
     const tableRegex = /CREATE TABLE\s+([\w."]+)\s+\(([\s\S]*?)\);/g;
     let match;
-    
+
     while ((match = tableRegex.exec(allSchemaContent)) !== null) {
       const tableName = match[1].replace(/"/g, '');
       const columnsText = match[2];
-      
+
       typesOutput += `      ${tableName}: {
         Row: {
 `;
-      
+
       // Extraire les colonnes
       const lines = columnsText.split('\n').filter(line => line.trim().length > 0 && !line.trim().startsWith('--'));
       lines.forEach(line => {
@@ -279,7 +295,7 @@ export interface Database {
           const name = parts[1];
           const type = parts[2];
           const constraints = parts[3].trim();
-          
+
           if (!['PRIMARY', 'FOREIGN', 'CHECK', 'CONSTRAINT'].includes(name.toUpperCase())) {
             // Convertir les types SQL en types TypeScript
             let tsType = 'string';
@@ -292,13 +308,13 @@ export interface Database {
             } else if (type.includes('JSON')) {
               tsType = 'any';
             }
-            
+
             const nullable = constraints.includes('NOT NULL') ? '' : ' | null';
             typesOutput += `          ${name}: ${tsType}${nullable};\n`;
           }
         }
       });
-      
+
       typesOutput += `        };
         Insert: {
           // Types pour l'insertion (sans les valeurs auto-générées)
@@ -309,7 +325,7 @@ export interface Database {
       };
 `;
     }
-    
+
     typesOutput += `    };
     Views: {
       // Vues si nécessaire
@@ -348,7 +364,7 @@ export type Tables<
       : never
     : never;
 `;
-    
+
     fs.writeFileSync(path.join(process.cwd(), 'src/types/supabase.ts'), typesOutput);
     console.log('✅ Types TypeScript générés depuis les migrations (fallback)');
   } catch (_error) {
@@ -371,7 +387,7 @@ function validateDocumentation() {
  */
 function generateFeaturesDoc() {
   console.log('📝 Génération de la documentation des fonctionnalités...');
-  
+
   const featuresDir = './src/features';
   if (!fs.existsSync(featuresDir)) {
     console.log('⚠️ Dossier features non trouvé');
@@ -379,14 +395,15 @@ function generateFeaturesDoc() {
   }
 
   let markdownOutput = `# Documentation des Fonctionnalités\n\n> Généré le: ${CONFIG.date}\n\n`;
-  
-  const features = fs.readdirSync(featuresDir, { withFileTypes: true })
+
+  const features = fs
+    .readdirSync(featuresDir, { withFileTypes: true })
     .filter(dirent => dirent.isDirectory())
     .map(dirent => dirent.name);
 
   features.forEach(feature => {
     markdownOutput += `## 🎯 ${feature.charAt(0).toUpperCase() + feature.slice(1)}\n\n`;
-    
+
     // Lire le fichier index.ts s'il existe
     const indexPath = path.join(featuresDir, feature, 'index.ts');
     if (fs.existsSync(indexPath)) {
@@ -397,10 +414,11 @@ function generateFeaturesDoc() {
     // Lister les composants
     const componentsDir = path.join(featuresDir, feature, 'components');
     if (fs.existsSync(componentsDir)) {
-      const components = fs.readdirSync(componentsDir)
+      const components = fs
+        .readdirSync(componentsDir)
         .filter(file => file.endsWith('.tsx'))
         .map(file => file.replace('.tsx', ''));
-      
+
       if (components.length > 0) {
         markdownOutput += `### Composants\n\n`;
         components.forEach(comp => {
@@ -413,10 +431,11 @@ function generateFeaturesDoc() {
     // Lister les hooks
     const hooksDir = path.join(featuresDir, feature, 'hooks');
     if (fs.existsSync(hooksDir)) {
-      const hooks = fs.readdirSync(hooksDir)
+      const hooks = fs
+        .readdirSync(hooksDir)
         .filter(file => file.endsWith('.ts'))
         .map(file => file.replace('.ts', ''));
-      
+
       if (hooks.length > 0) {
         markdownOutput += `### Hooks\n\n`;
         hooks.forEach(hook => {
@@ -438,7 +457,7 @@ function generateFeaturesDoc() {
  */
 function generateComponentsDoc() {
   console.log('📝 Génération de la documentation des composants...');
-  
+
   const componentsDir = './src/components';
   if (!fs.existsSync(componentsDir)) {
     console.log('⚠️ Dossier components non trouvé');
@@ -446,41 +465,42 @@ function generateComponentsDoc() {
   }
 
   let markdownOutput = `# Documentation des Composants\n\n> Généré le: ${CONFIG.date}\n\n`;
-  
+
   // Parcourir les dossiers atoms, molecules, organisms
   const componentTypes = ['atoms', 'molecules', 'organisms'];
-  
+
   componentTypes.forEach(type => {
     const typeDir = path.join(componentsDir, type);
     if (!fs.existsSync(typeDir)) return;
-    
+
     markdownOutput += `## ${type.charAt(0).toUpperCase() + type.slice(1)}\n\n`;
-    
-    const components = fs.readdirSync(typeDir)
+
+    const components = fs
+      .readdirSync(typeDir)
       .filter(file => file.endsWith('.tsx') && !file.includes('.stories'))
       .map(file => file.replace('.tsx', ''));
-    
+
     components.forEach(comp => {
       markdownOutput += `### ${comp}\n\n`;
-      
+
       // Lire le fichier du composant
       const compPath = path.join(typeDir, `${comp}.tsx`);
       if (fs.existsSync(compPath)) {
         const content = fs.readFileSync(compPath, 'utf8');
-        
+
         // Extraire les props du composant
         const propsMatch = content.match(/interface\s+(\w+Props)\s*\{([^}]+)\}/);
         if (propsMatch) {
           markdownOutput += `**Props:**\n\n\`\`\`typescript\ninterface ${propsMatch[1]} {\n${propsMatch[2]}\n}\n\`\`\`\n\n`;
         }
-        
+
         // Extraire la description du composant
         const descMatch = content.match(/\/\*\*\s*\n\s*\*\s*(.+?)\s*\n\s*\*\//);
         if (descMatch) {
           markdownOutput += `**Description:** ${descMatch[1]}\n\n`;
         }
       }
-      
+
       markdownOutput += '---\n\n';
     });
   });
@@ -494,7 +514,7 @@ function generateComponentsDoc() {
  */
 function generateServicesDoc() {
   console.log('📝 Génération de la documentation des services...');
-  
+
   const servicesDir = './src/services';
   if (!fs.existsSync(servicesDir)) {
     console.log('⚠️ Dossier services non trouvé');
@@ -502,22 +522,23 @@ function generateServicesDoc() {
   }
 
   let markdownOutput = `# Documentation des Services\n\n> Généré le: ${CONFIG.date}\n\n`;
-  
-  const services = fs.readdirSync(servicesDir)
+
+  const services = fs
+    .readdirSync(servicesDir)
     .filter(file => file.endsWith('.ts'))
     .map(file => file.replace('.ts', ''));
 
   services.forEach(service => {
     markdownOutput += `## ${service}\n\n`;
-    
+
     const servicePath = path.join(servicesDir, `${service}.ts`);
     if (fs.existsSync(servicePath)) {
       const content = fs.readFileSync(servicePath, 'utf8');
-      
+
       // Extraire les fonctions exportées
       const functions = content.match(/export\s+(?:async\s+)?function\s+(\w+)/g) || [];
       const constExports = content.match(/export\s+const\s+(\w+)/g) || [];
-      
+
       if (functions.length > 0) {
         markdownOutput += `### Fonctions\n\n`;
         functions.forEach(func => {
@@ -526,7 +547,7 @@ function generateServicesDoc() {
         });
         markdownOutput += '\n';
       }
-      
+
       if (constExports.length > 0) {
         markdownOutput += `### Constantes\n\n`;
         constExports.forEach(constant => {
@@ -536,7 +557,7 @@ function generateServicesDoc() {
         markdownOutput += '\n';
       }
     }
-    
+
     markdownOutput += '---\n\n';
   });
 
@@ -549,68 +570,68 @@ function generateServicesDoc() {
  */
 function generateHooksDoc() {
   console.log('📝 Génération de la documentation des hooks...');
-  
+
   let markdownOutput = `# Documentation des Hooks\n\n> Généré le: ${CONFIG.date}\n\n`;
-  
+
   // Parcourir tous les dossiers hooks
-  const hooksDirs = [
-    './src/hooks',
-    './src/features/*/hooks'
-  ];
-  
+  // const hooksDirs = ['./src/hooks', './src/features/*/hooks'];
+
   const allHooks = [];
-  
+
   // Hooks globaux
   const globalHooksDir = './src/hooks';
   if (fs.existsSync(globalHooksDir)) {
-    const globalHooks = fs.readdirSync(globalHooksDir)
+    const globalHooks = fs
+      .readdirSync(globalHooksDir)
       .filter(file => file.endsWith('.ts'))
       .map(file => ({ name: file.replace('.ts', ''), path: path.join(globalHooksDir, file), type: 'global' }));
     allHooks.push(...globalHooks);
   }
-  
+
   // Hooks des features
   const featuresDir = './src/features';
   if (fs.existsSync(featuresDir)) {
-    const features = fs.readdirSync(featuresDir, { withFileTypes: true })
+    const features = fs
+      .readdirSync(featuresDir, { withFileTypes: true })
       .filter(dirent => dirent.isDirectory())
       .map(dirent => dirent.name);
-    
+
     features.forEach(feature => {
       const featureHooksDir = path.join(featuresDir, feature, 'hooks');
       if (fs.existsSync(featureHooksDir)) {
-        const featureHooks = fs.readdirSync(featureHooksDir)
+        const featureHooks = fs
+          .readdirSync(featureHooksDir)
           .filter(file => file.endsWith('.ts'))
-          .map(file => ({ 
-            name: file.replace('.ts', ''), 
-            path: path.join(featureHooksDir, file), 
-            type: feature 
+          .map(file => ({
+            name: file.replace('.ts', ''),
+            path: path.join(featureHooksDir, file),
+            type: feature,
           }));
         allHooks.push(...featureHooks);
       }
     });
   }
-  
+
   allHooks.forEach(hook => {
     markdownOutput += `## ${hook.name}\n\n`;
     markdownOutput += `**Type:** ${hook.type}\n\n`;
-    
+
     if (fs.existsSync(hook.path)) {
       const content = fs.readFileSync(hook.path, 'utf8');
-      
+
       // Extraire la description du hook
       const descMatch = content.match(/\/\*\*\s*\n\s*\*\s*(.+?)\s*\n\s*\*\//);
       if (descMatch) {
         markdownOutput += `**Description:** ${descMatch[1]}\n\n`;
       }
-      
+
       // Extraire les paramètres de retour
       const returnMatch = content.match(/return\s+\{([^}]+)\}/);
       if (returnMatch) {
         markdownOutput += `**Retourne:**\n\n\`\`\`typescript\n{${returnMatch[1]}}\n\`\`\`\n\n`;
       }
     }
-    
+
     markdownOutput += '---\n\n';
   });
 
@@ -623,15 +644,15 @@ function generateHooksDoc() {
  */
 function generateTestsDoc() {
   console.log('📝 Génération de la documentation des tests...');
-  
+
   let markdownOutput = `# Documentation des Tests\n\n> Généré le: ${CONFIG.date}\n\n`;
-  
+
   // Trouver tous les fichiers de test
   const testFiles = [];
-  
+
   function findTestFiles(dir) {
     if (!fs.existsSync(dir)) return;
-    
+
     const files = fs.readdirSync(dir, { withFileTypes: true });
     files.forEach(file => {
       const fullPath = path.join(dir, file.name);
@@ -642,17 +663,17 @@ function generateTestsDoc() {
       }
     });
   }
-  
+
   findTestFiles('./src');
-  
+
   markdownOutput += `## Couverture des Tests\n\n`;
   markdownOutput += `**Total des fichiers de test:** ${testFiles.length}\n\n`;
-  
+
   testFiles.forEach(testFile => {
     const relativePath = testFile.replace('./src/', '').replace(/_/g, '\\_');
     markdownOutput += `- **${relativePath}**\n`;
   });
-  
+
   markdownOutput += `\n## Commandes de Test\n\n`;
   markdownOutput += `\`\`\`bash\n`;
   markdownOutput += `# Tests unitaires\nnpm run test:unit\n\n`;
@@ -681,14 +702,15 @@ function generateReport() {
   report += `- ✅ Services\n`;
   report += `- ✅ Hooks\n`;
   report += `- ✅ Tests\n\n`;
-  
+
   report += `## 📁 Fichiers Générés\n\n`;
-  const generatedFiles = fs.readdirSync(CONFIG.generatedDir)
+  const generatedFiles = fs
+    .readdirSync(CONFIG.generatedDir)
     .filter(file => file.endsWith('.md'))
     .map(file => `- \`${file}\``)
     .join('\n');
   report += generatedFiles;
-  
+
   fs.writeFileSync(path.join(CONFIG.generatedDir, 'README.md'), report);
 }
 
