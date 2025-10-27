@@ -1,95 +1,97 @@
----
-alwaysApply: true
----
 flowchart TD
-  %% App Flowchart for Linkart (app_flowchart.mdc)
-  %% Legend: users = buyer/seller as single user with capabilities
+  %% Root / Auth
+  Splash["Splash\n(vérif. session)"] -->|nouveau| Onboarding["Onboarding\n(carousel)"]
+  Splash -->|session valide| AppRoot["App Root\n(Tabs)"]
 
-  %% Start
-  Start([Start]) --> Splash[/"Splash Screen: Linkart"/]
-  Splash --> Auth{Is user authenticated?}
-  Auth -- No --> SignUp["Sign Up / Sign In (OTP)"]
-  SignUp --> CreateProfile["Create minimal profile\n(name, bio, location)"]
-  CreateProfile --> SetDefaults["Set default capabilities:\ncan_buy=true, others=false"]
-  SetDefaults --> Home
-  Auth -- Yes --> Home[/Home / Marketplace/]
+  Onboarding --> Login["Login / Register\n(OTP)"]
+  Login --> OTP["OTP Verification"]
+  OTP --> ProfileSetup["Profile Setup\n(select role & capabilities)"]
+  ProfileSetup --> AppRoot
 
-  %% Home / Marketplace
-  Home --> Browse["Browse / Search / Filters"]
-  Browse --> ProductCard["Product Card (preview, price, seller)"]
-  ProductCard --> ProductDetail["Open Product Detail"]
-  ProductDetail --> Preview["Play Preview (30s)"]
+  %% Main Tabs (subgraph)
+  subgraph Tabs [Barre inférieure - Tabs]
+    direction LR
+    HomeTab["Home\n(Discover)"]
+    MarketplaceTab["Marketplace\n(Beats / Services)"]
+    UploadTab["Upload / Sell"]
+    WalletTab["Wallet"]
+    ProfileTab["Profile"]
+  end
 
-  %% Buying flow
-  ProductDetail --> BuyClick{"User clicks Buy?"}
-  BuyClick -- Yes --> CheckCanBuy{user.capabilities.can_buy?}
-  CheckCanBuy -- No --> PromptEnableSellOrBuy["Prompt: Activate buying capability"]
-  CheckCanBuy -- Yes --> Checkout["Checkout: show price, commission (5%), total"]
-  Checkout --> SelectPayment["Select payment method\n(Wave / Orange Money)"]
-  SelectPayment --> CreateTx["POST /api/pay -> create transaction (pending)"]
-  CreateTx --> PaymentProcessing["Process mobile money payment"]
-  PaymentProcessing -->|Success| TxPaid["transaction.status = paid"]
-  PaymentProcessing -->|Failure| TxFailed["transaction.status = failed"]
-  TxFailed --> NotifyFail["Notify user: payment failed"]
-  TxPaid --> CalcCommission["Calculate commission (5%)\nnet = gross - commission"]
-  CalcCommission --> UpdateWallet["Update seller.wallet += net"]
-  CalcCommission --> GenerateContract["Generate contract PDF -> store R2\ntransactions.contract_url"]
-  GenerateContract --> GenerateDownload["Generate presigned GET URL (TTL 15m)"]
-  GenerateDownload --> ReturnToApp["Return download URL to app"]
-  ReturnToApp --> DownloadStart["App downloads/streams file"]
-  DownloadStart --> LogDownload["Log entry in download_logs"]
-  LogDownload --> ShowContract["Display contract & receipt"]
-  ShowContract --> EndBuyFlow([Purchase complete])
+  AppRoot --> Tabs
 
-  %% Upload / Seller flow
-  Home --> PublishCTA["Publish / Sell button"]
-  PublishCTA --> CheckCanSell{user.capabilities.can_sell?}
-  CheckCanSell -- No --> ActivateSell["Activate seller (form: genres, payment account)"]
-  ActivateSell --> RequestSellApproval["Admin validation step\n(set can_sell true on approval)"]
-  RequestSellApproval --> CheckCanSell
-  CheckCanSell -- Yes --> UploadRequest["POST /api/upload-request -> presigned PUT URL (5m)"]
-  UploadRequest --> UploadClient["Client PUT upload (preview + full file)"]
-  UploadClient --> UploadComplete["POST /api/upload-complete -> create product (status=pending)"]
-  UploadComplete --> AdminQueue["Product in admin moderation queue"]
-  AdminQueue --> AdminDecision{"Admin approves?"}
-  AdminDecision -- Approve --> ProductActive["product.status = active"]
-  AdminDecision -- Reject --> ProductRejected["product.status = rejected\nnotify seller"]
-  ProductActive --> VisibleInMarketplace["Visible in marketplace (boosted if active)"]
+  %% HOME flow
+  HomeTab --> Search["Search / Filters"]
+  HomeTab --> BeatsList["Beats List"]
+  HomeTab --> ServicesList["Services List"]
+  BeatsList --> BeatDetails["Beat Details\n(preview 30s)"]
+  ServicesList --> ServiceDetails["Service Details"]
 
-  %% Boosts flow
-  ProductDetail --> BoostCTA["User clicks 'Boost' (product/profile)"]
-  BoostCTA --> CheckCanBuy
-  CheckCanBuy -- Yes --> BoostCheckout["Checkout for boost (type/duration)"]
-  BoostCheckout --> CreateBoostTx["Create boost transaction (type=boost)"]
-  CreateBoostTx --> BoostPayment["Process payment (boost)"]
-  BoostPayment -->|Success| ActivateBoost["Insert record in boosts\nstart_at -> end_at"]
-  ActivateBoost --> UpdateRanking["Boost affects listing order / featured slots"]
+  %% MARKETPLACE flow
+  MarketplaceTab --> BeatsList
+  MarketplaceTab --> SamplesList["Samples & Kits"]
+  BeatsList -->|select| BeatDetails
+  BeatDetails --> Checkout["Checkout / Cart"]
+  ServiceDetails --> BookingForm["Booking Form"]
 
-  %% Admin flows
-  AdminPanel["Admin Panel"] --> ViewPending["View pending products / reports"]
-  ViewPending --> AdminDecision
-  AdminPanel --> ToggleCapabilities["Toggle user.capabilities (e.g., can_withdraw)"]
-  AdminPanel --> ProcessWithdrawals["Process withdrawal requests (manual)"]
+  %% PAYMENT / ESCROW flow
+  Checkout --> Payment["Payment Provider\n(Wave/OM)"]
+  Payment --> PaymentWebhook["Payment Callback\n(validate + set paid_held)"]
+  PaymentWebhook --> PaymentSuccess["Payment Success\n(status=paid_held)"]
+  PaymentSuccess --> GenerateDownload["Generate Download Token / URL"]
+  GenerateDownload --> DownloadViewer["Download Viewer / Player"]
+  PaymentWebhook -->|admin| Dispute["Dispute / Refund"]
+  Dispute --> AdminPanel["Admin: Dispute Management"]
 
-  %% Wallet & Withdrawals
-  UserMenu["User Menu"] --> Wallet["View Wallet Balance"]
-  Wallet --> RequestWithdraw["Request Withdrawal (Wave/OM)"]
-  RequestWithdraw --> CreateWithdrawTx["Create withdrawal record (pending)"]
-  CreateWithdrawTx --> AdminPanel
-  AdminPanel --> MarkWithdrawPaid["Admin marks withdrawal as paid"]
-  MarkWithdrawPaid --> UpdateWalletAfterWithdraw["Deduct from wallet & notify user"]
+  %% UPLOAD / SELL flow
+  UploadTab --> UploadCenter["Upload Center\n(preview 30s)"]
+  UploadCenter --> UploadComplete["Upload Complete\n(create product status=pending)"]
+  UploadComplete --> AdminApproval["Admin Approval"]
+  AdminApproval -->|approved| ProductActive["Product Active"]
+  ProductActive --> MyProducts["My Products"]
+  MyProducts --> BoostScreen["Boost Product / Profile"]
 
-  %% Error / edge cases
-  DownloadStart -->|Expired URL| Expired["Download URL expired"]
-  Expired --> RenewDownload["User requests new download -> POST /api/generate-download"]
-  RenewDownload --> GenerateDownload
+  %% WALLET flow
+  WalletTab --> Wallet["Wallet\n(balance, history)"]
+  Wallet --> WithdrawReq["Withdraw Request"]
+  WithdrawReq --> WithdrawPending["Withdraw Pending (admin)"]
+  WithdrawPending -->|confirm| WithdrawPaid["Withdraw Paid"]
 
-  AdminDecision -->|Suspicious content| SuspendUser["Suspend seller / revoke can_sell\nnotify support"]
+  %% PURCHASES / LICENSES
+  ProfileTab --> MyPurchases["My Purchases"]
+  MyPurchases --> DownloadViewer
+  MyPurchases --> Contracts["Contracts (PDF)"]
 
-  %% Misc & end
-  EndBuyFlow --> Home
-  ProductRejected --> Home
-  VisibleInMarketplace --> Home
+  %% PROFILE / RATINGS
+  ProfileTab --> ProfileView["Profile View\n(public & self)"]
+  ProfileView --> EditProfile["Edit Profile"]
+  ProfileView --> Ratings["Ratings & Reviews"]
+  Ratings --> RespondReview["Respond (seller)"]
 
-  style Start fill:#f9f,stroke:#333,stroke-width:1px
-  style EndBuyFlow fill:#9f9,stroke:#333,stroke-width:1px
+  %% COMMUNICATION
+  HomeTab --> Notifications["Notifications"]
+  Notifications --> Inbox["Inbox / Messages"]
+  BeatDetails -->|contact seller| Inbox
+  ServiceDetails -->|contact| Inbox
+  BookingForm --> Inbox
+
+  %% ADMIN flows (separate)
+  AdminPanel --> AdminDashboard["Admin Dashboard\n(products, transactions)"]
+  AdminDashboard --> PendingProducts["Pending Products"]
+  PendingProducts -->|approve/reject| AdminActions["Approve / Reject"]
+
+  %% ERRORS & STATES
+  AppRoot --> Offline["Offline / Error"]
+  Offline --> Retry["Retry / Cached content"]
+
+  %% Special states & links
+  PaymentSuccess --> MyPurchases
+  ProductActive --> BeatsList
+  MyProducts --> EditProduct["Edit Product"]
+  EditProduct --> UploadCenter
+
+  %% Visual grouping
+  classDef auth fill:#f7fafc,stroke:#cbd5e1;
+  classDef main fill:#ffffff,stroke:#e2e8f0;
+  class Splash,Onboarding,Login,OTP,ProfileSetup auth;
+  class Tabs,HomeTab,MarketplaceTab,UploadTab,WalletTab,ProfileTab main;
