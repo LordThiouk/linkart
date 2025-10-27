@@ -1,6 +1,6 @@
 # Documentation des Fonctionnalités
 
-> Généré le: 2025-10-25
+> Généré le: 2025-10-27
 
 ## 🎯 Admin
 
