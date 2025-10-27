@@ -133,3 +133,4 @@ export const Button: React.FC<ButtonProps> = ({
 export default Button;
 // Test comment
 // Test modification
+// Test pre-commit hook
