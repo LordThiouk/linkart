@@ -11,6 +11,29 @@ const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
 
+// Charger les variables d'environnement depuis .env
+function loadEnvFile() {
+  const envPath = path.join(process.cwd(), '.env');
+  if (fs.existsSync(envPath)) {
+    const envContent = fs.readFileSync(envPath, 'utf8');
+    const envLines = envContent.split('\n');
+    
+    envLines.forEach(line => {
+      const trimmedLine = line.trim();
+      if (trimmedLine && !trimmedLine.startsWith('#')) {
+        const [key, ...valueParts] = trimmedLine.split('=');
+        if (key && valueParts.length > 0) {
+          const value = valueParts.join('=');
+          process.env[key] = value;
+        }
+      }
+    });
+  }
+}
+
+// Charger les variables d'environnement au début
+loadEnvFile();
+
 const CONFIG = {
   docsDir: './docs',
   generatedDir: './docs/generated',
@@ -153,19 +176,184 @@ function generateAPIDocs() {
 }
 
 /**
- * Génère les types TypeScript depuis la DB
+ * Génère les types TypeScript depuis la base de données distante
  */
 function generateTypes() {
-  console.log('📝 Génération des types TypeScript...');
+  console.log('📝 Génération des types TypeScript depuis la base de données...');
+  
+  // Debug : vérifier les variables d'environnement
+  console.log('🔍 Debug des variables d\'environnement :');
+  console.log('SUPABASE_ACCESS_TOKEN:', process.env.SUPABASE_ACCESS_TOKEN ? `${process.env.SUPABASE_ACCESS_TOKEN.substring(0, 10)}...` : 'NON DÉFINI');
+  console.log('SUPABASE_SERVICE_ROLE_KEY:', process.env.SUPABASE_SERVICE_ROLE_KEY ? `${process.env.SUPABASE_SERVICE_ROLE_KEY.substring(0, 10)}...` : 'NON DÉFINI');
+  console.log('SUPABASE_ANON_KEY:', process.env.SUPABASE_ANON_KEY ? `${process.env.SUPABASE_ANON_KEY.substring(0, 10)}...` : 'NON DÉFINI');
+  
   try {
-    execSync('npx supabase gen types typescript --project-id tevnkidggpvqpislmhht > src/types/supabase.ts', {
-      stdio: 'inherit',
-    });
-    console.log('✅ Types TypeScript générés');
+    // Utiliser le SUPABASE_ACCESS_TOKEN s'il est disponible
+    if (process.env.SUPABASE_ACCESS_TOKEN) {
+      console.log('🔍 Utilisation du SUPABASE_ACCESS_TOKEN');
+      console.log('Token complet:', process.env.SUPABASE_ACCESS_TOKEN);
+      
+      const env = {
+        ...process.env,
+        SUPABASE_ACCESS_TOKEN: process.env.SUPABASE_ACCESS_TOKEN
+      };
+      
+      console.log('🔍 Exécution de la commande Supabase CLI...');
+      execSync('npx supabase gen types typescript --project-id "tevnkidggpvqpislmhht" --schema public > src/types/supabase.ts', {
+        stdio: 'inherit',
+        env: env
+      });
+      console.log('✅ Types TypeScript générés depuis la base de données distante');
+      return;
+    }
+    
+    // Utiliser le SUPABASE_SERVICE_ROLE_KEY s'il est disponible
+    if (process.env.SUPABASE_SERVICE_ROLE_KEY) {
+      console.log('🔍 Utilisation du SUPABASE_ACCESS_TOKEN');
+      console.log('Token complet:', process.env.SUPABASE_ACCESS_TOKEN);
+      
+      const env = {
+        ...process.env,
+        SUPABASE_ACCESS_TOKEN: process.env.SUPABASE_ACCESS_TOKEN
+      };
+      
+      console.log('🔍 Exécution de la commande Supabase CLI...');
+      execSync('npx supabase gen types typescript --project-id "tevnkidggpvqpislmhht" --schema public > src/types/supabase.ts', {
+        stdio: 'inherit',
+        env: env
+      });
+      console.log('✅ Types TypeScript générés depuis la base de données distante');
+      return;
+    }
+    
+    // Fallback : générer depuis les migrations si pas de token
+    console.log('⚠️ Pas de SUPABASE_ACCESS_TOKEN disponible, génération depuis les migrations...');
+    generateTypesFromMigrations();
+    
   } catch (_error) {
-    console.error(
-      '❌ Erreur lors de la génération des types TypeScript. Assurez-vous que Supabase est bien configuré.'
-    );
+    console.error('❌ Erreur avec Supabase CLI, fallback vers les migrations...');
+    console.error('Détails:', _error.message);
+    generateTypesFromMigrations();
+  }
+}
+
+/**
+ * Génère les types TypeScript depuis les migrations (fallback)
+ */
+function generateTypesFromMigrations() {
+  try {
+    const allSchemaContent = getCombinedMigrations();
+    
+    if (!allSchemaContent) {
+      console.log('⚠️ Aucun schéma trouvé dans les migrations');
+      return;
+    }
+    
+    let typesOutput = `// Types générés automatiquement depuis les migrations (fallback)
+// Généré le: ${CONFIG.date}
+// ⚠️ Ces types peuvent ne pas être synchronisés avec la base de données distante
+
+export interface Database {
+  public: {
+    Tables: {
+`;
+    
+    // Extraire les tables depuis les migrations
+    const tableRegex = /CREATE TABLE\s+([\w."]+)\s+\(([\s\S]*?)\);/g;
+    let match;
+    
+    while ((match = tableRegex.exec(allSchemaContent)) !== null) {
+      const tableName = match[1].replace(/"/g, '');
+      const columnsText = match[2];
+      
+      typesOutput += `      ${tableName}: {
+        Row: {
+`;
+      
+      // Extraire les colonnes
+      const lines = columnsText.split('\n').filter(line => line.trim().length > 0 && !line.trim().startsWith('--'));
+      lines.forEach(line => {
+        const trimmedLine = line.trim().replace(/,$/, '');
+        const parts = trimmedLine.match(/^(\w+)\s+([\w\(\)]+)(.*)/);
+        if (parts) {
+          const name = parts[1];
+          const type = parts[2];
+          const constraints = parts[3].trim();
+          
+          if (!['PRIMARY', 'FOREIGN', 'CHECK', 'CONSTRAINT'].includes(name.toUpperCase())) {
+            // Convertir les types SQL en types TypeScript
+            let tsType = 'string';
+            if (type.includes('INT') || type.includes('NUMERIC') || type.includes('DECIMAL')) {
+              tsType = 'number';
+            } else if (type.includes('BOOL')) {
+              tsType = 'boolean';
+            } else if (type.includes('TIMESTAMP') || type.includes('DATE')) {
+              tsType = 'string';
+            } else if (type.includes('JSON')) {
+              tsType = 'any';
+            }
+            
+            const nullable = constraints.includes('NOT NULL') ? '' : ' | null';
+            typesOutput += `          ${name}: ${tsType}${nullable};\n`;
+          }
+        }
+      });
+      
+      typesOutput += `        };
+        Insert: {
+          // Types pour l'insertion (sans les valeurs auto-générées)
+        };
+        Update: {
+          // Types pour la mise à jour (tous les champs optionnels)
+        };
+      };
+`;
+    }
+    
+    typesOutput += `    };
+    Views: {
+      // Vues si nécessaire
+    };
+    Functions: {
+      // Fonctions RPC si nécessaire
+    };
+    Enums: {
+      // Enums si nécessaire
+    };
+  };
+}
+
+export type Tables<
+  PublicTableNameOrOptions extends
+    | keyof (Database["public"]["Tables"] & Database["public"]["Views"])
+    | { schema: keyof Database },
+  TableName extends PublicTableNameOrOptions extends { schema: keyof Database }
+    ? keyof (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
+        Database[PublicTableNameOrOptions["schema"]]["Views"])
+    : never = never,
+> = PublicTableNameOrOptions extends { schema: keyof Database }
+  ? (Database[PublicTableNameOrOptions["schema"]]["Tables"] &
+      Database[PublicTableNameOrOptions["schema"]]["Views"])[TableName] extends {
+      Row: infer R;
+    }
+    ? R
+    : never
+  : PublicTableNameOrOptions extends keyof (Database["public"]["Tables"] &
+        Database["public"]["Views"])
+    ? (Database["public"]["Tables"] &
+        Database["public"]["Views"])[PublicTableNameOrOptions] extends {
+        Row: infer R;
+      }
+      ? R
+      : never
+    : never;
+`;
+    
+    fs.writeFileSync(path.join(process.cwd(), 'src/types/supabase.ts'), typesOutput);
+    console.log('✅ Types TypeScript générés depuis les migrations (fallback)');
+  } catch (_error) {
+    console.error('❌ Erreur lors de la génération des types TypeScript.');
+    console.error('Détails:', _error.message);
   }
 }
 
