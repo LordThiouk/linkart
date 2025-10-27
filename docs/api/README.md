@@ -177,7 +177,515 @@ Récupère la liste des produits actifs avec filtres.
 }
 ```
 
-### 3.3 Paiements & Transactions
+### 3.2 Marketplace & Recherche
+
+#### `GET /api/products`
+
+**Capability requise** : Aucune (public)
+
+Récupère la liste des produits actifs avec filtres.
+
+**Query Parameters:**
+
+- `type`: `beat` | `sample` | `kit` | `service`
+- `genre`: `trap` | `afrobeat` | `hip-hop` | etc.
+- `minPrice`: number
+- `maxPrice`: number
+- `sortBy`: `newest` | `price_asc` | `price_desc` | `rating`
+- `page`: number (pagination)
+- `limit`: number (défaut: 20)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "products": [
+      {
+        "id": "uuid",
+        "title": "Trap Beat 2025",
+        "type": "beat",
+        "price": 50000,
+        "previewUrl": "presigned-url",
+        "rating": 4.5,
+        "seller": {
+          "name": "Producer Name",
+          "verified": true
+        }
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 20,
+      "total": 150,
+      "hasMore": true
+    }
+  }
+}
+```
+
+#### `GET /api/products/:id/pricing`
+
+**Capability requise** : Aucune (public)
+
+Récupère les options de tarification multi-licences pour un produit.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "productId": "uuid",
+    "pricing": [
+      {
+        "id": "uuid",
+        "licenseType": "basic",
+        "price": 25000,
+        "terms": "Usage non-commercial uniquement",
+        "isAvailable": true,
+        "displayOrder": 1
+      },
+      {
+        "id": "uuid",
+        "licenseType": "non_exclusive",
+        "price": 50000,
+        "terms": "Usage commercial, distribution limitée",
+        "isAvailable": true,
+        "displayOrder": 2
+      },
+      {
+        "id": "uuid",
+        "licenseType": "exclusive",
+        "price": 150000,
+        "terms": "Droits exclusifs complets",
+        "isAvailable": true,
+        "displayOrder": 3
+      }
+    ]
+  }
+}
+```
+
+### 3.3 Services & Réservations
+
+#### `GET /api/services`
+
+**Capability requise** : Aucune (public)
+
+Récupère la liste des services professionnels disponibles.
+
+**Query Parameters:**
+
+- `category`: `mixing` | `mastering` | `recording` | `production` | `coaching`
+- `location`: string (ville/région)
+- `minPrice`: number
+- `maxPrice`: number
+- `sortBy`: `newest` | `rating` | `price_asc` | `price_desc`
+- `page`: number (pagination)
+- `limit`: number (défaut: 20)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "services": [
+      {
+        "id": "uuid",
+        "title": "Mixage Professionnel",
+        "category": "mixing",
+        "provider": {
+          "name": "Studio Pro",
+          "verified": true,
+          "rating": 4.8
+        },
+        "pricing": [
+          {
+            "tierName": "Basic Mix",
+            "price": 20000,
+            "description": "Mix simple, 2h",
+            "durationEstimate": "2h",
+            "isOnDemand": false
+          },
+          {
+            "tierName": "Premium Mix",
+            "price": null,
+            "description": "Mix personnalisé",
+            "durationEstimate": "Variable",
+            "isOnDemand": true
+          }
+        ],
+        "portfolioUrl": "presigned-url"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 20,
+      "total": 45,
+      "hasMore": true
+    }
+  }
+}
+```
+
+#### `GET /api/services/:id/pricing`
+
+**Capability requise** : Aucune (public)
+
+Récupère les options de tarification multi-tiers pour un service.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "serviceId": "uuid",
+    "pricing": [
+      {
+        "id": "uuid",
+        "tierName": "Basic Mix",
+        "price": 20000,
+        "description": "Mix simple, 2h de travail",
+        "durationEstimate": "2h",
+        "isOnDemand": false,
+        "displayOrder": 1
+      },
+      {
+        "id": "uuid",
+        "tierName": "Standard Mix",
+        "price": 35000,
+        "description": "Mix + mastering, 4h de travail",
+        "durationEstimate": "4h",
+        "isOnDemand": false,
+        "displayOrder": 2
+      },
+      {
+        "id": "uuid",
+        "tierName": "Premium Mix",
+        "price": null,
+        "description": "Mix personnalisé selon vos besoins",
+        "durationEstimate": "Variable",
+        "isOnDemand": true,
+        "displayOrder": 3
+      }
+    ]
+  }
+}
+```
+
+#### `POST /api/bookings/create`
+
+**Capability requise** : `can_buy`
+
+Crée une demande de réservation pour un service.
+
+**Request:**
+
+```json
+{
+  "serviceId": "uuid",
+  "pricingTierId": "uuid", // Optionnel pour services "à la demande"
+  "scheduledAt": "2025-11-15T14:00:00Z",
+  "notes": "Besoin d'un mixage pour mon nouveau single"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "bookingId": "uuid",
+    "status": "pending",
+    "message": "Demande de réservation envoyée au prestataire"
+  }
+}
+```
+
+#### `GET /api/bookings`
+
+**Capability requise** : Aucune (utilisateur authentifié)
+
+Récupère les réservations de l'utilisateur (en tant que client ou prestataire).
+
+**Query Parameters:**
+
+- `role`: `client` | `provider` (défaut: les deux)
+- `status`: `pending` | `confirmed` | `completed` | `cancelled`
+- `page`: number (pagination)
+- `limit`: number (défaut: 20)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "bookings": [
+      {
+        "id": "uuid",
+        "service": {
+          "title": "Mixage Professionnel",
+          "category": "mixing"
+        },
+        "provider": {
+          "name": "Studio Pro"
+        },
+        "client": {
+          "name": "Artiste Name"
+        },
+        "status": "confirmed",
+        "scheduledAt": "2025-11-15T14:00:00Z",
+        "negotiatedPrice": 25000,
+        "notes": "Besoin d'un mixage pour mon nouveau single"
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 20,
+      "total": 8,
+      "hasMore": false
+    }
+  }
+}
+```
+
+#### `PATCH /api/bookings/:id/confirm`
+
+**Capability requise** : Propriétaire du service
+
+Confirme une demande de réservation.
+
+**Request:**
+
+```json
+{
+  "negotiatedPrice": 25000, // Optionnel pour services "à la demande"
+  "notes": "Prix convenu pour le mixage"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "bookingId": "uuid",
+    "status": "confirmed",
+    "conversationId": "uuid",
+    "message": "Réservation confirmée, chat activé"
+  }
+}
+```
+
+#### `PATCH /api/bookings/:id/complete`
+
+**Capability requise** : Propriétaire du service
+
+Marque une réservation comme complétée.
+
+**Request:**
+
+```json
+{
+  "notes": "Service terminé avec succès"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "bookingId": "uuid",
+    "status": "completed",
+    "message": "Service marqué comme complété"
+  }
+}
+```
+
+#### `PATCH /api/bookings/:id/cancel`
+
+**Capability requise** : Client ou prestataire
+
+Annule une réservation.
+
+**Request:**
+
+```json
+{
+  "reason": "Changement de planning"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "bookingId": "uuid",
+    "status": "cancelled",
+    "message": "Réservation annulée"
+  }
+}
+```
+
+### 3.4 Messagerie (Services uniquement)
+
+#### `POST /api/conversations/create`
+
+**Capability requise** : Aucune (utilisateur authentifié)
+
+Crée une conversation liée à une réservation de service.
+
+**Request:**
+
+```json
+{
+  "bookingId": "uuid"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "conversationId": "uuid",
+    "bookingId": "uuid",
+    "status": "active",
+    "message": "Conversation créée"
+  }
+}
+```
+
+#### `POST /api/messages/send`
+
+**Capability requise** : Participant de la conversation
+
+Envoie un message dans une conversation de service.
+
+**Request:**
+
+```json
+{
+  "conversationId": "uuid",
+  "content": "Bonjour, j'aimerais discuter des détails du mixage"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "messageId": "uuid",
+    "conversationId": "uuid",
+    "content": "Bonjour, j'aimerais discuter des détails du mixage",
+    "senderId": "uuid",
+    "timestamp": "2025-10-22T10:30:00Z"
+  }
+}
+```
+
+#### `GET /api/conversations`
+
+**Capability requise** : Aucune (utilisateur authentifié)
+
+Récupère les conversations de l'utilisateur.
+
+**Query Parameters:**
+
+- `status`: `active` | `closed`
+- `page`: number (pagination)
+- `limit`: number (défaut: 20)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "conversations": [
+      {
+        "id": "uuid",
+        "booking": {
+          "service": {
+            "title": "Mixage Professionnel"
+          }
+        },
+        "status": "active",
+        "lastMessage": {
+          "content": "Parfait, on se voit demain à 14h",
+          "timestamp": "2025-10-22T10:30:00Z"
+        },
+        "unreadCount": 0
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 20,
+      "total": 3,
+      "hasMore": false
+    }
+  }
+}
+```
+
+#### `GET /api/conversations/:id/messages`
+
+**Capability requise** : Participant de la conversation
+
+Récupère les messages d'une conversation.
+
+**Query Parameters:**
+
+- `page`: number (pagination)
+- `limit`: number (défaut: 50)
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "messages": [
+      {
+        "id": "uuid",
+        "content": "Bonjour, j'aimerais discuter des détails du mixage",
+        "senderId": "uuid",
+        "timestamp": "2025-10-22T10:30:00Z",
+        "isRead": true
+      },
+      {
+        "id": "uuid",
+        "content": "Parfait, quel style de musique ?",
+        "senderId": "uuid",
+        "timestamp": "2025-10-22T10:32:00Z",
+        "isRead": true
+      }
+    ],
+    "pagination": {
+      "page": 1,
+      "limit": 50,
+      "total": 2,
+      "hasMore": false
+    }
+  }
+}
+```
+
+### 3.5 Paiements & Transactions (Beats/Kits uniquement)
 
 #### `POST /api/pay`
 
@@ -192,6 +700,7 @@ Initie un paiement pour un produit (beats et kits uniquement).
 ```json
 {
   "productId": "uuid",
+  "pricingId": "uuid", // ID de la licence sélectionnée depuis /api/products/:id/pricing
   "paymentMethod": "wave" | "orange_money",
   "phoneNumber": "+221701234567"
 }

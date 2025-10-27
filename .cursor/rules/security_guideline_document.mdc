@@ -97,28 +97,39 @@ La sécurité de Linkart repose sur trois piliers :
 
 ---
 
-## 5. Paiements & modèle escrow
+## 5. Paiements & modèle escrow (Beats/Kits uniquement)
 
 ### 5.1 Processus
 
-1. Achat → transaction créée (`status=pending`)
+**⚠️ IMPORTANT :** L'escrow s'applique UNIQUEMENT aux beats, samples et kits. Les services sont gratuits et les paiements se font directement entre client et prestataire.
+
+1. Achat produit → transaction créée (`status=pending`)
 2. Paiement validé par Wave → (`status=paid_held`)
 3. Fonds bloqués en escrow virtuel.
 4. Libération manuelle/automatique → (`status=released`)
 5. Commission 5 % déduite, reste transféré au wallet vendeur.
 
-### 5.2 Sécurité du flux
+### 5.2 Validation du Pricing
+
+* **Vérification pricing_id** : Chaque transaction doit référencer un `pricing_id` valide depuis `product_pricing`.
+* **Validation licence** : Vérifier que la licence sélectionnée existe et est disponible.
+* **Cohérence prix** : Le montant payé doit correspondre exactement au prix de la licence sélectionnée.
+* **Disponibilité** : Vérifier que `is_available = true` pour la licence.
+
+### 5.3 Sécurité du flux
 
 * Vérification de signature Wave webhook (HMAC).
 * Aucune logique de paiement côté mobile.
 * Toutes les transactions validées par Edge Function avec service role key.
 * Historique horodaté pour audit.
+* **Blocage services** : Rejet automatique des tentatives d'achat de services via `/api/pay`.
 
-### 5.3 Protection contre fraudes
+### 5.4 Protection contre fraudes
 
-* Double vérification montant / transaction ID.
+* Double vérification montant / transaction ID / pricing_id.
 * Blocage auto si incohérence entre payload Wave et DB.
 * Limitation du nombre de tentatives (max 3 paiements simultanés / utilisateur).
+* **Validation pricing** : Vérification que le pricing_id appartient bien au produit acheté.
 
 ---
 
@@ -132,17 +143,50 @@ La sécurité de Linkart repose sur trois piliers :
 
 ---
 
-## 7. API & Edge Functions
+## 7. Services & Messagerie (Sécurité)
 
-### 7.1 Bonnes pratiques
+### 7.1 Services Gratuits
+
+* **Aucun paiement via plateforme** : Les services ne peuvent pas être achetés via `/api/pay`.
+* **Paiements externes** : Les paiements se font directement entre client et prestataire.
+* **Pas de commission** : Linkart ne prélève aucune commission sur les services.
+* **Validation prestataire** : Seuls les utilisateurs avec `can_offer_services = true` peuvent publier des services.
+
+### 7.2 Système de Réservation
+
+* **Authentification requise** : Toutes les réservations nécessitent un utilisateur authentifié.
+* **Validation créneaux** : Vérification que le créneau demandé est disponible.
+* **Limitation réservations** : Max 5 réservations en attente par utilisateur.
+* **Protection spam** : Rate limiting sur les créations de réservations (3/min).
+
+### 7.3 Messagerie Conditionnelle
+
+* **Restriction stricte** : Chat uniquement pour les réservations de services confirmées.
+* **Pas de chat produits** : Aucune messagerie autorisée pour les beats/kits (protection revenus).
+* **Validation booking** : Seuls les participants d'une réservation confirmée peuvent chatter.
+* **Rate limiting** : Max 50 messages/heure par utilisateur.
+* **Modération automatique** : Détection de liens externes et tentatives de contournement.
+
+### 7.4 Protection des Revenus
+
+* **Blocage contournement** : Détection des tentatives de négociation hors plateforme.
+* **Monitoring messages** : Surveillance des échanges pour détecter les fraudes.
+* **Signalement utilisateurs** : Système de signalement pour comportements suspects.
+* **Sanctions automatiques** : Suspension temporaire en cas de violation répétée.
+
+---
+
+## 8. API & Edge Functions
+
+### 8.1 Bonnes pratiques
 
 * Toujours vérifier `auth.uid()` au début.
-* Jamais d’accès direct à la DB sans RLS.
+* Jamais d'accès direct à la DB sans RLS.
 * Inputs validés et typés (`zod` recommandé).
 * Erreurs masquées (jamais de stack trace brute).
 * Logging via Sentry (`captureException`).
 
-### 7.2 Limites & quotas
+### 8.2 Limites & quotas
 
 | Endpoint             | Limite | Raison                      |
 | -------------------- | ------ | --------------------------- |
@@ -150,10 +194,12 @@ La sécurité de Linkart repose sur trois piliers :
 | `/generate-download` | 3/min  | Éviter génération spam URLs |
 | `/pay`               | 3/min  | Sécurité paiement           |
 | `/withdraw`          | 1/h    | Prévention fraude           |
+| `/bookings/create`   | 3/min  | Protection spam réservations |
+| `/messages/send`     | 50/h   | Limitation messagerie       |
 
 ---
 
-## 8. Sécurité mobile
+## 9. Sécurité mobile
 
 * Stockage sécurisé via **SecureStore** ou **EncryptedStorage** (pas AsyncStorage brut).
 * Nettoyage complet des sessions au logout.
@@ -163,20 +209,22 @@ La sécurité de Linkart repose sur trois piliers :
 
 ---
 
-## 9. Sécurité admin
+## 10. Sécurité admin
 
 * Accès admin via JWT spécial (`role=admin`).
 * Fonctions protégées :
 
   * `/api/admin/products/approve`
   * `/api/admin/withdraw/confirm`
+  * `/api/admin/services/moderate`
+  * `/api/admin/bookings/resolve`
 * Journalisation de chaque action admin.
 * Possibilité de suspendre un utilisateur ou bloquer une transaction.
 * Audit mensuel des logs.
 
 ---
 
-## 10. Monitoring & alerting
+## 11. Monitoring & alerting
 
 * **Sentry** pour exceptions et erreurs.
 * **Supabase logs** : requêtes et Edge Functions.
@@ -189,7 +237,7 @@ La sécurité de Linkart repose sur trois piliers :
 
 ---
 
-## 11. Sauvegardes & reprise
+## 12. Sauvegardes & reprise
 
 * Backup DB Supabase quotidien (automatique).
 * Sauvegarde R2 (liste objets + métadonnées).
@@ -201,7 +249,7 @@ La sécurité de Linkart repose sur trois piliers :
 
 ---
 
-## 12. Tests de sécurité & audits
+## 13. Tests de sécurité & audits
 
 * Tests automatisés sur endpoints sensibles : `/pay`, `/download`, `/withdraw`.
 * Audit code trimestriel (RLS, Edge Functions, permissions R2).
@@ -210,19 +258,19 @@ La sécurité de Linkart repose sur trois piliers :
 
 ---
 
-## 13. Politique utilisateur
+## 14. Politique utilisateur
 
-* L’utilisateur doit valider les CGU et accepter que :
+* L'utilisateur doit valider les CGU et accepter que :
 
   * les ventes passent par escrow,
   * les transactions sont vérifiables,
   * tout contenu illégal peut être supprimé.
-* Droit d’accès, rectification, suppression (RGPD).
+* Droit d'accès, rectification, suppression (RGPD).
 * Suppression complète du compte à la demande (table `users.deleted_at`).
 
 ---
 
-## 14. Conformité légale
+## 15. Conformité légale
 
 * Respect RGPD (données UE).
 * Conformité CNRA / SODAV (musique, droit d’auteur).
@@ -231,7 +279,7 @@ La sécurité de Linkart repose sur trois piliers :
 
 ---
 
-## 15. Processus d’incident
+## 16. Processus d'incident
 
 1. Détection via logs / alertes.
 2. Notification automatique admin.
@@ -242,7 +290,7 @@ La sécurité de Linkart repose sur trois piliers :
 
 ---
 
-## 16. Bonnes pratiques développeur
+## 17. Bonnes pratiques développeur
 
 * Pas de `console.log()` avec données utilisateur.
 * Ne jamais exposer les tokens R2 ou service role.
@@ -254,7 +302,7 @@ La sécurité de Linkart repose sur trois piliers :
 
 ---
 
-## 17. Checklists déploiement sécurisé
+## 18. Checklists déploiement sécurisé
 
 ### Avant mise en prod :
 
@@ -266,5 +314,8 @@ La sécurité de Linkart repose sur trois piliers :
 * [ ] Sauvegarde récente DB
 * [ ] Sentry actif
 * [ ] CI/CD sans secrets exposés
+* [ ] Validation pricing testée
+* [ ] Blocage services vérifié
+* [ ] Messagerie conditionnelle testée
 
 

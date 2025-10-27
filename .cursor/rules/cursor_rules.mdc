@@ -3,8 +3,10 @@ alwaysApply: true
 ---
 # Cursor Rules — Operational & Prompting Guide for Linkart
 
-> Version: v1.0
+> Version: v2.1
 > Purpose: Provide precise operational rules, prompting conventions and do/don'ts for Cursor AI when working on the Linkart codebase. This file complements `cursor_project_rules.mdc` and is intended to be the single source-of-truth for Cursor's behavior, prompts format, CI interactions and production safety.
+> 
+> **Architecture v2.1**: Séparation claire entre Products (beats/kits payants) et Services (professionnels gratuits) avec système multi-pricing pour les deux. Ajout du Design System v2.0, système de favoris et playlists éditoriales.
 
 ---
 
@@ -26,6 +28,14 @@ Cursor must treat this file as **authoritative** and check it before producing o
 6. **All** file access must use presigned URLs (R2). No proxying of file contents through the app server by default.
 7. **Always** add tests for new logic (unit or integration) and description in PR.
 8. **All** Edge Functions must include a README header describing purpose, input, output, env vars, and required capabilities.
+9. **CRITICAL**: Always distinguish between Products (beats/kits payants) and Services (professionnels gratuits) in all code and documentation.
+10. **CRITICAL**: Never mix product and service logic in the same feature folder or Edge Function.
+11. **CRITICAL**: All pricing logic must use separate tables (`product_pricing` for products, `service_pricing` for services).
+12. **CRITICAL**: Services are NEVER purchasable via `/api/pay` - they use booking system only.
+13. **CRITICAL**: Design System v2.0 must be followed for all UI components - see `docs/product/design-system.md`.
+14. **CRITICAL**: HeartIcon and PlayButton are mandatory for Product Cards and Mini Player.
+15. **CRITICAL**: Playlists are admin-only (editorial) - users cannot create/modify playlists.
+16. **CRITICAL**: Favorites system must use optimistic UI with rollback on error.
 
 ---
 
@@ -86,19 +96,57 @@ Cursor must follow this template and return the exact artifacts requested in `#o
 
 ---
 
-## 5. Security & privacy rules
+## 5. Architecture Rules (Products vs Services)
+
+### 5.1 Database Separation Rules
+
+* **Products Table**: `products` - beats, kits, samples (payants, commission 5%)
+* **Services Table**: `services` - professionnels gratuits (0% commission)
+* **Product Pricing**: `product_pricing` - multi-licences (basic, non_exclusive, exclusive, lease)
+* **Service Pricing**: `service_pricing` - multi-tiers (prix fixe, à la demande, multi-tiers)
+* **Transactions**: ONLY reference `products.id` and `product_pricing.id` - NEVER services
+* **Bookings**: ONLY reference `services.id` and `service_pricing.id` - NEVER products
+
+### 5.2 API Endpoint Rules
+
+* **Product Endpoints**: `/api/products/*`, `/api/pay` (beats/kits uniquement)
+* **Service Endpoints**: `/api/services/*`, `/api/bookings/*` (services uniquement)
+* **Messaging**: `/api/conversations/*`, `/api/messages/*` (services uniquement)
+* **Pricing Endpoints**: `/api/products/:id/pricing`, `/api/services/:id/pricing`
+
+### 5.3 Frontend Feature Rules
+
+* **Product Features**: `src/features/products/`, `src/features/payments/`, `src/features/wallet/`
+* **Service Features**: `src/features/services/`, `src/features/bookings/`, `src/features/messaging/`
+* **Shared Features**: `src/features/pricing/` (handles both product and service pricing)
+
+### 5.4 Edge Function Rules
+
+* **Product Functions**: `supabase/functions/products/`, `supabase/functions/payments/`
+* **Service Functions**: `supabase/functions/services/`, `supabase/functions/bookings/`, `supabase/functions/conversations/`
+* **Shared Functions**: `supabase/functions/pricing/` (handles both types)
+
+---
+
+## 6. Security & privacy rules
 
 * Env secrets must be referenced only via `process.env` (Node) or `Deno.env.get` (Deno) and never printed in logs.
 * For dev examples, use placeholders like `SUPABASE_SERVICE_ROLE_KEY_PLACEHOLDER` — never real keys.
 * When creating presigned URLs include TTL constants: upload 5min, download 15min.
 * Sanitize any user-provided strings before inserting into SQL (use parameterized queries).
 * All endpoints that modify state must verify JWT and capabilities. Respond with 403 if missing.
+* **Payment Security**: `/api/pay` must validate `pricing_id` belongs to the product and reject service purchases.
+* **Messaging Security**: Chat only allowed for confirmed service bookings, never for products.
+* **Pricing Validation**: Always verify `pricing_id` exists and is available before processing transactions.
 
 ---
 
-## 6. Testing & CI integration
+## 7. Testing & CI integration
 
 * Cursor must produce tests when adding functionality. Tests should run locally and in GitHub Actions.
+* **Multi-pricing tests**: Required for any pricing-related changes (products or services).
+* **Product/Service separation tests**: Required for any changes affecting the separation.
+* **Booking system tests**: Required for any booking/messaging changes.
 
 * Add a CI step to regenerate and compare DB types; fail CI if changed types were not committed. Example GH job steps:
 
@@ -109,7 +157,7 @@ Cursor must follow this template and return the exact artifacts requested in `#o
 
 ---
 
-## 7. Code review & PR requirements
+## 8. Code review & PR requirements
 
 Every PR generated by Cursor must include:
 
@@ -119,23 +167,29 @@ Every PR generated by Cursor must include:
 * Migration files added (if any).
 * Generated types committed.
 * Tests added and passing locally.
+* **Multi-pricing tests** (if pricing-related changes).
+* **Product/Service separation tests** (if architecture changes).
+* **Booking system tests** (if booking/messaging changes).
 * Manual QA steps to validate (for payments or admin flows).
 
 No PR can be merged without at least one human approving the migration and the Edge Function README.
 
 ---
 
-## 8. Operational rules (runtime)
+## 9. Operational rules (runtime)
 
 * Cursor must not suggest running `supabase db reset` in environments with data.
 * For additive maintenance tasks (e.g., reindexing), Cursor must provide safe SQL (wrapped in transaction).
 * When writing data migration SQL (backfills), Cursor must generate idempotent scripts and include a `WHERE` guard and small preview SELECT to verify row counts.
+* **Pricing Validation**: Always verify pricing exists and is available before processing.
+* **Service Booking**: Always validate booking status before allowing messaging.
+* **Product Purchase**: Always validate pricing_id belongs to the product before processing payment.
 
 ---
 
-## 9. Prompt examples for common tasks
+## 10. Prompt examples for common tasks
 
-### 9.1 Add new migration
+### 10.1 Add new migration
 
 ```
 #context
@@ -149,7 +203,7 @@ Create migration using supabase migration new "add_ratings_table" with SQL to cr
 - supabase/migrations/<timestamp>_add_ratings_table.sql
 ```
 
-### 9.2 Create Edge Function
+### 10.2 Create Edge Function
 
 ```
 #context
@@ -165,9 +219,82 @@ Add function supabase/functions/upload-request/index.ts which validates can_sell
 - test file
 ```
 
+### 10.3 Add Product Pricing
+
+```
+#context
+Add multi-licensing for products (beats/kits).
+#task
+Create migration using supabase migration new "add_product_pricing" with SQL to create product_pricing table.
+#constraints
+- reference products.id
+- license_type enum (basic, non_exclusive, exclusive, lease)
+- price int, terms text, is_available boolean
+#output
+- supabase/migrations/<timestamp>_add_product_pricing.sql
+- supabase/functions/products/pricing/index.ts
+- test file for pricing validation
+```
+
+### 10.4 Add Service Booking
+
+```
+#context
+Add booking system for services (professionnels gratuits).
+#task
+Create migration using supabase migration new "add_service_booking" with SQL to create bookings and conversations tables.
+#constraints
+- reference services.id and service_pricing.id
+- status enum (pending, confirmed, completed, cancelled)
+- messaging only for confirmed bookings
+#output
+- supabase/migrations/<timestamp>_add_service_booking.sql
+- supabase/functions/bookings/create/index.ts
+- supabase/functions/conversations/create/index.ts
+- test files for booking flow
+```
+
+### 10.5 Add Favorites System
+
+```
+#context
+Add favorites system for beats (users can like/unlike products).
+#task
+Create migration using supabase migration new "add_favorites_table" with SQL to create favorites table.
+#constraints
+- reference users.id and products.id
+- unique constraint (user_id, product_id)
+- RLS policies for user access only
+#output
+- supabase/migrations/<timestamp>_add_favorites_table.sql
+- supabase/functions/favorites/toggle/index.ts
+- src/components/atoms/HeartIcon.tsx
+- src/store/favoritesStore.ts
+- test files for favorites flow
+```
+
+### 10.6 Add Editorial Playlists
+
+```
+#context
+Add editorial playlists system (admin-only creation, user consumption).
+#task
+Create migration using supabase migration new "add_playlists_system" with SQL to create playlists and playlist_items tables.
+#constraints
+- playlists.created_by must be admin users only
+- playlist_items reference playlists.id and products.id
+- RLS policies: users can read published playlists, admins can manage all
+#output
+- supabase/migrations/<timestamp>_add_playlists_system.sql
+- supabase/functions/admin/playlists/create/index.ts
+- supabase/functions/playlists/list/index.ts
+- src/components/molecules/PlaylistCard.tsx
+- test files for playlists flow
+```
+
 ---
 
-## 10. Escalation & human checks
+## 11. Escalation & human checks
 
 Cursor must flag the following for human review:
 
@@ -175,20 +302,29 @@ Cursor must flag the following for human review:
 * Any change to RLS policies.
 * Any data migration that modifies existing rows in production tables.
 * Anything that touches user funds (wallet, withdrawals).
+* Any change to product/service separation logic.
+* Any change to pricing validation logic.
+* Any change to booking/messaging restrictions.
+* Any change to design system components (HeartIcon, PlayButton).
+* Any change to favorites system logic.
+* Any change to playlists system (admin-only restrictions).
 
 When flagged, Cursor must produce a short risk summary and suggested rollback steps.
 
 ---
 
-## 11. Versioning & change log
+## 12. Versioning & change log
 
 * Cursor must add a one-paragraph changelog entry at the top of any PR altering the codebase, migrations or functions.
 * Keep `cursor_rules.mdc` under source control and update version when rules change.
+* **v2.1**: Added design system rules, favorites system rules, and editorial playlists rules.
 
 ---
 
-## 12. Acceptance
+## 13. Acceptance
 
 By using Cursor with this repository, Cursor acknowledges these rules and must follow them strictly. If the user requests a change that violates these rules, Cursor must refuse and explain why, then present alternative safe options.
+
+**CRITICAL**: These rules are non-negotiable and must be followed for all code generation, migrations, and documentation. The separation between Products (beats/kits payants) and Services (professionnels gratuits) is fundamental to the architecture and must never be compromised. The Design System v2.0, favorites system, and editorial playlists are core features that must be implemented according to specifications.
 
 

@@ -4,8 +4,10 @@ alwaysApply: true
 
 # TESTING — Stratégie et Plan de Tests pour Linkart
 
-> Version: v1.0
+> Version: v2.0
 > But : définir la stratégie de tests complète pour garantir qualité, sécurité et stabilité de Linkart (MVP).
+> 
+> **Architecture v2.0**: Séparation claire entre Products (beats/kits payants) et Services (professionnels gratuits) avec système multi-pricing pour les deux. Ajout du Design System v2.0, système de favoris et playlists éditoriales.
 
 ---
 
@@ -141,7 +143,302 @@ test('calculateCommission returns 5% and net amount', () => {
 
 ---
 
-## 9. Test automation & CI pipeline
+## 9. Tests Multi-Pricing
+
+### 9.1 Tests Produits (Beats/Kits)
+
+**Tests de validation pricing :**
+* Vérifier que `pricing_id` existe dans `product_pricing`
+* Vérifier que `is_available = true` pour la licence
+* Vérifier que le prix payé correspond exactement au prix de la licence
+* Vérifier que `license_type` est valide (basic, non_exclusive, exclusive, lease)
+
+**Tests de transaction avec pricing :**
+```typescript
+describe('Multi-pricing transactions', () => {
+  it('should create transaction with valid pricing_id', async () => {
+    const product = await createTestProduct();
+    const pricing = await createTestPricing(product.id, 'basic', 25000);
+    
+    const response = await fetch('/api/pay', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${buyerToken}` },
+      body: JSON.stringify({
+        productId: product.id,
+        pricingId: pricing.id,
+        paymentMethod: 'wave',
+        phoneNumber: '+221701234567'
+      })
+    });
+    
+    expect(response.status).toBe(200);
+    const data = await response.json();
+    expect(data.data.amount).toBe(25000);
+  });
+  
+  it('should reject invalid pricing_id', async () => {
+    const response = await fetch('/api/pay', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${buyerToken}` },
+      body: JSON.stringify({
+        productId: 'valid-product-id',
+        pricingId: 'invalid-pricing-id',
+        paymentMethod: 'wave',
+        phoneNumber: '+221701234567'
+      })
+    });
+    
+    expect(response.status).toBe(400);
+  });
+});
+```
+
+### 9.2 Tests Services (Multi-Tiers)
+
+**Tests de réservation avec tiers :**
+* Vérifier que `pricing_tier_id` existe dans `service_pricing`
+* Vérifier que le tier est disponible
+* Vérifier la création de réservation avec tier sélectionné
+* Vérifier la négociation de prix pour services "à la demande"
+
+**Tests de messagerie conditionnelle :**
+* Vérifier que le chat n'est activé qu'après confirmation de réservation
+* Vérifier que seuls les participants de la réservation peuvent chatter
+* Vérifier le blocage des tentatives de chat pour beats/kits
+
+```typescript
+describe('Service booking with multi-tiers', () => {
+  it('should create booking with selected tier', async () => {
+    const service = await createTestService();
+    const tier = await createTestServicePricing(service.id, 'Basic Mix', 20000);
+    
+    const response = await fetch('/api/bookings/create', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${clientToken}` },
+      body: JSON.stringify({
+        serviceId: service.id,
+        pricingTierId: tier.id,
+        scheduledAt: '2025-11-15T14:00:00Z',
+        notes: 'Session de mixage'
+      })
+    });
+    
+    expect(response.status).toBe(201);
+    const data = await response.json();
+    expect(data.data.status).toBe('pending');
+  });
+  
+  it('should activate chat after booking confirmation', async () => {
+    const booking = await createTestBooking('confirmed');
+    
+    const response = await fetch('/api/conversations/create', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${clientToken}` },
+      body: JSON.stringify({
+        bookingId: booking.id
+      })
+    });
+    
+    expect(response.status).toBe(201);
+  });
+});
+```
+
+### 9.3 Tests de Séparation Products/Services
+
+**Tests de blocage des achats de services :**
+* Vérifier que `/api/pay` rejette les tentatives d'achat de services
+* Vérifier que les services ne peuvent pas être achetés via l'endpoint de paiement
+* Vérifier que les services utilisent uniquement le système de réservation
+
+```typescript
+describe('Product/Service separation', () => {
+  it('should reject service purchase via /api/pay', async () => {
+    const service = await createTestService();
+    
+    const response = await fetch('/api/pay', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${buyerToken}` },
+      body: JSON.stringify({
+        productId: service.id, // Service ID
+        pricingId: 'any-pricing-id',
+        paymentMethod: 'wave',
+        phoneNumber: '+221701234567'
+      })
+    });
+    
+    expect(response.status).toBe(400);
+    const data = await response.json();
+    expect(data.error.code).toBe('SERVICE_NOT_PURCHASABLE');
+  });
+});
+```
+
+### 9.4 Tests Favorites System (Design System v2.0)
+
+**Tests de toggle favorite :**
+* Vérifier que l'utilisateur peut liker/unliker un produit
+* Vérifier l'interface optimiste (HeartIcon change immédiatement)
+* Vérifier le rollback en cas d'erreur
+* Vérifier la contrainte unique (user_id, product_id)
+
+**Tests de synchronisation :**
+* Vérifier la synchronisation temps réel entre devices
+* Vérifier la pagination des favoris
+* Vérifier l'inclusion des détails produits et pricing
+
+```typescript
+describe('Favorites System', () => {
+  it('should toggle favorite with optimistic UI', async () => {
+    const product = await createTestProduct();
+    
+    // Test optimistic UI
+    const heartIcon = screen.getByTestId('heart-icon');
+    expect(heartIcon).toHaveStyle({ color: 'outline' });
+    
+    fireEvent.press(heartIcon);
+    
+    // Should change immediately (optimistic)
+    expect(heartIcon).toHaveStyle({ color: 'filled' });
+    
+    // API call should succeed
+    const response = await fetch('/api/favorites', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${userToken}` },
+      body: JSON.stringify({ productId: product.id })
+    });
+    
+    expect(response.status).toBe(200);
+    const data = await response.json();
+    expect(data.data.is_favorite).toBe(true);
+  });
+  
+  it('should rollback on error', async () => {
+    const product = await createTestProduct();
+    
+    // Mock API failure
+    fetchMock.mockRejectOnce(new Error('Network error'));
+    
+    const heartIcon = screen.getByTestId('heart-icon');
+    fireEvent.press(heartIcon);
+    
+    // Should rollback to previous state
+    await waitFor(() => {
+      expect(heartIcon).toHaveStyle({ color: 'outline' });
+    });
+    
+    // Should show error toast
+    expect(screen.getByText('Erreur lors de la sauvegarde')).toBeInTheDocument();
+  });
+});
+```
+
+### 9.5 Tests Playlists System (Design System v2.0)
+
+**Tests admin (création playlists) :**
+* Vérifier que seuls les admins peuvent créer des playlists
+* Vérifier la création avec métadonnées (typebeat, ambiance, BPM)
+* Vérifier l'ajout/suppression de beats dans les playlists
+* Vérifier l'ordre des beats (display_order)
+
+**Tests user (consommation playlists) :**
+* Vérifier que les utilisateurs voient seulement les playlists publiées
+* Vérifier la lecture continue automatique
+* Vérifier les contrôles du player (play/pause, next/previous)
+* Vérifier l'intégration avec le système de favoris
+
+```typescript
+describe('Playlists System', () => {
+  it('should allow admin to create playlist', async () => {
+    const adminToken = await createAdminToken();
+    
+    const response = await fetch('/api/admin/playlists', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${adminToken}` },
+      body: JSON.stringify({
+        title: 'Trap Hits 2025',
+        description: 'Les meilleurs trap beats',
+        typebeat: 'Trap',
+        ambiance: 'Énergique',
+        bpm_range: '140-160'
+      })
+    });
+    
+    expect(response.status).toBe(201);
+    const data = await response.json();
+    expect(data.data.title).toBe('Trap Hits 2025');
+    expect(data.data.is_published).toBe(false);
+  });
+  
+  it('should reject non-admin playlist creation', async () => {
+    const userToken = await createUserToken();
+    
+    const response = await fetch('/api/admin/playlists', {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${userToken}` },
+      body: JSON.stringify({
+        title: 'My Playlist',
+        description: 'Test'
+      })
+    });
+    
+    expect(response.status).toBe(403);
+  });
+  
+  it('should allow users to consume published playlists', async () => {
+    const playlist = await createTestPlaylist({ is_published: true });
+    await addBeatsToPlaylist(playlist.id, [beat1, beat2, beat3]);
+    
+    const response = await fetch('/api/playlists');
+    expect(response.status).toBe(200);
+    
+    const data = await response.json();
+    expect(data.data).toHaveLength(1);
+    expect(data.data[0].title).toBe(playlist.title);
+    expect(data.data[0].beat_count).toBe(3);
+  });
+});
+```
+
+### 9.6 Tests Design System Components
+
+**Tests des nouveaux composants :**
+* Vérifier HeartIcon (outline/filled states, animation)
+* Vérifier PlayButton (play/pause states, loading)
+* Vérifier PlaylistCard (affichage métadonnées, navigation)
+* Vérifier MiniPlayer (intégration HeartIcon, contrôles)
+
+```typescript
+describe('Design System Components', () => {
+  it('should render HeartIcon with correct states', () => {
+    const { rerender } = render(<HeartIcon isFavorite={false} onToggle={jest.fn()} />);
+    expect(screen.getByTestId('heart-icon')).toHaveStyle({ color: 'outline' });
+    
+    rerender(<HeartIcon isFavorite={true} onToggle={jest.fn()} />);
+    expect(screen.getByTestId('heart-icon')).toHaveStyle({ color: 'filled' });
+  });
+  
+  it('should render PlaylistCard with metadata', () => {
+    const playlist = {
+      id: '1',
+      title: 'Trap Hits',
+      typebeat: 'Trap',
+      ambiance: 'Énergique',
+      beat_count: 15
+    };
+    
+    render(<PlaylistCard playlist={playlist} onPress={jest.fn()} />);
+    
+    expect(screen.getByText('Trap Hits')).toBeInTheDocument();
+    expect(screen.getByText('Trap • Énergique')).toBeInTheDocument();
+    expect(screen.getByText('15 beats')).toBeInTheDocument();
+  });
+});
+```
+
+---
+
+## 10. Test automation & CI pipeline
 
 CI job (GitHub Actions) example stages:
 
@@ -207,10 +504,19 @@ CI job (GitHub Actions) example stages:
 
 * [ ] Unit tests added for new logic
 * [ ] Integration tests for new Edge Functions / DB changes
+* [ ] **Multi-pricing tests for products (beats/kits)**
+* [ ] **Multi-tier tests for services**
+* [ ] **Product/Service separation tests**
+* [ ] **Favorites system tests (toggle, sync, rollback)**
+* [ ] **Playlists system tests (admin CRUD, user consumption)**
+* [ ] **Design System components tests**
 * [ ] Tests pass locally and in CI
 * [ ] Types regenerated and committed (if migration)
 * [ ] Lint & Prettier passed
 * [ ] Security checks (webhook signatures, RLS) included
+* [ ] **Pricing validation tests included**
+* [ ] **Booking system tests included**
+* [ ] **Messaging restrictions tests included**
 * [ ] Manual QA steps included for payment-related changes
 
 ---
@@ -238,7 +544,13 @@ supabase gen types typescript --local > src/types/supabase.ts
 
 ## 16. Coverage targets
 
-* Unit + integration combined: **>= 80%** on critical modules (payments, uploads, auth).
+* Unit + integration combined: **>= 80%** on critical modules (payments, uploads, auth, **pricing**, **bookings**, **favorites**, **playlists**).
+* **Multi-pricing tests: >= 90%** coverage for pricing validation logic.
+* **Service booking tests: >= 85%** coverage for booking flow.
+* **Product/Service separation tests: 100%** coverage for critical separation logic.
+* **Favorites system tests: >= 90%** coverage for toggle and sync logic.
+* **Playlists system tests: >= 85%** coverage for admin CRUD and user consumption.
+* **Design System components tests: >= 80%** coverage for new components.
 * Global project target: **>= 70%**.
 
 ---
@@ -246,9 +558,15 @@ supabase gen types typescript --local > src/types/supabase.ts
 ## 17. Test ownership & cadence
 
 * Every PR touches tests.
+* **Multi-pricing tests: Required for any pricing-related changes.**
+* **Service booking tests: Required for any booking/messaging changes.**
+* **Product/Service separation tests: Required for any changes affecting the separation.**
+* **Favorites system tests: Required for any changes to favorites functionality.**
+* **Playlists system tests: Required for any changes to playlists functionality.**
+* **Design System tests: Required for any new component creation or modification.**
 * Nightly: run full E2E + load tests in staging.
-* Weekly: security test sweep (vulnerabilities, RLS drift).
-* Monthly: test plan review, update fixtures and thresholds.
+* Weekly: security test sweep (vulnerabilities, RLS drift, **pricing validation**, **favorites sync**, **playlists permissions**).
+* Monthly: test plan review, update fixtures and thresholds, **review multi-pricing test coverage**, **review favorites/playlists test coverage**.
 
 ---
 
@@ -264,16 +582,43 @@ supabase gen types typescript --local > src/types/supabase.ts
 
 * `README_TESTING.md` with run instructions, env variables needed for test runs and how to start local supabase & functions.
 * Provide Postman collections or curl examples for integration testing payment webhooks.
+* **Multi-pricing test examples** in documentation.
+* **Service booking test scenarios** documented.
+* **Product/Service separation test cases** clearly explained.
 
 ---
 
-## 20. Exemple de cas concret de test d’intégration (pseudocode)
+## 20. Exemple de cas concret de test d'intégration (pseudocode)
 
-1. Seed DB with seller & product.
-2. Buyer calls `/api/pay` → returns payment instruction + tx_id.
-3. Simulate Wave webhook (signed) → call `/api/payment-callback`.
-4. Assert transaction.status === 'paid_held', contract_url not null.
-5. Buyer requests `/api/generate-download` → returns presigned GET.
-6. Assert download_logs has entry after consumption.
-7. Simulate admin release → transaction.status === 'released', seller.wallet increased by net.
+### 20.1 Test Multi-Pricing Produit
+
+1. Seed DB with seller & product with multiple pricing options.
+2. Buyer calls `/api/products/:id/pricing` → returns available pricing options.
+3. Buyer selects specific pricing tier and calls `/api/pay` with `pricingId` → returns payment instruction + tx_id.
+4. Simulate Wave webhook (signed) → call `/api/payment-callback`.
+5. Assert transaction.status === 'paid_held', contract_url not null, **pricing_id matches selected tier**.
+6. Buyer requests `/api/generate-download` → returns presigned GET.
+7. Assert download_logs has entry after consumption.
+8. Simulate admin release → transaction.status === 'released', seller.wallet increased by **net amount for selected tier**.
+
+### 20.3 Test Favorites System
+
+1. Seed DB with user and multiple products.
+2. User calls `/api/favorites` → returns empty list initially.
+3. User toggles favorite on product A → calls `/api/favorites` with `productId`.
+4. Assert favorite added to DB, optimistic UI updated.
+5. User calls `/api/favorites` → returns product A in favorites list.
+6. User toggles favorite again → assert favorite removed from DB.
+7. Test rollback: mock API failure → assert UI reverts to previous state.
+
+### 20.4 Test Playlists System
+
+1. Seed DB with admin user and multiple products.
+2. Admin creates playlist → calls `/api/admin/playlists` with metadata.
+3. Admin adds beats to playlist → calls `/api/admin/playlists/:id/items`.
+4. Admin publishes playlist → updates `is_published = true`.
+5. User calls `/api/playlists` → returns published playlist.
+6. User opens playlist → calls `/api/playlists/:id` → returns beats in order.
+7. User plays playlist → tests player integration and controls.
+8. Test non-admin restriction → assert 403 for playlist creation.
 

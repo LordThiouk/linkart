@@ -3,8 +3,8 @@ alwaysApply: true
 ---
 # Linkart — Cursor Project Rules
 
-> Version: v2.4
-> Purpose: Define Cursor AI workspace rules, coding standards, and conventions for Linkart backend and mobile app development. This version adds explicit rules about Supabase-managed migrations and Edge Functions.
+> Version: v3.0
+> Purpose: Define Cursor AI workspace rules, coding standards, and conventions for Linkart backend and mobile app development. This version adds explicit rules about Supabase-managed migrations, Edge Functions, and the new separated architecture (Products vs Services) with multi-pricing.
 
 ---
 
@@ -18,6 +18,7 @@ alwaysApply: true
   * Technical stack defined in `linkart.rules.md`
 * Prefer clarity, modularity, and maintainability over brevity.
 * All features should be designed using a **modular approach** with a clear separation between components, features, and UI primitives.
+* **CRITICAL**: Always distinguish between Products (beats/kits payants) and Services (professionnels gratuits) in all code and documentation.
 
 ---
 
@@ -55,6 +56,13 @@ linkart/
 ├── app/
 │   ├── components/        # Atoms, Molecules, Organisms
 │   ├── features/          # Feature-based folders
+│   │   ├── products/      # Beats/kits (payants)
+│   │   ├── services/      # Services (gratuits)
+│   │   ├── bookings/      # Réservations services
+│   │   ├── pricing/       # Multi-pricing (licences + tiers)
+│   │   ├── payments/      # Paiements (beats/kits uniquement)
+│   │   ├── wallet/        # Wallet (beats/kits uniquement)
+│   │   └── messaging/     # Chat (services uniquement)
 │   ├── screens/
 │   ├── hooks/
 │   ├── services/          # API clients
@@ -64,6 +72,11 @@ linkart/
 ├── supabase/
 │   ├── migrations/        # SQL migrations managed by Supabase CLI
 │   ├── functions/         # Supabase Edge Functions (each folder is a function)
+│   │   ├── products/      # Product-related functions
+│   │   ├── services/      # Service-related functions
+│   │   ├── bookings/      # Booking functions
+│   │   ├── pricing/       # Pricing functions
+│   │   └── payments/      # Payment functions
 ├── docs/
 └── .env
 ```
@@ -72,7 +85,43 @@ linkart/
 
 ---
 
-## 4. Theming and Design Tokens
+## 4. Database Architecture Rules (CRITICAL)
+
+### 4.1 Products vs Services Separation
+
+* **NEVER** mix Products and Services in the same table or logic.
+* **Products** (beats/kits/samples) are **PAID** and generate **5% commission**.
+* **Services** (mixage/mastering/recording) are **FREE** and generate **0% commission**.
+* Always use separate tables: `products` + `product_pricing` vs `services` + `service_pricing`.
+
+### 4.2 Multi-Pricing Rules
+
+* **Products**: Always use `product_pricing` table for prices. NEVER store price directly in `products` table.
+* **Services**: Always use `service_pricing` table for prices. Support multiple tiers per service.
+* **Transactions**: Always reference `pricing_id` (from product_pricing), NEVER reference services.
+* **API Endpoints**: Always include pricing selection in purchase/booking flows.
+
+### 4.3 Database Constraints
+
+* `transactions.product_id` must reference `products.id` ONLY (never services).
+* `transactions.pricing_id` must reference `product_pricing.id`.
+* `bookings.service_id` must reference `services.id` ONLY.
+* `bookings.pricing_tier_id` must reference `service_pricing.id` (nullable for on-demand).
+* `ratings` must have either `product_id` OR `booking_id` (never both).
+
+### 4.4 Required Migrations
+
+When creating new features, Cursor must create migrations for:
+
+* `products` + `product_pricing` tables
+* `services` + `service_pricing` tables  
+* `bookings` + `conversations` + `messages` tables
+* Proper foreign key constraints and indexes
+* RLS policies for all new tables
+
+---
+
+## 5. Theming and Design Tokens
 
 * All colors, fonts, and spacings must come from `app/theme/colors.ts` and `theme/index.ts`.
 * Never hardcode colors or typography in components.
@@ -95,11 +144,11 @@ export const colors = {
 
 ---
 
-## 5. Supabase: Migrations & Edge Functions (Key Rules)
+## 6. Supabase: Migrations & Edge Functions (Key Rules)
 
 This section is new and mandatory. Supabase is the authoritative source for DB schema and Edge Functions. Cursor must follow these rules strictly.
 
-### 5.1 Migrations
+### 6.1 Migrations
 
 * All schema changes **must** be made as SQL migrations inside `supabase/migrations/` or via `supabase db diff` / `supabase db push` workflow.
 * **Use the Supabase CLI command** to create new migrations:
@@ -139,14 +188,14 @@ This section is new and mandatory. Supabase is the authoritative source for DB s
     const supabase = createClient<Database>(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
     ```
 
-### 5.2 Edge Functions
+### 6.2 Edge Functions
 
 * Place Edge Functions in `supabase/functions/<function-name>/index.ts` (Deno-compatible).
 * Each function folder must include a README explaining purpose, input/output JSON examples, required env vars, and capabilities required.
 * Local development: use `supabase functions serve` to run functions locally. Cursor must provide a tested function before creating a PR.
 * When modifying an Edge Function that interacts with R2, use `lib/r2.ts` helper to centralize R2 client usage.
 
-### 5.3 CI/CD for Supabase
+### 6.3 CI/CD for Supabase
 
 * Use GitHub Actions to deploy migrations and functions:
 
@@ -154,7 +203,7 @@ This section is new and mandatory. Supabase is the authoritative source for DB s
   * Protect the production branch and require code review for migrations.
 * Runner must use `SUPABASE_SERVICE_ROLE_KEY` only in CI secrets (not in PRs from forks).
 
-### 5.4 Local dev & testing
+### 6.4 Local dev & testing
 
 * Developers should run `supabase start` (or `supabase functions serve`) and a local Postgres if needed.
 * Cursor must include minimal integration test for functions that mutate DB (using test DB or mock client).
@@ -162,7 +211,7 @@ This section is new and mandatory. Supabase is the authoritative source for DB s
 
 ---
 
-## 6. API Standards
+## 7. API Standards
 
 * All endpoints must use JSON.
 * Return consistent structure with `success`, `data`, and `error` keys.
@@ -176,11 +225,29 @@ This section is new and mandatory. Supabase is the authoritative source for DB s
   * 404 Not found
   * 500 Internal error
 
+### 7.1 Product Endpoints (beats/kits)
+
+* `POST /api/pay` - MUST include `pricing_id` parameter
+* `GET /api/products/:id/pricing` - Returns all available licenses
+* All product endpoints must validate `can_sell` capability
+
+### 7.2 Service Endpoints (professionnels)
+
+* `POST /api/bookings/create` - MUST include `service_id` and optional `pricing_tier_id`
+* `GET /api/services/:id/pricing` - Returns all available tiers
+* All service endpoints must validate `can_offer_services` capability
+
+### 7.3 Messaging Endpoints (services uniquement)
+
+* `POST /api/conversations/:id/messages` - Only for confirmed bookings
+* `GET /api/conversations/:id/messages` - Only for booking participants
+
 ---
 
-## 7. Modular Architecture Rules
+## 8. Modular Architecture Rules
 
-* Each **feature** must have its own folder in `/features/` (e.g. `features/products`, `features/payments`).
+* Each **feature** must have its own folder in `/features/` (e.g. `features/products`, `features/services`, `features/bookings`).
+* **CRITICAL**: Never mix product and service logic in the same feature folder.
 * Shared UI primitives live in `/components/atoms` and `/components/molecules`.
 * Larger composite sections (cards, product forms) are in `/components/organisms`.
 * Features can only depend on:
@@ -190,10 +257,11 @@ This section is new and mandatory. Supabase is the authoritative source for DB s
   * services
   * theme
 * No circular imports.
+* **Pricing components** must be shared between products and services but handle different data structures.
 
 ---
 
-## 8. Security & Error Handling
+## 9. Security & Error Handling
 
 * Use **try/catch** everywhere network calls occur.
 * Log all caught errors with Sentry.
@@ -204,9 +272,21 @@ This section is new and mandatory. Supabase is the authoritative source for DB s
   * Upload: 5min
   * Download: 15min
 
+### 9.1 Payment Security (beats/kits uniquement)
+
+* **NEVER** allow payment endpoints to process service bookings.
+* Always validate `pricing_id` belongs to `product_id` before processing payment.
+* Escrow system: hold funds until manual/admin release.
+
+### 9.2 Messaging Security (services uniquement)
+
+* **NEVER** allow messaging between product buyers and sellers.
+* Only allow messaging for confirmed service bookings.
+* Rate limit: max 50 messages/hour per conversation.
+
 ---
 
-## 9. Version Control & CI/CD
+## 10. Version Control & CI/CD
 
 * Branch naming: `feat/`, `fix/`, `api/`, `chore/`.
 * Commits: Conventional Commits style.
@@ -215,34 +295,50 @@ This section is new and mandatory. Supabase is the authoritative source for DB s
 
 ---
 
-## 10. Testing Rules
+## 11. Testing Rules
 
 | Layer       | Tool         | Goal                                 |
 | :---------- | :----------- | :----------------------------------- |
 | Unit        | Jest         | Verify business logic                |
 | Integration | Supertest    | Validate API endpoints               |
 | E2E         | Playwright   | Test flows upload → buy → download   |
+| E2E Services| Playwright   | Test flows booking → messaging → completion |
 | UI          | Storybook RN | Build and verify reusable components |
 
 Test results must be green before deployment to production.
 
+### 11.1 Multi-Pricing Tests
+
+* Test different license types for products (basic, exclusive, non-exclusive, lease).
+* Test different tiers for services (fixed price, on-demand, multi-tier).
+* Test pricing validation in payment flows.
+* Test booking flows with different pricing options.
+
 ---
 
-## 11. Cursor AI Behaviors
+## 12. Cursor AI Behaviors
 
 * Cursor must prioritize modular code generation and proper imports.
 * Always use existing helpers (`lib/r2.ts`, `lib/payment.ts`).
 * Never hardcode credentials.
-* Must enforce 5% commission rule in all payment-related flows.
+* Must enforce 5% commission rule in all payment-related flows (beats/kits uniquement).
 * Must validate user `capabilities` for all protected endpoints.
 * Suggest test coverage when creating new features.
 * Use theme tokens for any UI component.
 * When changing DB schema, Cursor must generate a SQL migration and add it to `supabase/migrations/`.
 * When adding or editing server logic, Cursor must add/update the corresponding Edge Function under `supabase/functions/` and a README for the function.
 
+### 12.1 Critical Rules for Products vs Services
+
+* **NEVER** create payment flows for services.
+* **NEVER** create messaging flows for products.
+* **ALWAYS** use separate tables for products and services.
+* **ALWAYS** include pricing selection in purchase/booking flows.
+* **ALWAYS** validate pricing_id belongs to the correct entity.
+
 ---
 
-## 12. NativeBase & Theming Rules
+## 13. NativeBase & Theming Rules
 
 * All screens wrapped with `NativeBaseProvider` and `SafeAreaView`.
 * Custom components use `useTheme()` hook for consistent color and spacing.
@@ -252,7 +348,7 @@ Test results must be green before deployment to production.
 
 ---
 
-## 13. Future Enhancements
+## 14. Future Enhancements
 
 * Add multi-theme switching (dark/light)
 * Add Storybook RN integration

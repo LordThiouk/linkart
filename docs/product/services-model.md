@@ -1,7 +1,10 @@
 # Linkart — Modèle Services Gratuits
 
-> Version: v1.0 Auteur : Papa Diop Objet : Définir la stratégie business et technique pour les
+> Version: v2.0 Auteur : Papa Diop Objet : Définir la stratégie business et technique pour les
 > services gratuits sur Linkart
+>
+> **Architecture v2.0**: Séparation claire entre Products (beats/kits payants) et Services
+> (professionnels gratuits) avec système multi-pricing pour les deux.
 
 ---
 
@@ -284,113 +287,276 @@ CREATE TABLE messages (
 
 ## 8. Modèle de Données
 
-### 8.1 Table `products` (modifiée)
+### 8.1 Table `services` (nouvelle)
 
 ```sql
--- Ajout distinction claire
-ALTER TABLE products ADD COLUMN pricing_type TEXT CHECK (pricing_type IN ('fixed', 'on_demand', 'tiered'));
+CREATE TABLE services (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  provider_id UUID REFERENCES users(id) NOT NULL,
+  title TEXT NOT NULL,
+  description TEXT,
+  category TEXT CHECK (category IN ('mixing', 'mastering', 'recording', 'production', 'coaching', 'arrangement', 'sound_design')),
+  portfolio_keys TEXT[], -- Array des clés R2 pour les exemples
+  status TEXT CHECK (status IN ('pending', 'active', 'rejected')) DEFAULT 'pending',
+  metadata JSONB, -- Informations supplémentaires (équipements, expérience, etc.)
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Index pour performance
+CREATE INDEX idx_services_provider_id ON services(provider_id);
+CREATE INDEX idx_services_category ON services(category);
+CREATE INDEX idx_services_status ON services(status);
 ```
 
-### 8.2 Nouvelle table `service_pricing`
+### 8.2 Table `service_pricing` (détaillée)
 
 ```sql
 CREATE TABLE service_pricing (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  service_id UUID REFERENCES products(id),
-  tier_name TEXT, -- 'Basic', 'Standard', 'Premium'
-  price DECIMAL(10,2),
-  duration INTEGER, -- en minutes
-  description TEXT, -- 'Mix simple', 'Mix + Mastering'
-  is_active BOOLEAN DEFAULT true,
-  display_order INTEGER,
-  created_at TIMESTAMP DEFAULT NOW()
+  service_id UUID REFERENCES services(id) ON DELETE CASCADE NOT NULL,
+  tier_name TEXT NOT NULL, -- 'Basic Mix', 'Standard', 'Premium', etc.
+  price DECIMAL(10,2), -- NULL si is_on_demand = true
+  description TEXT NOT NULL, -- Description détaillée du tier
+  duration_estimate INTEGER, -- Durée estimée en minutes
+  is_on_demand BOOLEAN DEFAULT false, -- true pour "Contactez-moi"
+  display_order INTEGER DEFAULT 0, -- Ordre d'affichage
+  is_available BOOLEAN DEFAULT true, -- Disponibilité du tier
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
 );
+
+-- Index pour performance
+CREATE INDEX idx_service_pricing_service_id ON service_pricing(service_id);
+CREATE INDEX idx_service_pricing_display_order ON service_pricing(service_id, display_order);
+CREATE INDEX idx_service_pricing_available ON service_pricing(is_available);
+
+-- Contraintes
+ALTER TABLE service_pricing ADD CONSTRAINT check_price_or_on_demand
+CHECK ((price IS NOT NULL AND is_on_demand = false) OR (price IS NULL AND is_on_demand = true));
+
+ALTER TABLE service_pricing ADD CONSTRAINT check_positive_price
+CHECK (price IS NULL OR price > 0);
 ```
 
-### 8.3 Nouvelle table `bookings`
+### 8.3 Table `bookings` (détaillée)
 
 ```sql
 CREATE TABLE bookings (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-  service_id UUID REFERENCES products(id),
-  client_id UUID REFERENCES users(id),
-  provider_id UUID REFERENCES users(id),
-  booking_date TIMESTAMP,
-  duration INTEGER, -- en minutes
-  status TEXT CHECK (status IN ('pending', 'confirmed', 'completed', 'cancelled')),
-  notes TEXT,
-  created_at TIMESTAMP DEFAULT NOW()
+  service_id UUID REFERENCES services(id) NOT NULL,
+  pricing_tier_id UUID REFERENCES service_pricing(id), -- NULL si on_demand
+  client_id UUID REFERENCES users(id) NOT NULL,
+  provider_id UUID REFERENCES users(id) NOT NULL,
+  status TEXT CHECK (status IN ('pending', 'confirmed', 'completed', 'cancelled')) DEFAULT 'pending',
+  scheduled_at TIMESTAMP, -- Date/heure prévue
+  completed_at TIMESTAMP, -- Date/heure de completion
+  negotiated_price DECIMAL(10,2), -- Prix négocié si on_demand
+  notes TEXT, -- Notes du client
+  client_notes TEXT, -- Notes du prestataire
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
 );
+
+-- Index pour performance
+CREATE INDEX idx_bookings_service_id ON bookings(service_id);
+CREATE INDEX idx_bookings_client_id ON bookings(client_id);
+CREATE INDEX idx_bookings_provider_id ON bookings(provider_id);
+CREATE INDEX idx_bookings_status ON bookings(status);
+CREATE INDEX idx_bookings_scheduled_at ON bookings(scheduled_at);
+
+-- Contraintes
+ALTER TABLE bookings ADD CONSTRAINT check_negotiated_price_positive
+CHECK (negotiated_price IS NULL OR negotiated_price > 0);
+
+ALTER TABLE bookings ADD CONSTRAINT check_scheduled_future
+CHECK (scheduled_at IS NULL OR scheduled_at > NOW());
 ```
 
-### 8.4 Contraintes Transactions
+### 8.4 Tables `conversations` et `messages` (détaillées)
 
 ```sql
--- Bloquer transactions pour services
+CREATE TABLE conversations (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  booking_id UUID REFERENCES bookings(id) ON DELETE CASCADE NOT NULL,
+  status TEXT CHECK (status IN ('active', 'closed')) DEFAULT 'active',
+  created_at TIMESTAMP DEFAULT NOW(),
+  updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE TABLE messages (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  conversation_id UUID REFERENCES conversations(id) ON DELETE CASCADE NOT NULL,
+  sender_id UUID REFERENCES users(id) NOT NULL,
+  content TEXT NOT NULL,
+  is_read BOOLEAN DEFAULT false,
+  read_at TIMESTAMP,
+  created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- Index pour performance
+CREATE INDEX idx_conversations_booking_id ON conversations(booking_id);
+CREATE INDEX idx_messages_conversation_id ON messages(conversation_id);
+CREATE INDEX idx_messages_sender_id ON messages(sender_id);
+CREATE INDEX idx_messages_created_at ON messages(created_at);
+```
+
+### 8.5 Contraintes de Séparation Products/Services
+
+```sql
+-- Vérifier que les transactions ne référencent jamais de services
 ALTER TABLE transactions ADD CONSTRAINT check_no_service_transactions
-CHECK (product_type != 'service');
+CHECK (product_id IS NOT NULL AND service_id IS NULL);
+
+-- Vérifier que les bookings ne référencent jamais de products
+ALTER TABLE bookings ADD CONSTRAINT check_no_product_bookings
+CHECK (service_id IS NOT NULL AND product_id IS NULL);
+
+-- Vérifier que les ratings peuvent être pour products OU services, mais pas les deux
+ALTER TABLE ratings ADD CONSTRAINT check_rating_target
+CHECK (
+  (product_id IS NOT NULL AND booking_id IS NULL) OR
+  (product_id IS NULL AND booking_id IS NOT NULL)
+);
 ```
 
 ---
 
 ## 9. API Endpoints
 
-### 9.1 Réservations
+### 9.1 Services Management
 
 ```typescript
-// Créer réservation
+// Créer un service
+POST /api/services/create
+{
+  title: string,
+  description: string,
+  category: 'mixing' | 'mastering' | 'recording' | 'production' | 'coaching' | 'arrangement' | 'sound_design',
+  portfolio_keys?: string[], // Clés R2 des exemples
+  metadata?: {
+    equipment?: string[],
+    experience_years?: number,
+    specializations?: string[]
+  }
+}
+
+// Lister les services disponibles
+GET /api/services?category=mixing&status=active&page=1&limit=20
+
+// Récupérer un service spécifique
+GET /api/services/:id
+
+// Mettre à jour un service
+PATCH /api/services/:id
+{
+  title?: string,
+  description?: string,
+  status?: 'active' | 'inactive',
+  metadata?: object
+}
+```
+
+### 9.2 Service Pricing Management
+
+```typescript
+// Créer un tier de pricing
+POST /api/services/:id/pricing
+{
+  tier_name: string,
+  price?: number, // NULL si is_on_demand = true
+  description: string,
+  duration_estimate?: number, // en minutes
+  is_on_demand?: boolean,
+  display_order?: number
+}
+
+// Lister les pricing d'un service
+GET /api/services/:id/pricing
+
+// Mettre à jour un tier
+PATCH /api/services/:id/pricing/:pricingId
+{
+  tier_name?: string,
+  price?: number,
+  description?: string,
+  duration_estimate?: number,
+  is_on_demand?: boolean,
+  display_order?: number,
+  is_available?: boolean
+}
+
+// Supprimer un tier
+DELETE /api/services/:id/pricing/:pricingId
+```
+
+### 9.3 Bookings Management
+
+```typescript
+// Créer une réservation
 POST /api/bookings/create
 {
   service_id: string,
-  booking_date: string,
-  duration: number,
+  pricing_tier_id?: string, // NULL si on_demand
+  scheduled_at: string, // ISO date
   notes?: string
 }
 
-// Lister réservations utilisateur
-GET /api/bookings?user_id=xxx&status=xxx
+// Lister les réservations
+GET /api/bookings?user_id=xxx&status=pending&page=1&limit=20
 
-// Confirmer réservation (prestataire)
+// Confirmer une réservation (prestataire)
 PATCH /api/bookings/:id/confirm
-
-// Marquer complété (prestataire)
-PATCH /api/bookings/:id/complete
-
-// Annuler réservation
-PATCH /api/bookings/:id/cancel
-```
-
-### 9.2 Messagerie
-
-```typescript
-// Créer conversation (liée à réservation)
-POST /api/conversations/create
 {
-  booking_id: string,
-  other_user_id: string
+  client_notes?: string
 }
 
-// Envoyer message
-POST /api/messages/send
+// Marquer comme complété (prestataire)
+PATCH /api/bookings/:id/complete
 {
-  conversation_id: string,
+  completion_notes?: string
+}
+
+// Annuler une réservation
+PATCH /api/bookings/:id/cancel
+{
+  reason?: string
+}
+```
+
+### 9.4 Messaging System
+
+```typescript
+// Créer une conversation (automatique après confirmation)
+POST /api/conversations/create
+{
+  booking_id: string
+}
+
+// Envoyer un message
+POST /api/conversations/:id/messages
+{
   content: string
 }
 
-// Lister conversations
-GET /api/conversations
+// Lister les conversations
+GET /api/conversations?user_id=xxx&status=active
 
-// Lister messages conversation
-GET /api/conversations/:id/messages
+// Lister les messages d'une conversation
+GET /api/conversations/:id/messages?page=1&limit=50
+
+// Marquer un message comme lu
+PATCH /api/messages/:id/read
 ```
 
-### 9.3 Restrictions Paiement
+### 9.5 Restrictions Paiement
 
 ```typescript
-// POST /api/pay - MODIFIÉ
-// Bloquer pour type='service'
+// POST /api/pay - MODIFIÉ pour bloquer les services
 {
-  "error": "Services cannot be purchased through Linkart. Use booking system instead."
+  "error": "SERVICE_NOT_PURCHASABLE",
+  "message": "Services cannot be purchased through Linkart. Use booking system instead.",
+  "code": "SERVICE_NOT_PURCHASABLE"
 }
 ```
 
@@ -420,12 +586,42 @@ GET /api/conversations/:id/messages
 
 ## 11. Exemples Concrets
 
-### 11.1 Scénario : Studio Enregistrement
+### 11.1 Scénario : Studio Enregistrement (Prix Fixe)
 
-**Prestataire :** Studio "SoundWave Dakar" **Service :** Enregistrement vocal + instruments **Tarif
-:** 15,000F/heure (prix fixe)
+**Prestataire :** Studio "SoundWave Dakar"  
+**Service :** Enregistrement vocal + instruments  
+**Tarif :** 15,000F/heure (prix fixe)
 
-**Flow :**
+**Configuration Service :**
+
+```json
+{
+  "title": "Enregistrement Studio Professionnel",
+  "description": "Studio équipé avec matériel professionnel pour enregistrement vocal et instrumental",
+  "category": "recording",
+  "portfolio_keys": ["studio_example_1.mp3", "studio_example_2.mp3"],
+  "metadata": {
+    "equipment": ["Pro Tools", "Neumann U87", "SSL Console"],
+    "experience_years": 8,
+    "specializations": ["Hip-Hop", "Afrobeat", "R&B"]
+  }
+}
+```
+
+**Configuration Pricing :**
+
+```json
+{
+  "tier_name": "Enregistrement Standard",
+  "price": 15000,
+  "description": "Enregistrement vocal + instruments, mixage de base inclus",
+  "duration_estimate": 60,
+  "is_on_demand": false,
+  "display_order": 1
+}
+```
+
+**Flow Réservation :**
 
 1. Client réserve créneau 2h samedi 14h
 2. Studio confirme réservation
@@ -435,10 +631,58 @@ GET /api/conversations/:id/messages
 
 ### 11.2 Scénario : Ingénieur Multi-Tarifs
 
-**Prestataire :** "MixMaster Pro" **Service :** Mix & Mastering **Tarifs :** 3 tiers
-(Basic/Standard/Premium)
+**Prestataire :** "MixMaster Pro"  
+**Service :** Mix & Mastering  
+**Tarifs :** 3 tiers (Basic/Standard/Premium)
 
-**Flow :**
+**Configuration Service :**
+
+```json
+{
+  "title": "Mix & Mastering Professionnel",
+  "description": "Services de mixage et mastering pour tous genres musicaux",
+  "category": "mixing",
+  "portfolio_keys": ["mix_example_1.mp3", "master_example_1.mp3"],
+  "metadata": {
+    "equipment": ["Pro Tools", "Waves", "FabFilter"],
+    "experience_years": 12,
+    "specializations": ["Electronic", "Hip-Hop", "Pop"]
+  }
+}
+```
+
+**Configuration Pricing Multi-Tiers :**
+
+```json
+[
+  {
+    "tier_name": "Basic Mix",
+    "price": 20000,
+    "description": "Mix simple, 2h de travail, 1 révision incluse",
+    "duration_estimate": 120,
+    "is_on_demand": false,
+    "display_order": 1
+  },
+  {
+    "tier_name": "Standard",
+    "price": 35000,
+    "description": "Mix + Mastering, 4h de travail, 2 révisions incluses",
+    "duration_estimate": 240,
+    "is_on_demand": false,
+    "display_order": 2
+  },
+  {
+    "tier_name": "Premium",
+    "price": 50000,
+    "description": "Mix + Mastering + Révisions illimitées, 6h de travail",
+    "duration_estimate": 360,
+    "is_on_demand": false,
+    "display_order": 3
+  }
+]
+```
+
+**Flow Réservation :**
 
 1. Client choisit tier "Standard" (35,000F)
 2. Réservation créée pour 4h de travail
@@ -446,30 +690,62 @@ GET /api/conversations/:id/messages
 4. Paiement Wave direct vers prestataire
 5. Livraison fichiers finaux, avis positif
 
+### 11.3 Scénario : Service À la Demande
+
+**Prestataire :** "SoundDesign Studio"  
+**Service :** Sound Design sur mesure  
+**Tarif :** À la demande
+
+**Configuration Pricing :**
+
+```json
+{
+  "tier_name": "Sound Design Personnalisé",
+  "price": null,
+  "description": "Création d'effets sonores sur mesure selon vos besoins",
+  "duration_estimate": null,
+  "is_on_demand": true,
+  "display_order": 1
+}
+```
+
+**Flow Réservation :**
+
+1. Client fait une demande de réservation
+2. Prestataire confirme et active le chat
+3. Négociation du prix via messagerie (ex: 25,000F)
+4. Confirmation du prix et des détails
+5. Service effectué, paiement direct
+6. Avis et évaluation
+
 ---
 
 ## 12. Roadmap Évolution
 
-### 12.1 Phase 1 (MVP)
+### 12.1 Phase 1 (MVP) - ✅ Complété
 
 - ✅ Services gratuits avec réservation
 - ✅ Messagerie conditionnelle
 - ✅ Système d'avis
-- ✅ Tarification flexible
+- ✅ Tarification flexible (prix fixe, à la demande, multi-tiers)
+- ✅ Architecture séparée Products/Services
+- ✅ Système multi-pricing complet
 
-### 12.2 Phase 2 (Amélioration)
+### 12.2 Phase 2 (Amélioration) - 📅 En cours
 
-- 📅 Calendrier intégré
-- 📅 Notifications push
+- 📅 Calendrier intégré avec disponibilités
+- 📅 Notifications push pour réservations
 - 📅 Système de disponibilités avancé
-- 📅 Analytics prestataires
+- 📅 Analytics prestataires détaillés
+- 📅 Système de réputation avancé
 
-### 12.3 Phase 3 (Monétisation Optionnelle)
+### 12.3 Phase 3 (Monétisation Optionnelle) - 🔮 Futur
 
 - 🔮 Commission optionnelle services (si demande)
 - 🔮 Abonnements premium prestataires
 - 🔮 Services marketplace avancés
 - 🔮 Intégration paiements externes
+- 🔮 Système de recommandations IA
 
 ---
 
@@ -501,6 +777,15 @@ Le modèle services gratuits de Linkart vise à créer un écosystème musical c
 - **Beats/Kits** = Monétisation et revenus
 - **Messagerie** = Protection revenus + facilitation services
 - **Avis** = Qualité et confiance écosystème
+- **Multi-pricing** = Flexibilité et personnalisation
+- **Architecture séparée** = Sécurité et évolutivité
 
 Cette stratégie positionne Linkart comme la plateforme de référence pour tous les acteurs de
 l'industrie musicale sénégalaise, avec un modèle économique durable et évolutif.
+
+**Avantages techniques :**
+
+- Séparation claire des responsabilités
+- Système multi-pricing flexible
+- Messagerie conditionnelle sécurisée
+- Architecture évolutive et maintenable

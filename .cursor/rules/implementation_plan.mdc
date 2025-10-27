@@ -7,13 +7,16 @@ alwaysApply: true
 
 1. **Compte utilisateur** (auth OTP via Supabase)
 2. **Profils** avec capabilities : `can_buy`, `can_sell`
-3. **Catalogue produits** (beats, samples, kits, services)
-4. **Paiement intégré (Wave / OM)** avec commission 5 %
-5. **Téléchargement sécurisé via URL presignée**
-6. **Système de wallet et retraits manuels**
-7. **Mécanisme de boost payant (produit ou profil)**
-8. **Système de notation (ratings)**
-9. **Back-office admin minimal (approbation produits, retraits)**
+3. **Catalogue produits** (beats, samples, kits) avec multi-licences
+4. **Catalogue services** (mixage, mastering, enregistrement) avec multi-tiers
+5. **Paiement intégré (Wave / OM)** avec commission 5% sur beats/kits uniquement
+6. **Système de réservation** pour services (gratuit)
+7. **Téléchargement sécurisé via URL presignée** (beats/kits uniquement)
+8. **Système de wallet et retraits manuels** (beats/kits uniquement)
+9. **Mécanisme de boost payant** (produit, service ou profil)
+10. **Système de notation** (ratings pour produits et services)
+11. **Messagerie conditionnelle** (services uniquement)
+12. **Back-office admin minimal** (approbation produits/services, retraits)
 
 ---
 
@@ -23,16 +26,22 @@ alwaysApply: true
 
 * [ ] Créer projet Supabase (auth + db)
 * [ ] Configurer R2 Cloudflare (buckets : `beats`, `previews`, `contracts`)
-* [ ] Créer tables selon `backend_structure_document.mdc`
+* [ ] Créer tables selon `backend_structure_document.mdc` :
+  * Tables séparées : `products` + `product_pricing` (beats/kits)
+  * Tables séparées : `services` + `service_pricing` (professionnels)
+  * Tables booking : `bookings`, `conversations`, `messages`
 * [ ] Configurer RLS policies (auth.uid, capabilities)
 * [ ] Créer fonctions Edge principales :
-
   * `/upload-request`
   * `/upload-complete`
-  * `/pay`
-  * `/generate-download`
+  * `/pay` (beats/kits uniquement avec pricing_id)
+  * `/generate-download` (beats/kits uniquement)
   * `/boost`
-  * `/withdraw`
+  * `/withdraw` (beats/kits uniquement)
+  * `/bookings/create` (services uniquement)
+  * `/bookings/confirm`
+  * `/conversations/create` (services uniquement)
+  * `/messages/send` (services uniquement)
 * [ ] CI/CD GitHub Actions : migrations + functions deploy
 
 ### 3.2 Frontend setup
@@ -62,36 +71,47 @@ alwaysApply: true
 
 * [x] UI Upload (formulaire beat/sample/service)
 * [ ] Edge Function `/upload-request` → presigned PUT
-* [ ] Edge Function `/upload-complete` → insert product (status=pending)
+* [ ] Edge Function `/upload-complete` → insert product/service (status=pending)
+* [ ] UI sélection multi-licences pour beats/kits
+* [ ] UI sélection multi-tiers pour services
 * [ ] Admin validation (manual)
 
-### 4.2 Achat & paiement
+### 4.2 Achat & paiement (beats/kits uniquement)
 
-* [ ] Flow achat produit
-* [ ] Function `/pay` → transaction pending
+* [ ] Flow achat produit avec sélection licence
+* [ ] Function `/pay` → transaction pending (avec pricing_id)
 * [ ] Webhook paiement → status=paid → wallet update
 * [ ] Génération contrat PDF + R2 upload
 * [ ] Function `/generate-download` → URL presignée (15 min)
 * [ ] Téléchargement fichier (preview 30s / complet payant)
 
-### 4.3 Wallet & retraits
+### 4.3 Services & réservation (gratuit)
+
+* [ ] Flow réservation service avec sélection tier
+* [ ] Function `/bookings/create` → booking pending
+* [ ] Function `/bookings/confirm` → booking confirmed
+* [ ] Activation messagerie automatique
+* [ ] Function `/conversations/create` + `/messages/send`
+* [ ] Finalisation service (paiement externe)
+
+### 4.4 Wallet & retraits (beats/kits uniquement)
 
 * [ ] Function `/withdraw`
 * [ ] Admin validation (manual)
 * [ ] Mise à jour wallet
 * [ ] Historique retraits
 
-### 4.4 Boosts
+### 4.5 Boosts
 
 * [ ] Function `/boost` → transaction type=boost
-* [ ] Classement boosté sur `/api/products`
+* [ ] Classement boosté sur `/api/products` et `/api/services`
 * [ ] UI boost avec durée/prix
 
-### 4.5 Ratings
+### 4.6 Ratings
 
 * [x] Table `ratings` (déjà ajoutée)
-* [ ] Edge Function `/ratings/create`
-* [x] Affichage moyenne sur produit / profil
+* [ ] Edge Function `/ratings/create` (produits ET services)
+* [x] Affichage moyenne sur produit/service et profil
 * [ ] Modération admin
 
 ---
@@ -111,9 +131,10 @@ alwaysApply: true
 ## 6. Phase 4 — Admin & outils internes
 
 * [ ] Dashboard admin minimal (Supabase Studio ou React Web)
-* [ ] CRUD : produits, transactions, retraits, utilisateurs
-* [ ] Filtrage produits par statut (pending/active/rejected)
-* [ ] Suivi des revenus plateforme
+* [ ] CRUD : produits, services, transactions, retraits, utilisateurs
+* [ ] Filtrage produits/services par statut (pending/active/rejected)
+* [ ] Suivi des revenus plateforme (beats/kits uniquement)
+* [ ] Gestion des réservations et disputes
 * [ ] Export CSV (revenus, transactions, retraits)
 
 ---
@@ -124,7 +145,6 @@ alwaysApply: true
 | ---- | ----- | ----- |
 | **SODAV Monitor**         | Lier métadonnées produits à système de suivi des diffusions | ⚙️ Moyen terme |
 | **SODAV TeleDéclaration** | Déclaration automatique des œuvres vendues                  | ⚙️ Moyen terme |
-| **Booking module**        | Permettre réservation studio / ingénieur / beatmaker        | ⚙️ Long terme  |
 | **AI tagging**            | Analyse automatique du BPM, genre, tonalité des beats       | ⚙️ Long terme  |
 | **API publique**          | Pour intégration avec autres apps musicales                 | ⚙️ Long terme  |
 
@@ -157,13 +177,16 @@ alwaysApply: true
 ## 10. MVP Checklist
 
 * [ ] Auth fonctionnelle (OTP)
-* [x] Upload produit avec preview
-* [ ] Paiement 5 % commission
-* [ ] Téléchargement sécurisé
-* [x] Wallet opérationnel
-* [x] Boost actif
-* [x] Notation active
-* [ ] Admin valide produit & retrait
+* [x] Upload produit/service avec preview
+* [ ] Multi-pricing : licences pour beats/kits, tiers pour services
+* [ ] Paiement 5% commission (beats/kits uniquement)
+* [ ] Système de réservation (services gratuits)
+* [ ] Messagerie conditionnelle (services uniquement)
+* [ ] Téléchargement sécurisé (beats/kits uniquement)
+* [x] Wallet opérationnel (beats/kits uniquement)
+* [x] Boost actif (produits/services/profils)
+* [x] Notation active (produits/services)
+* [ ] Admin valide produit/service & retrait
 * [x] Logs & Sentry en place
 * [ ] CI/CD opérationnel
 

@@ -47,20 +47,22 @@ l'industrie musicale dans un écosystème sécurisé et profitable.
 flowchart TD
     A[Inscription] --> B[Activation vendeur]
     B --> C[Upload produit]
-    C --> D[Validation admin]
-    D --> E[Produit actif]
-    E --> F[Ventes]
-    F --> G[Commission 5%]
-    G --> H[Retrait wallet]
+    C --> D[Configuration multi-licences]
+    D --> E[Validation admin]
+    E --> F[Produit actif]
+    F --> G[Ventes avec sélection licence]
+    G --> H[Commission 5%]
+    H --> I[Retrait wallet]
 ```
 
 **Étapes clés :**
 
 1. **Onboarding** : Création profil + activation capabilities `can_sell`
 2. **Upload** : Beat/sample + preview 30s + métadonnées
-3. **Validation** : Modération admin (qualité, droits)
-4. **Vente** : Mise en ligne + boost optionnel
-5. **Monétisation** : Commission 5% + retrait sécurisé
+3. **Configuration multi-licences** : Définition des différents types de licences et prix
+4. **Validation** : Modération admin (qualité, droits)
+5. **Vente** : Mise en ligne + boost optionnel
+6. **Monétisation** : Commission 5% + retrait sécurisé
 
 ### 3.2 Parcours Artiste (Acheteur)
 
@@ -68,76 +70,104 @@ flowchart TD
 flowchart TD
     A[Découverte] --> B[Recherche/Filtres]
     B --> C[Preview 30s]
-    C --> D[Achat]
-    D --> E[Paiement Wave/OM]
-    E --> F[Escrow]
-    F --> G[Téléchargement]
-    G --> H[Contrat PDF]
+    C --> D[Sélection licence]
+    D --> E[Achat]
+    E --> F[Paiement Wave/OM]
+    F --> G[Escrow]
+    G --> H[Téléchargement]
+    H --> I[Contrat PDF]
 ```
 
 **Étapes clés :**
 
 1. **Découverte** : Marketplace + recommandations
 2. **Évaluation** : Preview + infos vendeur + ratings
-3. **Achat** : Checkout + paiement sécurisé
-4. **Escrow** : Fonds bloqués jusqu'à validation
-5. **Livraison** : Téléchargement + contrat automatique
+3. **Sélection licence** : Choix du type de licence adapté au projet
+4. **Achat** : Checkout + paiement sécurisé
+5. **Escrow** : Fonds bloqués jusqu'à validation
+6. **Livraison** : Téléchargement + contrat automatique
+
+### 3.3 Parcours Prestataire de Services
+
+```mermaid
+flowchart TD
+    A[Inscription] --> B[Activation services]
+    B --> C[Configuration multi-tiers]
+    C --> D[Portfolio upload]
+    D --> E[Validation admin]
+    E --> F[Service actif]
+    F --> G[Réservations gratuites]
+    G --> H[Messagerie client]
+    H --> I[Prestation externe]
+    I --> J[Évaluation]
+```
 
 ---
 
 ## 4. Modules Fonctionnels
 
-### 4.1 Marketplace
+### 4.1 Modèle Produits (Beats/Kits)
 
-- **Catalogue** : Beats, samples, kits, services
-- **Recherche** : Par genre, BPM, prix, licence
-- **Filtres** : Type, statut, rating, localisation
-- **Tri** : Pertinence, prix, nouveauté, popularité
+- **Types** : Beats, samples, kits uniquement
+- **Multi-Licences** : Chaque produit peut avoir plusieurs types de licences
+  - **Basic** : Usage limité, prix abordable
+  - **Non-Exclusive** : Usage commercial, prix moyen
+  - **Exclusive** : Droits exclusifs, prix élevé
+  - **Lease** : Location temporaire, prix réduit
+- **Pricing** : Table `product_pricing` avec prix et termes par licence
+- **Commission** : 5% fixe sur toutes les ventes
+- **Escrow** : Fonds bloqués jusqu'à validation manuelle/admin
 
-### 4.2 Système de Paiement & Escrow
+### 4.2 Système de Paiement & Escrow (Beats/Kits uniquement)
 
-- **Paiements** : Wave, Orange Money intégrés (beats/kits uniquement)
+- **Paiements** : Wave, Orange Money intégrés
 - **Escrow** : Fonds bloqués jusqu'à validation
 - **Commission** : 5% fixe sur beats et kits UNIQUEMENT
-- **Services** : Paiements externes, pas de commission
 - **Retraits** : Validation manuelle admin
+- **Sélection licence** : Obligatoire avant paiement
 
 ### 4.3 Upload & Gestion Produits
 
 - **Upload** : Fichiers complets + preview 30s
 - **Métadonnées** : Genre, BPM, licence, tags
+- **Configuration multi-licences** : Définition des prix et termes par licence
 - **Validation** : Modération qualité admin
 - **Gestion** : Édition, suppression, statistiques
 
-### 4.4 Système de Boosts
+### 4.4 Modules Services (Gratuits)
 
-- **Boost Produit** : Mise en avant temporaire
+- **Types** : Mixage, mastering, enregistrement, production, coaching, sound design
+- **Multi-Tarifs** : Chaque service peut avoir plusieurs options de tarification
+  - **Prix fixe** : Tarif unique pour une prestation définie
+  - **À la demande** : Prix négocié directement avec le client
+  - **Multi-tiers** : Plusieurs options (Basic/Standard/Premium)
+- **Pricing** : Table `service_pricing` avec prix et descriptions par tier
+- **Commission** : 0% - Services complètement gratuits pour la plateforme
+- **Paiements** : Externes (cash, Wave direct, Orange Money direct)
+- **Réservation** : Système de booking intégré et gratuit
+- **Messagerie** : Chat 1-to-1 activé après confirmation de réservation
+- **Portfolio** : Upload d'exemples de travaux
+
+### 4.5 Système de Boosts
+
+- **Boost Produit** : Mise en avant temporaire (beats/kits/services)
 - **Boost Profil** : Visibilité créateur
 - **Tarification** : 2,000 F (7j) / 5,000 F (14j)
 - **Effet** : Priorité dans résultats de recherche
 
-### 4.5 Wallet & Retraits
+### 4.6 Wallet & Retraits (Beats/Kits uniquement)
 
 - **Solde** : Affichage temps réel
 - **Historique** : Transactions détaillées
 - **Retraits** : Demande + validation admin
 - **Sécurité** : Audit trail complet
 
-### 4.6 Système de Ratings
+### 4.7 Système de Ratings (Produits ET Services)
 
 - **Notation** : 1-5 étoiles + commentaires
 - **Validation** : Achat confirmé requis (beats/kits) ou réservation complétée (services)
 - **Modération** : Signalement + masquage admin
 - **Impact** : Visibilité vendeur + confiance acheteur
-
-### 4.7 Modules Services (Gratuits)
-
-- **Réservation** : Système de booking intégré
-- **Tarification** : Prix fixe, à la demande, ou multi-tarifs
-- **Messagerie** : Chat 1-to-1 pour services uniquement
-- **Paiements** : Externes à la plateforme (Wave direct, cash)
-- **Avis** : Système d'évaluation post-prestation
-- **Disponibilités** : Gestion calendrier prestataires
 
 > **Documentation complète** : Voir [Modèle Services Gratuits](./services-model.md)
 
@@ -244,6 +274,15 @@ flowchart TD
 ---
 
 ## 9. Changelog
+
+### v2.2 (2025-10-27)
+
+- **Services gratuits** : Nouveau modèle économique avec services professionnels gratuits
+- **Multi-pricing** : Système de tarification flexible pour beats/kits et services
+- **Réservation intégrée** : Système de booking pour services avec messagerie conditionnelle
+- **Architecture séparée** : Distinction claire entre produits payants et services gratuits
+- **Commission ciblée** : 5% uniquement sur beats/kits, 0% sur services
+- **Messagerie conditionnelle** : Chat uniquement pour services, protection revenus beats/kits
 
 ### v2.1 (2025-10-27)
 

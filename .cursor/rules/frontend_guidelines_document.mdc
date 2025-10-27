@@ -3,8 +3,10 @@ alwaysApply: true
 ---
 # Linkart — Frontend Guidelines Document
 
-> Version: v1.0
-> Objectif : définir les standards techniques, l’architecture, les conventions UI/UX et les bonnes pratiques de développement pour l’application mobile Linkart (React Native + Expo).
+> Version: v2.0
+> Objectif : définir les standards techniques, l'architecture, les conventions UI/UX et les bonnes pratiques de développement pour l'application mobile Linkart (React Native + Expo).
+> 
+> **Architecture v2.0**: Séparation claire entre Products (beats/kits payants) et Services (professionnels gratuits) avec système multi-pricing pour les deux.
 
 ---
 
@@ -45,8 +47,12 @@ app/
 │   └── index.ts
 ├── features/
 │   ├── auth/
-│   ├── products/
-│   ├── wallet/
+│   ├── products/        # Beats, kits, samples (payants)
+│   ├── services/        # Professionnels gratuits
+│   ├── bookings/        # Système de réservation
+│   ├── pricing/         # Multi-pricing (licences + tiers)
+│   ├── messaging/       # Chat pour services
+│   ├── wallet/          # Wallet (beats/kits uniquement)
 │   ├── uploads/
 │   ├── boosts/
 │   └── index.ts
@@ -54,6 +60,8 @@ app/
 ├── screens/             # Pages principales
 │   ├── HomeScreen.tsx
 │   ├── ProductDetailScreen.tsx
+│   ├── ServiceDetailScreen.tsx
+│   ├── BookingScreen.tsx
 │   ├── UploadScreen.tsx
 │   ├── WalletScreen.tsx
 │   ├── ProfileScreen.tsx
@@ -72,67 +80,133 @@ app/
 
 ## 4. Thème et design tokens
 
-* Le thème global est défini dans `app/theme/colors.ts`.
+* Le thème global est défini dans `src/theme/index.ts`.
 * Aucun code hex ne doit apparaître ailleurs.
 * `theme/index.ts` crée un objet `nativeBaseTheme` via `extendTheme()`.
 * Tous les composants utilisent `useTheme()` pour accéder aux couleurs et tailles.
+* **Design System v2.0** : Voir `docs/product/design-system.md` pour les spécifications complètes.
 
 ### Exemple :
 
 ```ts
 export const colors = {
-  primary: '#1E40AF',
-  accent: '#F59E0B',
-  background: '#FFFFFF',
-  surface: '#F8FAFC',
-  text: '#0F172A',
-  muted: '#64748B',
-  danger: '#EF4444',
+  primary: '#6366F1',      // Indigo (boutons, accents)
+  secondary: '#F59E0B',    // Orange (prix, highlights)
+  music: {
+    pink: '#EC4899',       // Rose (heart icon, éléments spéciaux)
+  },
+  dark: {
+    '950': '#0A0A0A',      // Fond principal
+    '900': '#111111',      // Surface cards
+    '800': '#1A1A1A',      // Surface élevée
+    '100': '#F5F5F5',      // Texte principal
+    '300': '#D4D4D4',      // Texte secondaire
+    '400': '#A3A3A3',      // Texte tertiaire
+  },
 };
 ```
 
 ---
 
-## 5. Composants réutilisables
+## 5. Design System v2.0
 
-### 5.1 Atoms
+### 5.1 Documentation
+
+* **Design System** : `docs/product/design-system.md` - Principes, couleurs, typographie, espacements
+* **Components Library** : `docs/product/components-library.md` - Catalogue complet des composants
+* **Migration Guide** : `docs/product/migration-guide.md` - Plan de migration des composants existants
+* **Screens Specs** : `docs/product/screens-specs.md` - Spécifications détaillées des écrans
+* **Playlists Feature** : `docs/product/playlists-feature.md` - Système de playlists éditoriales
+* **Likes Feature** : `docs/product/likes-feature.md` - Système de favoris
+
+### 5.2 Nouveaux Composants
+
+#### Atoms
+* `HeartIcon` - Toggle favorite avec animation
+* `PlayButton` - Bouton play/pause avec variants
+* `Pill/Chip` - Tags avec close button
+
+#### Molecules
+* `ServiceCard` - Cards pour services professionnels
+* `PlaylistCard` - Cards pour playlists éditoriales
+* `MiniPlayer` - Player sticky avec heart icon
+
+#### Organisms
+* `HeroBanner` - Grande carte featured avec gradient
+* `FilterPills` - Filtres scrollables horizontaux
+* `TrendingSection` - Section horizontale des tendances
+* `ServicesSection` - Section verticale des services
+
+## 6. Composants réutilisables
+
+### 6.1 Atoms
 
 * `ButtonPrimary`, `InputField`, `TextLabel`, `Badge`, `Avatar`.
-* Tous acceptent `variant`, `size`, et props d’accessibilité.
+* **Nouveaux** : `HeartIcon`, `PlayButton`, `Pill/Chip`.
+* Tous acceptent `variant`, `size`, et props d'accessibilité.
 
-### 5.2 Molecules
+### 6.2 Molecules
 
-* `ProductCard`, `AudioPlayer`, `RatingStars`, `BoostBadge`.
+* `ProductCard`, `ServiceCard`, `AudioPlayer`, `RatingStars`, `BoostBadge`.
+* `PricingCard` (pour licences et tiers), `BookingCard`, `MessageBubble`.
+* **Nouveaux** : `PlaylistCard`, `MiniPlayer` (adapté).
 * Règle : aucune logique réseau.
 
-### 5.3 Organisms
+### 6.3 Organisms
 
-* `ProductList`, `CheckoutForm`, `UploadForm`, `ProfileHeader`.
+* `ProductList`, `ServiceList`, `CheckoutForm`, `BookingForm`, `UploadForm`, `ProfileHeader`.
+* `PricingSelector` (sélection licence/tier), `ChatInterface`, `BookingCalendar`.
+* **Nouveaux** : `HeroBanner`, `FilterPills`, `TrendingSection`, `ServicesSection`.
 * Peuvent gérer de la logique locale (state/UI).
 
 ---
 
-## 6. Navigation
+## 7. Navigation
 
-* Stack principale : `AuthStack`, `MainTabs`, `ProductStack`.
+* Stack principale : `AuthStack`, `MainTabs`, `ProductStack`, `ServiceStack`, `BookingStack`.
+* **Nouveaux** : `PlaylistStack`, `FavoritesStack`.
 * Redirection automatique vers Home si utilisateur déjà logué.
-* Routes protégées (middleware Auth) pour pages Wallet, Upload.
+* Routes protégées (middleware Auth) pour pages Wallet, Upload, Booking.
+* **Séparation claire** : Products et Services ont des stacks séparés.
+
+### 7.1 Écrans Principaux
+
+#### Home Stack
+* `HomeScreen` - Dashboard principal avec hero banner, tendances, services
+* `PlaylistDetailScreen` - Détail playlist avec player intégré
+* `FavoritesScreen` - Écran des favoris avec grid 2 colonnes
+
+#### Marketplace Stack
+* `MarketplaceScreen` - Marketplace avec filtres et tabs
+* `ProductDetailScreen` - Détail produit avec pricing multi-licences
+* `ServiceDetailScreen` - Détail service avec pricing multi-tiers
+
+#### Service Stack
+* `BookingScreen` - Réservation de service
+* `ChatScreen` - Messagerie pour services
+* `BookingHistoryScreen` - Historique des réservations
 
 ---
 
-## 7. Bonnes pratiques UX
+## 8. Bonnes pratiques UX
 
 * Transitions fluides, feedback immédiat sur actions.
 * Utiliser `Toast` de NativeBase pour toutes confirmations/erreurs.
 * Loader visible pour actions > 1s.
 * Pré-écoute audio max 30s, autoplay interdit.
 * Utiliser les icônes Lucide (`lucide-react-native`).
+* **Sélection de pricing** : Interface claire pour choisir licence/tier.
+* **Réservation** : Processus simple et guidé pour les services.
+* **Messagerie** : Interface intuitive pour le chat des services.
+* **Heart Icon** : Animation scale (0.9 → 1.1 → 1.0) + feedback haptique.
+* **Playlists** : Lecture continue automatique avec contrôles intuitifs.
+* **Favoris** : Interface optimiste avec synchronisation temps réel.
 
 ---
 
-## 8. Gestion des données & API
+## 9. Gestion des données & API
 
-### 8.1 Services
+### 9.1 Services
 
 * Tous les appels réseau passent par `/services/api.ts` :
 
@@ -144,89 +218,180 @@ export const api = axios.create({
 });
 ```
 
-### 8.2 Exemple d’appel
+### 9.2 Exemples d'appels
 
 ```ts
+// Products (beats/kits)
 export const fetchProducts = async () => {
   const { data } = await api.get('/api/products');
   return data;
 };
+
+export const fetchProductPricing = async (productId: string) => {
+  const { data } = await api.get(`/api/products/${productId}/pricing`);
+  return data;
+};
+
+// Services (professionnels gratuits)
+export const fetchServices = async () => {
+  const { data } = await api.get('/api/services');
+  return data;
+};
+
+export const fetchServicePricing = async (serviceId: string) => {
+  const { data } = await api.get(`/api/services/${serviceId}/pricing`);
+  return data;
+};
+
+// Bookings
+export const createBooking = async (bookingData: any) => {
+  const { data } = await api.post('/api/bookings/create', bookingData);
+  return data;
+};
+
+// Messaging
+export const sendMessage = async (conversationId: string, content: string) => {
+  const { data } = await api.post(`/api/conversations/${conversationId}/messages`, { content });
+  return data;
+};
+
+// Favorites (Nouveaux)
+export const toggleFavorite = async (productId: string) => {
+  const { data } = await api.post('/api/favorites', { product_id: productId });
+  return data;
+};
+
+export const fetchFavorites = async () => {
+  const { data } = await api.get('/api/favorites');
+  return data;
+};
+
+// Playlists (Nouveaux)
+export const fetchPlaylists = async () => {
+  const { data } = await api.get('/api/playlists');
+  return data;
+};
+
+export const fetchPlaylistDetail = async (playlistId: string) => {
+  const { data } = await api.get(`/api/playlists/${playlistId}`);
+  return data;
+};
 ```
 
-### 8.3 Erreurs
+### 9.3 Erreurs
 
 * Catch global avec `Toast.show()` + log Sentry.
+* **Validation pricing** : Vérifier que pricing_id existe avant paiement.
+* **Validation booking** : Vérifier que service est disponible avant réservation.
+* **Interface optimiste** : Mise à jour immédiate pour favoris avec rollback en cas d'erreur.
 
 ---
 
-## 9. Authentification
+## 10. Authentification
 
 * Auth par OTP (téléphone ou email).
 * Lors de la première connexion → création profil minimal (`users` table).
 * Stocker `session` dans Zustand (persistée via AsyncStorage).
 * Token JWT est injecté automatiquement dans `axios` headers.
+* **Capabilities** : `can_buy`, `can_sell`, `can_offer_services`, `can_withdraw`.
+* **Nouvelles capabilities** : `can_create_playlists` (admin uniquement).
 
 ---
 
-## 10. Gestion du média
+## 11. Gestion du média
 
 * Upload via `/api/upload-request` → obtention URL PUT.
 * Le fichier complet (zip/mp3) envoyé sur R2, preview 30s max.
 * Lien de téléchargement presigné généré après paiement.
+* **Services** : Portfolio (mp3) pour démonstration des compétences.
+* **Products** : Fichier complet (zip) pour téléchargement après achat.
+* **Playlists** : Covers générées (gradient + icon) ou uploadées.
+* **Favoris** : Pas de fichiers, juste références aux produits.
 
 ---
 
-## 11. Performances
+## 12. Performances
 
 * Pagination infinie (FlatList avec `onEndReached`).
 * Lazy load images avec `expo-image`.
 * Utiliser `React.memo` et `useCallback` sur les listes longues.
 * Bundles optimisés avec EAS Build.
+* **Pricing** : Cache des options de pricing pour éviter les appels répétés.
+* **Bookings** : Pagination des réservations et messages.
+* **Favoris** : Cache local avec synchronisation différentielle.
+* **Playlists** : Cache des playlists avec invalidation intelligente.
+* **Animations** : Native driver pour les animations fluides.
 
 ---
 
-## 12. Sécurité
+## 13. Sécurité
 
 * Ne jamais stocker les clés API ou service key localement.
 * Utiliser variables `EXPO_PUBLIC_*` et config `.env`.
 * Téléchargement uniquement via presigned URLs (15 min).
 * Nettoyage des states sensibles au logout.
+* **Pricing** : Validation côté client ET serveur des pricing_id.
+* **Messaging** : Vérification que l'utilisateur peut accéder à la conversation.
+* **Bookings** : Vérification des permissions avant création de réservation.
+* **Favoris** : Validation que l'utilisateur peut liker le produit.
+* **Playlists** : Vérification des permissions admin pour création/modification.
 
 ---
 
-## 13. Tests
+## 14. Tests
 
 | Type | Outil           | Description                    |
 | ---- | --------------- | ------------------------------ |
 | Unit | Jest            | Test des hooks et stores       |
 | UI   | Testing Library | Test composants interactifs    |
 | E2E  | Playwright      | Scénarios achat, upload, login |
+| **Multi-pricing** | Jest | Test sélection licence/tier |
+| **Booking** | Testing Library | Test flow réservation |
+| **Messaging** | Testing Library | Test interface chat |
+| **Favoris** | Testing Library | Test toggle favorite et sync |
+| **Playlists** | Testing Library | Test lecture continue et contrôles |
 
 ---
 
-## 14. Accessibilité
+## 15. Accessibilité
 
 * Tous les boutons doivent avoir `accessibilityLabel`.
 * Texte lisible en dark/light mode.
-* Support clavier et lecteurs d’écran sur Android/iOS.
+* Support clavier et lecteurs d'écran sur Android/iOS.
+* **Pricing** : Labels clairs pour les options de licence/tier.
+* **Booking** : Instructions vocales pour le processus de réservation.
+* **Messaging** : Support des lecteurs d'écran pour les messages.
+* **Heart Icon** : Labels pour les états favori/non-favori.
+* **Playlists** : Navigation claire entre les beats de la playlist.
+* **Animations** : Respect des préférences `prefers-reduced-motion`.
 
 ---
 
-## 15. CI/CD mobile
+## 16. CI/CD mobile
 
 * Build via **EAS Build** sur chaque tag.
 * Version bump auto via `expo-version`.
 * Tests exécutés avant build.
 * Upload sur Play Store / TestFlight via EAS submit.
+* **Tests multi-pricing** exécutés avant déploiement.
+* **Tests booking/messaging** exécutés avant déploiement.
+* **Tests favoris/playlists** exécutés avant déploiement.
+* **Tests design system** exécutés avant déploiement.
 
 ---
 
-## 16. Futur (phases suivantes)
+## 17. Futur (phases suivantes)
 
-* Mode offline (caching produits).
+* Mode offline (caching produits et services).
 * Thème sombre auto.
 * Multi-langue (i18n + fr/en).
 * Notifications push (Expo Push API).
 * Dashboard web React (admin).
+* **Services avancés** : Calendrier intégré, notifications de réservation.
+* **Messagerie avancée** : Partage de fichiers, appels vocaux.
+* **Pricing dynamique** : Suggestions de prix basées sur le marché.
+* **Playlists intelligentes** : Génération automatique par IA.
+* **Favoris avancés** : Catégories, partage, export.
+* **Analytics** : Dashboard utilisateur avec statistiques.
 
 

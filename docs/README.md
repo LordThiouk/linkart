@@ -1,7 +1,10 @@
 # Documentation Linkart
 
-> Version: v2.0 Auteur: Papa Diop Dernière mise à jour: 2025-10-27 Objet: Documentation centrale
+> Version: v3.0 Auteur: Papa Diop Dernière mise à jour: 2025-10-27 Objet: Documentation centrale
 > complète du projet Linkart - Marketplace musicale du Sénégal
+>
+> **Architecture v3.0**: Séparation claire entre Products (beats/kits payants) et Services
+> (professionnels gratuits) avec système multi-pricing pour les deux.
 
 ---
 
@@ -22,6 +25,7 @@ Devenir la **plateforme de référence** pour l'industrie musicale en Afrique fr
 - **Sécuriser** les transactions et la propriété intellectuelle
 - **Faciliter** la collaboration et la création
 - **Monétiser** équitablement les talents créatifs
+- **Offrir** des services gratuits pour maximiser l'acquisition d'utilisateurs
 
 ---
 
@@ -95,11 +99,15 @@ docs/
 ### Fonctionnalités Clés
 
 - ✅ **Marketplace** : Beats, samples, kits, services
-- ✅ **Paiements sécurisés** : Wave/Orange Money + escrow
+- ✅ **Paiements sécurisés** : Wave/Orange Money + escrow (beats/kits uniquement)
+- ✅ **Services gratuits** : Mixage, mastering, enregistrement (0% commission)
+- ✅ **Système de réservation** : Booking intégré pour services
+- ✅ **Messagerie conditionnelle** : Chat uniquement pour services
+- ✅ **Multi-pricing** : Licences multiples (beats) + tiers multiples (services)
 - ✅ **Upload** : Fichiers complets + preview 30s
 - ✅ **Boosts** : Mise en avant payante
-- ✅ **Ratings** : Système d'évaluation
-- ✅ **Wallet** : Gestion des fonds et retraits
+- ✅ **Ratings** : Système d'évaluation (produits ET services)
+- ✅ **Wallet** : Gestion des fonds et retraits (beats/kits uniquement)
 - ✅ **Admin** : Validation et modération
 
 ---
@@ -194,10 +202,13 @@ npm run docs:maintain
 
 ### Projet
 
-- **GMV** : Volume transactions total
-- **Commission** : 5% fixe sur toutes ventes
-- **Utilisateurs** : Beatmakers, artistes, studios
+- **GMV** : Volume transactions total (beats/kits uniquement)
+- **Commission** : 5% fixe sur beats/kits UNIQUEMENT
+- **Services** : 0% commission (gratuits pour la plateforme)
+- **Utilisateurs** : Beatmakers, artistes, studios, ingénieurs du son
 - **Géographie** : Sénégal + Afrique francophone
+- **Réservations** : Nombre de services réservés
+- **Cross-selling** : Taux de conversion services → beats
 
 ---
 
@@ -209,6 +220,8 @@ npm run docs:maintain
 - ✅ Génération automatique opérationnelle
 - ✅ Synchronisation CI/CD active
 - ✅ Documentation technique complète
+- ✅ **Architecture séparée** Products/Services documentée
+- ✅ **Multi-pricing** et booking system documentés
 
 ### Phase 2 - Growth (Q2 2025) 🔄
 
@@ -216,6 +229,7 @@ npm run docs:maintain
 - 🔄 Guides vidéo intégrés
 - 🔄 API interactive (Swagger UI)
 - 🔄 Documentation mobile (app)
+- 🔄 **Services avancés** : Calendrier, notifications
 
 ### Phase 3 - Scale (Q3-Q4 2025) 📋
 
@@ -223,6 +237,7 @@ npm run docs:maintain
 - 📋 Guides intégration SODAV
 - 📋 Documentation compliance légale
 - 📋 Analytics documentation usage
+- 📋 **Monétisation services** (si applicable)
 
 ---
 
@@ -261,6 +276,16 @@ npm run docs:maintain
 
 ## 📝 Changelog
 
+### v3.0 (2025-10-27)
+
+- **Architecture séparée** Products/Services implémentée
+- **Services gratuits** avec système de réservation
+- **Messagerie conditionnelle** (services uniquement)
+- **Multi-pricing** pour licences et tiers
+- **Documentation complète** de la nouvelle architecture
+- **Tests multi-pricing** et booking system
+- **Sécurité renforcée** avec validation pricing
+
 ### v2.0 (2025-10-27)
 
 - **Documentation complète** selon les règles du projet
@@ -287,10 +312,15 @@ npm run docs:maintain
 3. **Couvre tous les aspects** : technique, produit, API, utilisateur
 4. **Respecte les standards** de qualité documentaire
 5. **Évolue automatiquement** avec le projet
+6. **Documente l'architecture séparée** Products/Services
+7. **Inclut le système multi-pricing** et booking
+8. **Assure la sécurité** avec validation pricing
 
 **C'est un système de documentation vivant et intelligent !** 🚀
 
----
+**Nouvelle architecture v3.0 :**
 
-_Cette documentation est maintenue automatiquement par le système Linkart. Pour toute question,
-consultez les sections spécialisées ou contactez l'équipe._
+- **Products** (beats/kits) : Commission 5%, escrow, paiements sécurisés
+- **Services** (professionnels) : Gratuits, réservation, messagerie conditionnelle
+- **Multi-pricing** : Licences multiples + tiers multiples
+- **Sécurité renforcée** : Validation pricing, séparation claire

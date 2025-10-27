@@ -196,6 +196,39 @@ R: La réservation reste en attente. Vous pouvez l'annuler et chercher un autre 
 **Q: Puis-je négocier le prix d'un service ?**
 R: Oui, via le chat intégré. Les prix affichés sont indicatifs pour les services "à la demande".
 
+### 3.6 Multi-Pricing & Licences
+
+**Q: Qu'est-ce que le multi-pricing pour les beats ?**
+R: Les beatmakers peuvent proposer plusieurs licences pour le même beat :
+- **Basic** : Usage non-commercial (prix réduit)
+- **Non-Exclusive** : Usage commercial, distribution limitée
+- **Exclusive** : Droits exclusifs complets (prix élevé)
+- **Lease** : Location temporaire des droits
+
+**Q: Comment choisir une licence ?**
+R: Sur la page du produit, vous verrez toutes les options disponibles avec leurs prix et conditions.
+Sélectionnez celle qui correspond à vos besoins.
+
+**Q: Puis-je acheter plusieurs licences du même beat ?**
+R: Non, une seule licence par beat. Choisissez celle qui correspond le mieux à votre projet.
+
+**Q: Qu'est-ce que le multi-tarifs pour les services ?**
+R: Les prestataires peuvent proposer plusieurs options :
+- **Prix fixe** : Tarif unique (ex: 15,000F/heure)
+- **À la demande** : Négociation selon le projet
+- **Multi-tiers** : Plusieurs options (Basic/Standard/Premium)
+
+**Q: Comment fonctionnent les services "à la demande" ?**
+R: Le prestataire indique "Contactez-moi" au lieu d'un prix fixe. Vous négociez directement via le chat après réservation.
+
+**Q: Puis-je changer de licence après achat ?**
+R: Non, la licence est définitive. Si vous avez besoin d'une licence plus élevée,
+vous devrez acheter le beat à nouveau.
+
+**Q: Les prix incluent-ils la commission ?**
+R: Les prix affichés sont les prix finaux. La commission de 5% est déduite automatiquement pour les beats/kits.
+Aucune commission pour les services.
+
 ---
 
 ## 4. Support Technique
@@ -314,6 +347,7 @@ Vous avez le droit de :
 - **Nouvelle stratégie services gratuits** : Commission 5% uniquement sur beats/kits
 - **Guide prestataires** : Documentation complète pour services
 - **FAQ services** : Questions spécifiques aux réservations et paiements
+- **FAQ multi-pricing** : Questions sur licences multiples et tarifs flexibles
 - **Conditions services** : CGU adaptées aux paiements externes
 - **Messagerie conditionnelle** : Chat uniquement pour services
 

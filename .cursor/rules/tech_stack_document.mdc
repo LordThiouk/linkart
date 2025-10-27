@@ -105,16 +105,31 @@ Il présente chaque technologie choisie, les raisons du choix, les interactions 
 
 ---
 
-## 5. Paiement
+## 5. Paiement & Modèle Économique
 
 | Élément      | Détail                                             |
 | ------------ | -------------------------------------------------- |
-| Fournisseurs | Wave API, Orange Money                             |
-| Modèle       | Escrow (paiement bloqué avant libération)          |
-| Webhooks     | Signés HMAC (vérification transaction ID)          |
-| Commission   | 5 % sur toutes ventes                              |
-| Déblocage    | Automatique ou manuel via admin                    |
-| Contrats     | Générés et stockés sur R2 (`contracts/{txId}.pdf`) |
+| **Fournisseurs** | Wave API, Orange Money                             |
+| **Modèle** | Escrow (paiement bloqué avant libération)          |
+| **Webhooks** | Signés HMAC (vérification transaction ID)          |
+| **Commission** | **5% sur beats/kits UNIQUEMENT** - Services gratuits |
+| **Déblocage** | Automatique ou manuel via admin                    |
+| **Contrats** | Générés et stockés sur R2 (`contracts/{txId}.pdf`) |
+| **Services** | **Paiements externes** - Pas de commission Linkart |
+
+### 5.1 Architecture Séparée
+
+**Produits (Beats/Kits/Samples) :**
+- Tables : `products`, `product_pricing`, `transactions`
+- Commission : 5% via escrow
+- Paiements : Wave/Orange Money via plateforme
+- Contrats : PDF générés automatiquement
+
+**Services (Professionnels) :**
+- Tables : `services`, `service_pricing`, `bookings`, `conversations`, `messages`
+- Commission : 0% (gratuit)
+- Paiements : Direct entre client et prestataire
+- Système : Réservation + messagerie conditionnelle
 
 ---
 
@@ -125,7 +140,7 @@ Il présente chaque technologie choisie, les raisons du choix, les interactions 
 | Auth         | Supabase Auth OTP                                  |
 | Tokens       | JWT                                                |
 | Autorisation | RLS + Capabilities                                 |
-| Capabilities | `can_buy`, `can_sell`, `can_withdraw`, `can_boost` |
+| Capabilities | `can_buy`, `can_sell`, `can_withdraw`, `can_boost`, `can_offer_services` |
 | Session      | Persistée localement, TTL 1h                       |
 | Middleware   | Vérification JWT sur chaque Edge Function          |
 
@@ -169,7 +184,9 @@ Il présente chaque technologie choisie, les raisons du choix, les interactions 
 * Aucun fichier public accessible sans token.
 * Sentry surveille erreurs et anomalies.
 * Webhooks paiements signés et vérifiés.
-* Transactions escrow jusqu’à validation.
+* **Escrow uniquement pour produits** (beats/kits) - Services gratuits.
+* **Messagerie conditionnelle** - Chat uniquement pour services.
+* **Validation pricing** - Vérification pricing_id pour transactions.
 * Hash des IPs dans logs (`download_logs`).
 
 (→ Voir `security_guideline_document.mdc` pour détails complets)
@@ -196,6 +213,8 @@ Il présente chaque technologie choisie, les raisons du choix, les interactions 
 * **Type-safe end-to-end** : DB → API → App typée.
 * **Zero redundancy** : tout code partagé centralisé dans `/lib/` ou `/services/`.
 * **Security by default** : aucune fonction publique sans auth.
+* **Séparation claire** : Products (payants) vs Services (gratuits).
+* **Multi-pricing** : Système flexible pour licences et tiers.
 
 ---
 
@@ -245,10 +264,13 @@ Secrets gérés via :
 | --------------- | -------------- | -------------------- |
 | Supabase        | Pro plan       | 25 $                 |
 | Cloudflare R2   | 200 GB         | 3 $                  |
-| Wave / OM frais | Variable (~1%) | -                    |
+| Wave / OM frais | Variable (~1%) | **Uniquement beats/kits** |
 | Sentry          | Free plan      | 0 $                  |
 | Expo EAS        | Standard       | 10 $                 |
+| **Services**    | **Gratuits**   | **0 $ commission**   |
 | Total (MVP)     | —              | **≈ 40 $ / mois**    |
+
+**Note :** Les services professionnels sont gratuits pour maximiser l'acquisition d'utilisateurs. La monétisation se concentre sur les ventes de beats/kits avec 5% de commission.
 
 ---
 
@@ -278,12 +300,14 @@ Secrets gérés via :
 | Axe         | Choix stratégique                  |
 | ----------- | ---------------------------------- |
 | Simplicité  | Supabase + R2 = faible maintenance |
-| Sécurité    | RLS + JWT + Escrow                 |
+| Sécurité    | RLS + JWT + Escrow (produits uniquement) |
 | Rapidité    | React Native + Expo                |
 | Coût        | < 50$/mois MVP                     |
 | Scalabilité | Cloud-native architecture          |
 | Cohérence   | Stack TypeScript end-to-end        |
+| **Monétisation** | **5% beats/kits + Services gratuits** |
+| **Acquisition** | **Services gratuits = plus d'utilisateurs** |
 
-> “Linkart est conçu comme un système modulaire, serverless, typé, sécurisé et prêt à évoluer sans dette technique.”
+> "Linkart est conçu comme un système modulaire, serverless, typé, sécurisé et prêt à évoluer sans dette technique. Le modèle économique sépare clairement les produits payants (beats/kits) des services gratuits pour maximiser l'acquisition d'utilisateurs."
 
 

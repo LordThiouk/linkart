@@ -26,6 +26,8 @@ alwaysApply: true
 * Services = réservation gratuite + paiement externe.
 * Aucune vente hors plateforme n'est encouragée (protection vendeur/acheteur).
 * Messagerie conditionnelle : chat uniquement pour services.
+* **Système de favoris** : HeartIcon sur Product Cards et Mini Player.
+* **Playlists éditoriales** : Créées par admin, lecture par users.
 * MVP = simplicité + fiabilité.
 
 ---
@@ -182,6 +184,38 @@ Dès `status = paid` :
    * Pas de liens externes vers autres plateformes
    * Modération automatique des messages
 5. **Fin** : Chat fermé après `status = completed`.
+
+---
+
+### 3.6ter FAVORITES FLOW (Système de Likes)
+
+1. **Toggle Favorite** : User clique HeartIcon sur Product Card ou Mini Player.
+2. **Interface Optimiste** : HeartIcon change immédiatement (outline → filled).
+3. **Synchronisation** : App → `/api/favorites` → DB update.
+4. **Rollback** : Si erreur → retour à l'état précédent + toast.
+5. **Écran Favoris** : Grid 2 colonnes avec tous les beats likés.
+6. **Synchronisation Temps Réel** : WebSocket pour updates multi-device.
+
+---
+
+### 3.6quater PLAYLISTS FLOW (Éditoriales)
+
+#### 3.6quater.1 Admin Flow (Création Playlists)
+
+1. **Dashboard Admin** : Gestion des playlists éditoriales.
+2. **Création Playlist** : Titre, description, typebeat, ambiance, BPM.
+3. **Ajout Beats** : Sélection beats selon critères (genre, BPM, tendances).
+4. **Ordre** : Définir l'ordre des beats dans la playlist.
+5. **Publication** : Playlist visible pour tous les users.
+
+#### 3.6quater.2 User Flow (Consommation Playlists)
+
+1. **Découverte** : Playlists sur Home Screen et Marketplace.
+2. **Lecture** : Tap sur playlist → PlaylistDetailScreen.
+3. **Player Intégré** : Lecture continue automatique des beats.
+4. **Contrôles** : Play/Pause, Next/Previous, Shuffle, Repeat.
+5. **Favoris** : HeartIcon pour liker beats depuis playlist.
+6. **Achat** : Bouton "Acheter" pour beats non possédés.
 
 ---
 
@@ -354,7 +388,13 @@ Dès `status = paid` :
 | `POST /api/bookings/create`  | Crée réservation service | -              |
 | `GET /api/bookings`          | Liste réservations    | -              |
 | `POST /api/conversations/create` | Crée chat service | -              |
-| `POST /api/messages/send`    | Envoie message        | -              |
+| `POST /api/favorites`             | Toggle favorite beat   | -              |
+| `GET /api/favorites`              | Liste favoris user    | -              |
+| `GET /api/playlists`              | Liste playlists publiques | -          |
+| `GET /api/playlists/:id`          | Détail playlist + beats | -           |
+| `POST /api/admin/playlists`        | Créer playlist (admin) | `admin`        |
+| `PUT /api/admin/playlists/:id`     | Modifier playlist (admin) | `admin`    |
+| `POST /api/admin/playlists/:id/items` | Ajouter beat à playlist (admin) | `admin` |
 
 ---
 
@@ -368,6 +408,9 @@ Dès `status = paid` :
 | Retrait effectué | `withdrawals`   |
 | Réservation créée | `bookings`     |
 | Message envoyé   | `messages`      |
+| Favorite ajouté  | `favorites`    |
+| Playlist créée   | `playlists`    |
+| Beat ajouté à playlist | `playlist_items` |
 
 ---
 
@@ -375,6 +418,8 @@ Dès `status = paid` :
 
 * **Services gratuits + réservation** (Phase 1) ✅
 * **Messagerie conditionnelle** (services uniquement) ✅
+* **Système de favoris** (Phase 1) ✅
+* **Playlists éditoriales** (Phase 1) ✅
 * **AI tagging automatique** (genre, BPM)
 * **Subscriptions (Pro)** → Boosts inclus
 * **SODAV integration** → Déclaration automatique œuvres
@@ -398,5 +443,6 @@ Dès `status = paid` :
 
 ## 📝 Changelog
 
+* **v2.2** - Ajout du système de favoris et playlists éditoriales
 * **v2.1** - Ajout du modèle services gratuits avec réservation et messagerie conditionnelle
 * **v1.0** - Version initiale du document de flux
