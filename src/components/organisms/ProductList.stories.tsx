@@ -1,141 +1,141 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { ProductList } from './ProductList';
+import { PaperProvider } from 'react-native-paper';
+import { theme } from '../../theme';
+import { Product } from '../../types';
 
 const meta: Meta<typeof ProductList> = {
   title: 'Organisms/ProductList',
   component: ProductList,
+  decorators: [
+    Story => (
+      <PaperProvider theme={theme}>
+        <Story />
+      </PaperProvider>
+    ),
+  ],
   parameters: {
-    docs: {
-      description: {
-        component: 'Liste de produits avec pagination et actions.',
-      },
-    },
+    layout: 'fullscreen',
   },
   argTypes: {
-    products: {
-      control: { type: 'object' },
-    },
-    loading: {
-      control: { type: 'boolean' },
-    },
-    refreshing: {
-      control: { type: 'boolean' },
-    },
-    onProductPress: {
-      action: 'onProductPress',
-    },
-    onRefresh: {
-      action: 'onRefresh',
-    },
-    onLoadMore: {
-      action: 'onLoadMore',
-    },
+    onProductPress: { action: 'product pressed' },
+    onLoadMore: { action: 'load more' },
+    onRefresh: { action: 'refresh' },
   },
 };
 
 export default meta;
-
 type Story = StoryObj<typeof ProductList>;
 
 const mockProducts = [
   {
     id: '1',
-    title: 'Afrobeat Instrumental',
-    price: 15000,
-    type: 'beat',
-    status: 'active',
-    license: 'Standard',
-    file_key: 'beats/1/afrobeat-instrumental.zip',
-    preview_key: 'previews/1/afrobeat-instrumental.mp3',
-    metadata: { genre: 'Afrobeat', bpm: 120, tags: ['Afrobeat', 'Instrumental'] },
-    created_at: '2024-01-01T00:00:00Z',
-    updated_at: '2024-01-01T00:00:00Z',
-    deleted_at: null,
-    user_id: 'user1',
+    title: 'Dark Trap Beat',
+    artist: 'Producer Name',
+    price: 25000,
+    imageUrl: 'https://picsum.photos/300/200?random=1',
+    genre: 'Trap',
+    bpm: 140,
+    license: 'Basic',
+    rating: 4.2,
+    viewCount: 1250,
+    downloadCount: 45,
+    likeCount: 89,
   },
   {
     id: '2',
-    title: 'Trap Beat Premium',
-    price: 25000,
-    type: 'beat',
-    status: 'active',
-    license: 'Exclusive',
-    file_key: 'beats/2/trap-beat-premium.zip',
-    preview_key: 'previews/2/trap-beat-premium.mp3',
-    metadata: { genre: 'Trap', bpm: 140, tags: ['Trap', 'Premium'] },
-    created_at: '2024-01-02T00:00:00Z',
-    updated_at: '2024-01-02T00:00:00Z',
-    deleted_at: null,
-    user_id: 'user2',
+    title: 'Afrobeat Fusion',
+    artist: 'African Producer',
+    price: 35000,
+    imageUrl: 'https://picsum.photos/300/200?random=2',
+    genre: 'Afrobeat',
+    bpm: 120,
+    license: 'Non-Exclusive',
+    rating: 4.8,
+    viewCount: 800,
+    downloadCount: 120,
+    likeCount: 67,
   },
   {
     id: '3',
-    title: 'Service de Mixage',
-    price: 50000,
-    type: 'service',
-    status: 'active',
-    license: 'Standard',
-    file_key: null,
-    preview_key: null,
-    metadata: { genre: 'Service', tags: ['Service', 'Mixage'] },
-    created_at: '2024-01-03T00:00:00Z',
-    updated_at: '2024-01-03T00:00:00Z',
-    deleted_at: null,
-    user_id: 'user3',
+    title: 'Hip-Hop Instrumental',
+    artist: 'Beat Maker',
+    price: 20000,
+    imageUrl: 'https://picsum.photos/300/200?random=3',
+    genre: 'Hip-Hop',
+    bpm: 90,
+    license: 'Lease',
+    rating: 4.5,
+    viewCount: 600,
+    downloadCount: 30,
+    likeCount: 45,
   },
 ];
 
 export const Default: Story = {
   args: {
-    products: mockProducts,
+    products: mockProducts as never,
     loading: false,
-    refreshing: false,
-    onProductPress: product => console.log('Product pressed:', product.id),
-    onRefresh: () => console.log('Refresh'),
+    onProductPress: productId => console.log('Product pressed:', productId),
     onLoadMore: () => console.log('Load more'),
+    onRefresh: () => console.log('Refresh'),
   },
 };
 
 export const Loading: Story = {
   args: {
-    products: [],
+    products: [] as never,
     loading: true,
-    refreshing: false,
-    onProductPress: product => console.log('Product pressed:', product.id),
-    onRefresh: () => console.log('Refresh'),
+    onProductPress: productId => console.log('Product pressed:', productId),
     onLoadMore: () => console.log('Load more'),
-  },
-};
-
-export const Refreshing: Story = {
-  args: {
-    products: mockProducts,
-    loading: false,
-    refreshing: true,
-    onProductPress: product => console.log('Product pressed:', product.id),
     onRefresh: () => console.log('Refresh'),
-    onLoadMore: () => console.log('Load more'),
   },
 };
 
 export const Empty: Story = {
   args: {
-    products: [],
+    products: [] as never,
     loading: false,
-    refreshing: false,
-    onProductPress: product => console.log('Product pressed:', product.id),
-    onRefresh: () => console.log('Refresh'),
+    onProductPress: productId => console.log('Product pressed:', productId),
     onLoadMore: () => console.log('Load more'),
+    onRefresh: () => console.log('Refresh'),
   },
 };
 
-export const SingleProduct: Story = {
+export const Error: Story = {
   args: {
-    products: [mockProducts[0]],
+    products: [] as never,
     loading: false,
-    refreshing: false,
-    onProductPress: product => console.log('Product pressed:', product.id),
-    onRefresh: () => console.log('Refresh'),
+    onProductPress: productId => console.log('Product pressed:', productId),
     onLoadMore: () => console.log('Load more'),
+    onRefresh: () => console.log('Refresh'),
+  },
+};
+
+export const ManyProducts: Story = {
+  args: {
+    products: [
+      ...(mockProducts as never),
+      ...(mockProducts as unknown as Product[]),
+      ...(mockProducts as unknown as Product[]).map((p: Product, i: number) => ({ ...p, id: `${p.id}-${i + 4}` })),
+      ...(mockProducts as unknown as Product[]).map((p: Product, i: number) => ({ ...p, id: `${p.id}-${i + 7}` })),
+    ] as Product[],
+    loading: false,
+    onProductPress: productId => console.log('Product pressed:', productId),
+    onLoadMore: () => console.log('Load more'),
+    onRefresh: () => console.log('Refresh'),
+  },
+};
+
+export const WithBoostedProducts: Story = {
+  args: {
+    products: (mockProducts as unknown as Product[]).map((product: Product, index: number) => ({
+      ...product,
+      isBoosted: index === 0, // Premier produit boosté
+    })) as Product[],
+    loading: false,
+    onProductPress: productId => console.log('Product pressed:', productId),
+    onLoadMore: () => console.log('Load more'),
+    onRefresh: () => console.log('Refresh'),
   },
 };

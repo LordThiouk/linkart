@@ -1,7 +1,9 @@
 # Linkart — Components Library
 
-> Version: v2.0 Auteur : Papa Diop Objectif : Catalogue complet des composants UI basé sur le design
-> system, avec mapping vers les composants existants et spécifications pour les nouveaux composants.
+> Version: v2.5 Auteur : Papa Diop Dernière mise à jour: 2025-10-28 Objectif : Catalogue complet des
+> composants UI basé sur le design system, avec mapping vers les composants existants et
+> spécifications pour les nouveaux composants. Phase 4 complétée avec composants deprecated et
+> placeholders Phase 5.
 
 ---
 
@@ -211,16 +213,19 @@ paddingHorizontal: tokens.spacing.sm,
 
 ## 4. Molecules (Composés)
 
-### 4.1 ProductCard (ADAPTER)
+### 4.1 ProductCard ✅ ADAPTÉ
 
-**Composant existant** : `src/components/atoms/ProductCard.tsx`
+**Composant adapté** : `src/components/atoms/ProductCard.tsx`
 
-**Modifications nécessaires :**
+**Réalisations :**
 
-- Ajouter HeartIcon (top-right)
-- Adapter layout pour 2 colonnes
-- Ajouter gradient overlay sur image
-- Améliorer typographie
+- ✅ HeartIcon intégré (top-right)
+- ✅ Layout adapté pour 2 colonnes
+- ✅ ProductMetrics intégré en bas
+- ✅ PlayButton pour preview intégré
+- ✅ Styles inline avec theme uniquement
+- ✅ Tests unitaires mis à jour
+- ✅ Stories Storybook créées
 
 **Props :**
 
@@ -232,11 +237,37 @@ interface ProductCardProps {
   price: number;
   imageUrl: string;
   isFavorite: boolean;
-  onPress: () => void;
-  onToggleFavorite: () => void;
-  onPlay: () => void;
+  viewCount: number;
+  downloadCount: number;
+  likeCount: number;
+  onPress: (id: string) => void;
+  onToggleFavorite: (id: string, isFavorite: boolean) => void;
+  onPlay?: (id: string) => void;
+  testID?: string;
 }
 ```
+
+**Layout :**
+
+```
+┌─────────────────┐
+│ [Image]    [♥]  │
+│                 │
+│ Title           │
+│ Artist          │
+│                 │
+│ [Play] Price    │
+│ [👁] [📥] [♥]   │
+└─────────────────┘
+```
+
+**Design Tokens :**
+
+- Layout 2 colonnes compatible (flex: 1)
+- HeartIcon position absolue (top-right)
+- ProductMetrics en bas
+- PlayButton pour preview
+- Styles inline avec theme uniquement
 
 **Layout :**
 
@@ -251,9 +282,9 @@ interface ProductCardProps {
 └─────────────────┘
 ```
 
-### 4.2 ServiceCard (NOUVEAU)
+### 4.2 ServiceCard ✅ CRÉÉ
 
-**Composant à créer** : `src/components/molecules/ServiceCard.tsx`
+**Fichier :** `src/components/molecules/ServiceCard.tsx`
 
 **Usage :** Cards pour services professionnels
 
@@ -263,55 +294,153 @@ interface ProductCardProps {
 interface ServiceCardProps {
   id: string;
   title: string;
-  provider: string;
+  provider: {
+    id: string;
+    name: string;
+    avatar?: string;
+    verified: boolean;
+  };
   description: string;
-  priceFrom: number;
-  avatarUrl: string;
-  onPress: () => void;
-  onBook: () => void;
+  price: number;
+  category: string;
+  rating?: number;
+  reviewCount?: number;
+  isFavorite: boolean;
+  onPress: (id: string) => void;
+  onToggleFavorite?: (id: string, isFavorite: boolean) => void;
+  onBook?: (id: string) => void;
 }
 ```
 
 **Layout :**
 
 ```
-┌─────────────────────────┐
-│ [Avatar] Title          │
-│         Provider        │
-│         Description     │
-│         À partir de $X  │
-│         [Réserver]      │
-└─────────────────────────┘
+┌─────────────────────────────────────┐
+│ [Avatar] Provider Name [✓] [♥]      │
+│                                     │
+│ Service Title                       │
+│ Service Description                  │
+│                                     │
+│ [Category] ⭐ Rating (Count)        │
+│                                     │
+│ Price        [Réserver]             │
+└─────────────────────────────────────┘
 ```
 
-### 4.3 MiniPlayer (ADAPTER)
+**Design Tokens :**
 
-**Composant existant** : `src/components/molecules/AudioPlayer.tsx`
+- Container padding: 16px
+- Avatar size: 32px
+- HeartIcon size: md (20px)
+- Button size: small
+- Border radius: theme.roundness
+- Shadow: elevation 2
 
-**Modifications nécessaires :**
+### 4.3 PlaylistCard ✅ CRÉÉ
 
-- Ajouter HeartIcon (right side)
-- Adapter layout sticky bottom
-- Améliorer progress bar
-- Ajouter artwork thumbnail
+**Fichier :** `src/components/molecules/PlaylistCard.tsx`
+
+**Usage :** Cards pour playlists éditoriales
 
 **Props :**
 
 ```typescript
-interface MiniPlayerProps {
+interface PlaylistCardProps {
+  id: string;
+  title: string;
+  description?: string;
+  coverImage: string;
+  typebeat?: string;
+  mood?: string;
+  beatCount: number;
+  duration?: string;
+  isPlaying: boolean;
+  onPress: (id: string) => void;
+  onPlayToggle: (id: string, isPlaying: boolean) => void;
+}
+```
+
+**Layout :**
+
+```
+┌─────────────────┐
+│ [Cover Image]   │
+│ [Play Button]   │
+│ [Duration Badge]│
+├─────────────────┤
+│ Playlist Title  │
+│ Description     │
+│                 │
+│ [Typebeat] [Mood] [X beats] │
+└─────────────────┘
+```
+
+**Design Tokens :**
+
+- Card width: 200px (fixe)
+- Cover image height: 120px
+- PlayButton size: lg (48px)
+- Badge size: small
+- Border radius: theme.roundness
+- Shadow: elevation 2
+
+### 4.3 MiniPlayer (AudioPlayer) ✅ ADAPTÉ
+
+**Composant adapté** : `src/components/molecules/AudioPlayer.tsx`
+
+**Réalisations :**
+
+- ✅ HeartIcon intégré (right side)
+- ✅ Layout sticky bottom adapté
+- ✅ Progress bar améliorée
+- ✅ Artwork thumbnail (40x40px) intégré
+- ✅ Layout horizontal: [Artwork] [Title/Artist + Progress] [Heart] [Play/Pause] [Next]
+- ✅ Bouton Next (SkipForward icon) ajouté
+- ✅ Styles inline avec theme uniquement
+- ✅ Tests unitaires mis à jour
+- ✅ Stories Storybook créées
+
+**Props :**
+
+```typescript
+interface AudioPlayerProps {
   title: string;
   artist: string;
   artworkUrl: string;
-  progress: number;
-  duration: number;
-  isPlaying: boolean;
+  uri: string;
+  duration?: number;
   isFavorite: boolean;
-  onPlayPause: () => void;
-  onNext: () => void;
-  onToggleFavorite: () => void;
-  onPress: () => void; // Ouvrir player complet
+  productId: string;
+  onPlay?: () => void;
+  onPause?: () => void;
+  onEnd?: () => void;
+  onNext?: () => void;
+  onToggleFavorite: (productId: string, isFavorite: boolean) => void;
+  onPress?: () => void;
+  sticky?: boolean;
+  style?: ViewStyle;
+  testID?: string;
 }
 ```
+
+**Layout :**
+
+```
+┌─────────────────────────────────┐
+│ [Artwork] Title        [♥] [▶] [⏭] │
+│          Artist                 │
+│          [Progress Bar]         │
+│          [Play] [Next]          │
+└─────────────────────────────────┘
+```
+
+**Design Tokens :**
+
+- Layout horizontal avec artwork thumbnail
+- HeartIcon à droite des contrôles
+- Bouton Next (SkipForward icon)
+- Rendu sticky-capable (via prop position)
+- Styles inline avec theme uniquement
 
 **Layout :**
 
@@ -324,15 +453,19 @@ interface MiniPlayerProps {
 └─────────────────────────────────┘
 ```
 
-### 4.4 SearchBar
+### 4.4 SearchBar ✅ ADAPTÉ
 
-**Composant existant** : `src/components/molecules/SearchBar.tsx`
+**Composant adapté** : `src/components/molecules/SearchBar.tsx`
 
-**Modifications nécessaires :**
+**Réalisations :**
 
-- Adapter style pour header
-- Ajouter placeholder "Rechercher beats, artistes..."
-- Améliorer icon search
+- ✅ Style adapté pour header moderne
+- ✅ Placeholder: "Rechercher beats, artistes, services..."
+- ✅ Icônes Search de Lucide au lieu de Material
+- ✅ Simplification pour focus sur la barre de recherche uniquement
+- ✅ Styles inline avec theme uniquement
+- ✅ Tests unitaires mis à jour
+- ✅ Stories Storybook mises à jour
 
 **Props :**
 
@@ -341,10 +474,20 @@ interface SearchBarProps {
   placeholder?: string;
   value: string;
   onChangeText: (text: string) => void;
+  onSearch?: (query: string) => void;
   onFocus?: () => void;
   onBlur?: () => void;
+  style?: ViewStyle;
+  testID?: string;
 }
 ```
+
+**Design Tokens :**
+
+- Style moderne aligné avec le header
+- Icônes Search de Lucide
+- Styles inline avec theme uniquement
+- Focus sur la barre de recherche uniquement
 
 ### 4.5 SectionHeader
 
@@ -401,7 +544,57 @@ interface PlaylistCardProps {
 
 ## 5. Organisms (Sections)
 
-### 5.1 AppHeader
+### 5.1 ProductUploadForm
+
+**Nouveau composant** : `src/features/products/components/ProductUploadForm.tsx`
+
+**✅ CRÉÉ** - Phase 4 complétée
+
+**Caractéristiques**:
+
+- Champs: titre, description, genre, BPM, tags
+- **Artwork Upload** (requis): Image de couverture avec aperçu et bouton de suppression
+- Section "Licences et Prix" avec options:
+  - Checkbox pour chaque type: Basic, Non-Exclusive, Exclusive, Lease
+  - Pour chaque licence cochée: champ prix + textarea termes
+  - Affichage conditionnel des champs prix/termes
+- Upload preview (placeholder pour l'instant)
+- Upload fichier complet (placeholder pour l'instant)
+- Validation: artwork requis + au moins une licence configurée
+
+**Props**:
+
+```typescript
+interface ProductUploadFormProps {
+  onSubmit: (data: ProductFormData) => void;
+  loading?: boolean;
+}
+
+interface ProductFormData {
+  title: string;
+  description: string;
+  genre: string;
+  bpm?: number;
+  tags: string[];
+  artworkUrl?: string;
+  licenses: Array<{
+    type: 'basic' | 'non_exclusive' | 'exclusive' | 'lease';
+    price: number;
+    terms: string;
+    is_available: boolean;
+  }>;
+}
+```
+
+**Validation**:
+
+- Titre requis (min 3 chars)
+- Description requise (min 10 chars)
+- **Artwork requis** (image de couverture)
+- Au moins une licence avec prix > 0
+- BPM optionnel (60-200 si fourni)
+
+### 5.2 AppHeader
 
 **Composant existant** : `src/components/organisms/Header.tsx`
 
@@ -432,9 +625,9 @@ interface AppHeaderProps {
 [☰] [Search Bar] [Avatar+Badge]
 ```
 
-### 5.2 HeroBanner
+### 5.2 HeroBanner ✅ CRÉÉ
 
-**Composant à créer** : `src/components/organisms/HeroBanner.tsx`
+**Fichier :** `src/components/organisms/HeroBanner.tsx`
 
 **Usage :** Grande carte featured avec gradient overlay
 
@@ -447,6 +640,7 @@ interface HeroBannerProps {
   artist: string;
   imageUrl: string;
   duration: string;
+  description?: string;
   onListen: () => void;
   onBuy: () => void;
 }
@@ -455,23 +649,30 @@ interface HeroBannerProps {
 **Layout :**
 
 ```
-┌─────────────────────────────────┐
-│ [Gradient Overlay]              │
-│                                 │
-│ Title                           │
-│ by Artist                       │
-│                                 │
-│ [•••••] 0:30                    │
-│                                 │
-│ [Écouter] [Acheter]             │
-└─────────────────────────────────┘
+┌─────────────────────────────────────┐
+│ [Image Background + Gradient]       │
+│                                     │
+│ Title                               │
+│ Subtitle                            │
+│ by Artist                           │
+│ Duration                            │
+│                                     │
+│ [Écouter] [Acheter]                │
+└─────────────────────────────────────┘
 ```
 
-### 5.3 FilterPills
+**Design Tokens :**
 
-**Composant à créer** : `src/components/organisms/FilterPills.tsx`
+- Height: 200px
+- Gradient: rgba(0,0,0,0.3) → rgba(0,0,0,0.7)
+- Button size: md
+- Padding: theme.spacing.lg
 
-**Usage :** Scrollable horizontal des filtres
+### 5.3 FilterPills ✅ CRÉÉ
+
+**Fichier :** `src/components/organisms/FilterPills.tsx`
+
+**Usage :** Filtres scrollables horizontaux
 
 **Props :**
 
@@ -480,14 +681,29 @@ interface FilterPillsProps {
   filters: Filter[];
   activeFilters: string[];
   onFilterPress: (filterId: string) => void;
+  onFilterRemove?: (filterId: string) => void;
+  showRemoveButton?: boolean;
 }
 
 interface Filter {
   id: string;
   label: string;
-  icon: string;
+  active: boolean;
 }
 ```
+
+**Layout :**
+
+```
+[Trap] [Hip-Hop] [Electronic] [Afrobeat] →
+```
+
+**Design Tokens :**
+
+- Scroll horizontal
+- Pill padding: theme.spacing.md horizontal, theme.spacing.sm vertical
+- Active color: theme.colors.primary
+- Inactive color: theme.colors.surfaceVariant
 
 ### 5.4 TrendingSection
 
@@ -697,51 +913,92 @@ const fabPulseAnimation = {
 
 ### 7.1 Composants à Adapter
 
-| Composant Design | Composant Existant | Modifications                        |
-| ---------------- | ------------------ | ------------------------------------ |
-| Button           | `Button.tsx`       | Ajouter variants fab, icon           |
-| ProductCard      | `ProductCard.tsx`  | Ajouter HeartIcon, layout 2 colonnes |
-| MiniPlayer       | `AudioPlayer.tsx`  | Ajouter HeartIcon, layout sticky     |
-| SearchBar        | `SearchBar.tsx`    | Adapter style header                 |
-| SectionTitle     | `SectionTitle.tsx` | Ajouter action "Voir tout"           |
-| TabBar           | `TabBar.tsx`       | Adapter 5 tabs, FAB upload           |
-| ProductList      | `ProductList.tsx`  | Adapter grid 2 colonnes              |
+| Composant Design | Composant Existant | Modifications                        | Statut |
+| ---------------- | ------------------ | ------------------------------------ | ------ |
+| Button           | `Button.tsx`       | Ajouter variants fab, icon           | 🔄     |
+| ProductCard      | `ProductCard.tsx`  | Ajouter HeartIcon, layout 2 colonnes | ✅     |
+| MiniPlayer       | `AudioPlayer.tsx`  | Ajouter HeartIcon, layout sticky     | ✅     |
+| SearchBar        | `SearchBar.tsx`    | Adapter style header                 | ✅     |
+| SectionTitle     | `SectionTitle.tsx` | Ajouter action "Voir tout"           | 🔄     |
+| TabBar           | `TabBar.tsx`       | Adapter 5 tabs, FAB upload           | 🔄     |
+| ProductList      | `ProductList.tsx`  | Adapter grid 2 colonnes              | 🔄     |
 
 ### 7.2 Nouveaux Composants à Créer
 
-| Composant         | Fichier                           | Priorité |
-| ----------------- | --------------------------------- | -------- |
-| HeartIcon         | `atoms/HeartIcon.tsx`             | Haute    |
-| PlayButton        | `atoms/PlayButton.tsx`            | Haute    |
-| ServiceCard       | `molecules/ServiceCard.tsx`       | Haute    |
-| PlaylistCard      | `molecules/PlaylistCard.tsx`      | Moyenne  |
-| HeroBanner        | `organisms/HeroBanner.tsx`        | Haute    |
-| FilterPills       | `organisms/FilterPills.tsx`       | Haute    |
-| TrendingSection   | `organisms/TrendingSection.tsx`   | Moyenne  |
-| ServicesSection   | `organisms/ServicesSection.tsx`   | Moyenne  |
-| MarketplaceHeader | `organisms/MarketplaceHeader.tsx` | Moyenne  |
-| ContentTabs       | `organisms/ContentTabs.tsx`       | Moyenne  |
-| FeaturedPacks     | `organisms/FeaturedPacks.tsx`     | Basse    |
+| Composant         | Fichier                           | Priorité | Statut |
+| ----------------- | --------------------------------- | -------- | ------ |
+| HeartIcon         | `atoms/HeartIcon.tsx`             | Haute    | ✅     |
+| PlayButton        | `atoms/PlayButton.tsx`            | Haute    | ✅     |
+| MetricItem        | `atoms/MetricItem.tsx`            | Haute    | ✅     |
+| ProductMetrics    | `molecules/ProductMetrics.tsx`    | Haute    | ✅     |
+| ServiceCard       | `molecules/ServiceCard.tsx`       | Haute    | ✅     |
+| PlaylistCard      | `molecules/PlaylistCard.tsx`      | Moyenne  | ✅     |
+| HeroBanner        | `organisms/HeroBanner.tsx`        | Haute    | ✅     |
+| FilterPills       | `organisms/FilterPills.tsx`       | Haute    | ✅     |
+| TrendingSection   | `organisms/TrendingSection.tsx`   | Moyenne  | 🔄     |
+| ServicesSection   | `organisms/ServicesSection.tsx`   | Moyenne  | 🔄     |
+| MarketplaceHeader | `organisms/MarketplaceHeader.tsx` | Moyenne  | 🔄     |
+| ContentTabs       | `organisms/ContentTabs.tsx`       | Moyenne  | 🔄     |
+| FeaturedPacks     | `organisms/FeaturedPacks.tsx`     | Basse    | 🔄     |
 
 ## 8. Tests et Qualité
 
 ### 8.1 Tests Unitaires
 
-Chaque composant doit avoir :
+**Composants Phase 1 (Atoms) :**
 
-- Tests des props et variants
-- Tests des états (loading, error, disabled)
-- Tests des interactions (onPress, onToggle)
-- Tests d'accessibilité
+- ✅ HeartIcon : Tests complets avec animation et haptic feedback
+- ✅ PlayButton : Tests avec tous les variants et états
+- ✅ MetricItem : Tests avec icônes et formats
 
-### 8.2 Storybook Stories
+**Composants Phase 2 (Molecules) :**
 
-Chaque composant doit avoir :
+- ✅ ProductMetrics : Tests avec métriques et layout
+- ✅ ServiceCard : Tests avec pricing et layout
+- ✅ PlaylistCard : Tests avec métadonnées et navigation
 
-- Story par variant
-- Story par état
-- Story interactive
-- Documentation des props
+**Composants Phase 2 (Organisms) :**
+
+- ✅ HeroBanner : Tests avec gradient et boutons
+- ✅ FilterPills : Tests avec sélection et scroll
+
+**Composants Phase 3 (Adaptés) :**
+
+- ✅ ProductCard : Tests mis à jour avec nouveaux props
+- ✅ SearchBar : Tests mis à jour avec nouveau style
+- ✅ AudioPlayer : Tests mis à jour avec MiniPlayer
+
+### 8.2 Stories Storybook
+
+**Composants Phase 1 (Atoms) :**
+
+- ✅ HeartIcon : Stories avec états favori/non-favori
+- ✅ PlayButton : Stories avec variants et loading
+- ✅ MetricItem : Stories avec différentes métriques
+
+**Composants Phase 2 (Molecules) :**
+
+- ✅ ProductMetrics : Stories avec métriques variées
+- ✅ ServiceCard : Stories avec différents services
+- ✅ PlaylistCard : Stories avec playlists variées
+
+**Composants Phase 2 (Organisms) :**
+
+- ✅ HeroBanner : Stories avec différents contenus
+- ✅ FilterPills : Stories avec filtres variés
+
+**Composants Phase 3 (Adaptés) :**
+
+- ✅ ProductCard : Stories mises à jour avec nouveaux props
+- ✅ SearchBar : Stories mises à jour avec nouveau style
+- ✅ AudioPlayer : Stories créées avec MiniPlayer
+
+### 8.3 Couverture de Tests
+
+- **Phase 1** : 100% des composants atoms testés
+- **Phase 2** : 100% des composants molecules et organisms testés
+- **Phase 3** : 100% des composants adaptés testés
+- **Global** : 100% des composants créés/adaptés testés
 
 ## 9. Performance
 
@@ -751,17 +1008,67 @@ Chaque composant doit avoir :
 - **Lazy Loading** : Images et composants lourds
 - **Virtual Scrolling** : Pour listes longues
 - **Image Optimization** : Formats WebP, tailles adaptées
+- **Bundle Splitting** : Code splitting par feature
+- **Tree Shaking** : Import uniquement des composants utilisés
 
-### 9.2 Bundle Size
+### 9.2 Métriques de Performance
+
+- **Bundle Size** : < 2MB pour l'app mobile
+- **First Paint** : < 1.5s
+- **Time to Interactive** : < 3s
+- **Memory Usage** : < 100MB en usage normal
+- **FPS** : 60fps pour animations fluides
+
+### 9.3 Optimisations Spécifiques
+
+**Composants Phase 1 (Atoms) :**
+
+- HeartIcon : Animation native avec `useNativeDriver`
+- PlayButton : Lazy loading des icônes
+- MetricItem : Memoization des valeurs
+
+**Composants Phase 2 (Molecules) :**
+
+- ProductMetrics : Lazy loading des métriques
+- ServiceCard : Memoization des prix
+- PlaylistCard : Lazy loading des images
+
+**Composants Phase 2 (Organisms) :**
+
+- HeroBanner : Lazy loading des images
+- FilterPills : Virtual scrolling pour filtres
+
+**Composants Phase 3 (Adaptés) :**
+
+- ProductCard : Memoization des props
+- SearchBar : Debounce des recherches
+- AudioPlayer : Lazy loading des artworks
+
+### 9.4 Bundle Size
 
 - **Tree Shaking** : Imports spécifiques
 - **Code Splitting** : Par écran/feature
+- **Lazy Loading** : Composants lourds
+- **Image Optimization** : Formats WebP, tailles adaptées
+- **Bundle Analysis** : Monitoring régulier
 - **Dead Code Elimination** : Supprimer code inutilisé
 
 ---
 
 ## Changelog
 
+- **v2.5** (2025-10-28) - Phase 4 complétée : Composants deprecated marqués, ProductPreview adapté,
+  placeholders Phase 5 créés
+- **v2.4** (2025-10-28) - Ajout artwork upload dans ProductUploadForm avec validation et aperçu
+- **v2.3** (2025-10-28) - Phase 3 complétée : ProductCard, SearchBar, AudioPlayer adaptés avec
+  nouveaux composants
+- **v2.3** (2025-10-28) - Tests unitaires et Stories Storybook mis à jour pour tous les composants
+  Phase 3
+- **v2.3** (2025-10-28) - Documentation mise à jour avec statut des composants Phase 3
+- **v2.2** - Ajout des composants ServiceCard, PlaylistCard, HeroBanner et FilterPills
+- **v2.2** - Documentation complète des composants Phase 2 avec exemples d'usage
+- **v2.1** - Ajout des composants MetricItem et HeartIcon pour les métriques produits
+- **v2.1** - Documentation complète des animations et états du système de favoris
 - **v2.0** - Bibliothèque complète basée sur design system
 - **v2.0** - Mapping avec composants existants
 - **v2.0** - Spécifications nouveaux composants (HeartIcon, PlayButton, etc.)

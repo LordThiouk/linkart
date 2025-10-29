@@ -124,7 +124,7 @@ export const Button: React.FC<ButtonProps> = ({
           textStyle,
         ]}
       >
-        {children || title}
+        {title}
       </PaperButton>
     </TouchableOpacity>
   );

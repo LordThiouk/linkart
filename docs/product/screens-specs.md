@@ -1,7 +1,8 @@
 # Linkart — Spécifications d'Écrans
 
-> Version: v2.0 Auteur : Papa Diop Objectif : Spécifications détaillées de tous les écrans basés sur
-> le design system, incluant layout, comportements, interactions et états.
+> Version: v2.3 Auteur : Papa Diop Dernière mise à jour: 2025-10-28 Objectif : Spécifications
+> détaillées de tous les écrans basés sur le design system, incluant layout, comportements,
+> interactions et états. Phase 3 complétée avec composants adaptés et intégration complète.
 
 ---
 
@@ -44,10 +45,10 @@ sur les screenshots fournis et le design system.
 #### Header
 
 - **Menu Burger** (gauche) : Ouvre drawer navigation
-- **Search Bar** (centre) : Placeholder "Rechercher beats, artistes..."
+- **Search Bar** (centre) : Placeholder "Rechercher beats, artistes, services..." ✅ ADAPTÉ
 - **Avatar + Badge** (droite) : Badge notification (orange, nombre)
 
-#### Hero Banner
+#### Hero Banner ✅ CRÉÉ
 
 - **Image Background** : Beat featured avec gradient overlay
 - **Titre Principal** : "Dark Trap" (grand, blanc)
@@ -55,7 +56,7 @@ sur les screenshots fournis et le design system.
 - **Progress Dots** : 5 dots + "0:30" (durée)
 - **Boutons** : "Écouter" (secondary) + "Acheter" (primary)
 
-#### Filter Pills
+#### Filter Pills ✅ CRÉÉ
 
 - **Scrollable Horizontal** : Genre, BPM, Prix, Licence
 - **État Actif** : Violet avec icon
@@ -67,25 +68,29 @@ sur les screenshots fournis et le design system.
 - **Header** : "Tendances" + "Voir tout" (lien bleu)
 - **Cards Horizontales** : Image + titre + artiste + prix + play button
 - **Scroll Horizontal** : Swipe pour voir plus
+- **ProductCard** : ✅ ADAPTÉ avec HeartIcon ✅ CRÉÉ
 
 #### Nouveautés Section
 
 - **Header** : "Nouveautés" + "Voir tout" (lien bleu)
 - **Grid 2 Colonnes** : Image + titre + artiste + prix + heart icon
 - **Scroll Vertical** : Pagination infinie
+- **ProductCard** : ✅ ADAPTÉ avec layout 2 colonnes et HeartIcon ✅ CRÉÉ
 
 #### Services Section
 
 - **Header** : "Services recommandés" + "Voir tout" (lien bleu)
 - **Cards Verticales** : Avatar + titre + description + prix "À partir de" + bouton "Réserver"
+- **ServiceCard** : ✅ CRÉÉ avec layout vertical et pricing
 
-#### Mini Player
+#### Mini Player ✅ ADAPTÉ
 
 - **Sticky Bottom** : Toujours visible
 - **Artwork** : Thumbnail du beat en cours
 - **Info** : Titre + artiste
 - **Progress Bar** : Barre de progression
 - **Controls** : Heart icon + play/pause + next
+- **HeartIcon** : ✅ CRÉÉ à droite des contrôles
 
 #### Bottom Navigation
 
@@ -120,6 +125,49 @@ sur les screenshots fournis et le design system.
 - **Long Press** : Actions contextuelles
 - **Scroll** : Navigation dans les listes
 
+### Métriques de Performance
+
+Chaque ProductCard affiche publiquement trois métriques sous le prix :
+
+1. **Vues** (icône œil) : Nombre de lectures preview
+2. **Téléchargements** (icône download) : Nombre de téléchargements
+3. **Likes** (icône cœur) : Nombre de favoris
+
+**Format d'affichage :**
+
+- < 1000 : nombre exact (ex: "42")
+- > = 1000 : format K (ex: "1.2K")
+- > = 1000000 : format M (ex: "1.5M")
+
+**Design :**
+
+- Icônes 16px, couleur muted
+- Texte 12px, couleur muted
+- Espacement horizontal 12px entre métriques
+- Alignement horizontal centré
+
+### HeartIcon (Toggle Favorite)
+
+Position : Coin supérieur droit de la ProductCard
+
+**États :**
+
+- Non-favori : cœur outline, couleur muted
+- Favori : cœur filled, couleur music.pink (#EC4899)
+
+**Comportement :**
+
+- Toggle optimiste : changement immédiat au tap
+- Animation scale : 0.9 → 1.1 → 1.0 (200ms)
+- Feedback haptique léger au tap
+- Rollback en cas d'erreur réseau
+- Toast d'erreur si échec
+
+**Accessibilité :**
+
+- Label : "Ajouter aux favoris" / "Retirer des favoris"
+- Taille touch area : 44x44px minimum
+
 ## 3. Marketplace Screen
 
 ### 3.1 Structure et Layout
@@ -151,7 +199,7 @@ sur les screenshots fournis et le design system.
 #### Marketplace Header
 
 - **Titre** : "Marketplace" (gauche)
-- **Search Icon** : Recherche (droite)
+- **Search Icon** : Recherche (droite) ✅ ADAPTÉ
 - **Filter Icon** : Filtres avancés (droite)
 
 #### Active Filters
@@ -171,6 +219,7 @@ sur les screenshots fournis et le design system.
 - **2 Colonnes** : Premium Pack, Trending
 - **Cards** : Icon + titre + sous-titre
 - **Couleurs** : Violet, Orange
+- **ProductCard** : ✅ ADAPTÉ avec layout 2 colonnes
 
 #### Sort Dropdown
 
@@ -181,6 +230,7 @@ sur les screenshots fournis et le design system.
 
 - **2 Colonnes** : Cards avec image + info + prix + heart
 - **FAB Button** : Bouton "+" flottant (upload)
+- **ProductCard** : ✅ ADAPTÉ avec layout 2 colonnes et HeartIcon ✅ CRÉÉ
 
 ### 3.3 États et Comportements
 
@@ -240,8 +290,9 @@ sur les screenshots fournis et le design system.
 - **Position** : Numéro dans la playlist
 - **Artwork** : Thumbnail du beat
 - **Info** : Titre + artiste + durée
-- **Heart Icon** : Toggle favorite
+- **HeartIcon** : ✅ CRÉÉ pour toggle favorite
 - **Play Button** : Jouer ce beat
+- **ProductCard** : ✅ ADAPTÉ avec layout horizontal
 
 #### Player Intégré
 
@@ -250,6 +301,8 @@ sur les screenshots fournis et le design system.
 - **Progress** : Barre de progression
 - **Controls** : Previous + Play/Pause + Next
 - **Shuffle/Repeat** : Modes de lecture
+- **HeartIcon** : ✅ CRÉÉ à droite des contrôles
+- **MiniPlayer** : ✅ ADAPTÉ avec HeartIcon intégré
 
 ### 4.3 États et Comportements
 
@@ -301,14 +354,23 @@ sur les screenshots fournis et le design system.
 #### Favorites Grid
 
 - **2 Colonnes** : Cards avec image + info + heart
-- **Heart Icon** : Toggle favorite (retirer)
+- **HeartIcon** : ✅ CRÉÉ pour toggle favorite (retirer)
 - **Tap Card** : Ouvrir détail du beat
+- **ProductCard** : ✅ ADAPTÉ avec layout 2 colonnes et HeartIcon ✅ CRÉÉ
 
 #### Empty State
 
 - **Message** : "Aucun favori pour le moment"
 - **Action** : "Explorer le Marketplace"
 - **Illustration** : Icône cœur
+
+#### Mini Player
+
+- **Position** : Sticky bottom
+- **Layout** : [Artwork] [Title/Artist + Progress] [Heart] [Play/Pause] [Next]
+- **HeartIcon** : ✅ CRÉÉ à droite des contrôles
+- **Contrôles** : Play/Pause, Next, Progress bar
+- **MiniPlayer** : ✅ ADAPTÉ avec HeartIcon intégré
 
 ### 5.3 États et Comportements
 
@@ -503,6 +565,13 @@ const breakpoints = {
 
 ## Changelog
 
+- **v2.3** (2025-10-28) - Phase 3 complétée : ProductCard, SearchBar, AudioPlayer adaptés avec
+  nouveaux composants
+- **v2.3** (2025-10-28) - Tests unitaires et Stories Storybook mis à jour pour tous les composants
+  Phase 3
+- **v2.3** (2025-10-28) - Documentation mise à jour avec statut des composants Phase 3
+- **v2.1** - Ajout des métriques de performance (vues, téléchargements, likes) sur ProductCards
+- **v2.1** - Spécifications complètes du HeartIcon avec états et animations
 - **v2.0** - Spécifications complètes de tous les écrans
 - **v2.0** - Détails des interactions et comportements
 - **v2.0** - Adaptations responsive et accessibilité

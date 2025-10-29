@@ -1,10 +1,11 @@
 # Documentation Linkart
 
-> Version: v3.0 Auteur: Papa Diop Dernière mise à jour: 2025-10-27 Objet: Documentation centrale
+> Version: v3.1 Auteur: Papa Diop Dernière mise à jour: 2025-10-28 Objet: Documentation centrale
 > complète du projet Linkart - Marketplace musicale du Sénégal
 >
-> **Architecture v3.0**: Séparation claire entre Products (beats/kits payants) et Services
-> (professionnels gratuits) avec système multi-pricing pour les deux.
+> **Architecture v3.1**: Séparation claire entre Products (beats/kits payants) et Services
+> (professionnels gratuits) avec système multi-pricing pour les deux. Phase 3 complétée avec
+> composants adaptés et intégration complète.
 
 ---
 
@@ -82,6 +83,8 @@ docs/
 - **[API Reference](./api/README.md)** - Documentation complète des endpoints
 - **[Authentification](./api/README.md#2-authentification--autorisation)** - JWT, capabilities
 - **[Webhooks](./api/README.md#5-webhooks--intégrations)** - Intégrations paiement
+- **[Favoris](./api/README.md#32bis-favoris-beatskits)** - Toggle et liste des favoris
+- **[Playlists](./api/README.md#playlists)** - Endpoints publics et admin
 
 ---
 
@@ -266,15 +269,23 @@ npm run docs:maintain
 - **Issues** : [GitHub Issues](https://github.com/LordThiouk/linkart/issues)
 - **Discussions** : [GitHub Discussions](https://github.com/LordThiouk/linkart/discussions)
 
-### Projet
+- ### Projet
 
-- **Email** : support@linkart.sn
+- **Email** : [support@linkart.sn](mailto:support@linkart.sn)
 - **WhatsApp** : +221 70 123 45 67
 - **Horaires** : Lundi-Vendredi, 9h-18h (GMT)
 
 ---
 
 ## 📝 Changelog
+
+### v3.1 (2025-10-28)
+
+- **Phase 3 complétée** : ProductCard, SearchBar, AudioPlayer adaptés avec nouveaux composants
+- **Tests unitaires** : Mise à jour des tests pour tous les composants Phase 3
+- **Stories Storybook** : Mise à jour des stories pour tous les composants Phase 3
+- **Documentation** : Mise à jour avec statut des composants Phase 3
+- **Architecture** : Composants modulaires et réutilisables avec intégration complète
 
 ### v3.0 (2025-10-27)
 
@@ -285,6 +296,29 @@ npm run docs:maintain
 - **Documentation complète** de la nouvelle architecture
 - **Tests multi-pricing** et booking system
 - **Sécurité renforcée** avec validation pricing
+
+### v3.0 (2025-10-27)
+
+- **Phase 2 complétée** : ServiceCard, PlaylistCard, HeroBanner, FilterPills créés
+- **Tests unitaires** : Création des tests pour tous les composants Phase 2
+- **Stories Storybook** : Création des stories pour tous les composants Phase 2
+- **Documentation** : Mise à jour avec statut des composants Phase 2
+- **Architecture** : Composants modulaires et réutilisables
+
+### v2.9 (2025-10-26)
+
+- **Phase 1 complétée** : HeartIcon, PlayButton, MetricItem, ProductMetrics créés
+- **Tests unitaires** : Création des tests pour tous les composants Phase 1
+- **Stories Storybook** : Création des stories pour tous les composants Phase 1
+- **Documentation** : Mise à jour avec statut des composants Phase 1
+- **Architecture** : Composants modulaires et réutilisables
+
+### v2.8 (2025-10-25)
+
+- **Design System v2.0** : Création du design system moderne
+- **Architecture modulaire** : Atoms, molecules, organisms
+- **Tests et Stories** : Intégration complète
+- **Documentation** : Mise à jour avec nouveaux composants
 
 ### v2.0 (2025-10-27)
 
@@ -315,12 +349,16 @@ npm run docs:maintain
 6. **Documente l'architecture séparée** Products/Services
 7. **Inclut le système multi-pricing** et booking
 8. **Assure la sécurité** avec validation pricing
+9. **Phase 3 complétée** avec composants adaptés et intégration complète
+10. **Tests et Stories** avec couverture complète pour tous les composants
 
 **C'est un système de documentation vivant et intelligent !** 🚀
 
-**Nouvelle architecture v3.0 :**
+**Nouvelle architecture v3.1 :**
 
 - **Products** (beats/kits) : Commission 5%, escrow, paiements sécurisés
 - **Services** (professionnels) : Gratuits, réservation, messagerie conditionnelle
 - **Multi-pricing** : Licences multiples + tiers multiples
 - **Sécurité renforcée** : Validation pricing, séparation claire
+- **Phase 3 complétée** : Composants adaptés avec intégration complète
+- **Tests et Stories** : Couverture complète pour tous les composants

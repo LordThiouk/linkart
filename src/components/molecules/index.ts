@@ -4,3 +4,6 @@ export { RatingStars } from './RatingStars';
 export { PriceDisplay } from './PriceDisplay';
 export { UserProfile } from './UserProfile';
 export { ProductPreview } from './ProductPreview';
+export { ProductMetrics } from './ProductMetrics';
+export { ServiceCard } from './ServiceCard';
+export { PlaylistCard } from './PlaylistCard';

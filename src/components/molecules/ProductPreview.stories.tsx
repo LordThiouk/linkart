@@ -1,153 +1,214 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { ProductPreview } from './ProductPreview';
+import { PaperProvider } from 'react-native-paper';
+import { theme } from '../../theme';
 
 const meta: Meta<typeof ProductPreview> = {
   title: 'Molecules/ProductPreview',
   component: ProductPreview,
+  decorators: [
+    Story => (
+      <PaperProvider theme={theme}>
+        <Story />
+      </PaperProvider>
+    ),
+  ],
   parameters: {
-    docs: {
-      description: {
-        component: 'Aperçu de produit avec informations complètes et actions.',
-      },
-    },
+    layout: 'centered',
   },
   argTypes: {
-    title: {
-      control: { type: 'text' },
-    },
-    price: {
-      control: { type: 'number' },
-    },
-    creator: {
-      control: { type: 'object' },
-    },
-    rating: {
-      control: { type: 'number', min: 0, max: 5, step: 0.1 },
-    },
-    isBoosted: {
-      control: { type: 'boolean' },
-    },
-    onPress: {
-      action: 'onPress',
-    },
-    onPlayPreview: {
-      action: 'onPlayPreview',
-    },
+    onPress: { action: 'pressed' },
+    onPlayPreview: { action: 'play preview' },
+    onToggleFavorite: { action: 'toggle favorite' },
   },
 };
 
 export default meta;
-
 type Story = StoryObj<typeof ProductPreview>;
+
+const mockCreator = {
+  name: 'Producer Name',
+  avatarUri: 'https://picsum.photos/100/100',
+  rating: 4.5,
+  isVerified: true,
+};
 
 export const Default: Story = {
   args: {
     id: '1',
-    title: 'Afrobeat Instrumental',
-    price: 15000,
-    currency: 'FCFA',
-    creator: {
-      name: 'Beatmaker Pro',
-      avatarUri: 'https://via.placeholder.com/100',
-      rating: 4.5,
-      isVerified: true,
-    },
-    tags: ['Afrobeat', 'Instrumental'],
-    genre: 'Afrobeat',
-    bpm: 120,
-    license: 'Standard',
-    previewUri: 'https://example.com/preview.mp3',
-    isBoosted: false,
-    rating: 4.2,
-    onPress: () => console.log('Product pressed'),
-    onPlayPreview: () => console.log('Play preview'),
-  },
-};
-
-export const Boosted: Story = {
-  args: {
-    id: '2',
-    title: 'Trap Beat Premium',
+    title: 'Dark Trap Beat',
+    type: 'beat',
     price: 25000,
     currency: 'FCFA',
-    creator: {
-      name: 'Studio Master',
-      avatarUri: 'https://via.placeholder.com/100',
-      rating: 4.8,
-      isVerified: true,
-    },
-    tags: ['Trap', 'Premium'],
+    creator: mockCreator,
+    tags: ['trap', 'dark', 'hip-hop'],
     genre: 'Trap',
     bpm: 140,
-    license: 'Exclusive',
+    license: 'Basic',
     previewUri: 'https://example.com/preview.mp3',
-    isBoosted: true,
-    rating: 4.7,
+    rating: 4.2,
     onPress: () => console.log('Product pressed'),
-    onPlayPreview: () => console.log('Play preview'),
+    onPlayPreview: () => console.log('Preview played'),
+    onToggleFavorite: productId => console.log('Toggle favorite:', productId),
   },
 };
 
-export const Service: Story = {
+export const WithMetrics: Story = {
+  args: {
+    id: '2',
+    title: 'Afrobeat Fusion',
+    type: 'beat',
+    price: 35000,
+    currency: 'FCFA',
+    creator: mockCreator,
+    tags: ['afrobeat', 'fusion', 'african'],
+    genre: 'Afrobeat',
+    bpm: 120,
+    license: 'Non-Exclusive',
+    previewUri: 'https://example.com/preview2.mp3',
+    rating: 4.8,
+    viewCount: 1250,
+    downloadCount: 45,
+    likeCount: 89,
+    imageUrl: 'https://picsum.photos/300/200',
+    onPress: () => console.log('Product pressed'),
+    onPlayPreview: () => console.log('Preview played'),
+    onToggleFavorite: productId => console.log('Toggle favorite:', productId),
+  },
+};
+
+export const ServiceType: Story = {
   args: {
     id: '3',
-    title: 'Service de Mixage',
+    title: 'Professional Mixing Service',
+    type: 'service',
     price: 50000,
     currency: 'FCFA',
     creator: {
       name: 'Audio Engineer',
-      avatarUri: 'https://via.placeholder.com/100',
+      avatarUri: 'https://picsum.photos/100/100?random=3',
       rating: 4.9,
       isVerified: true,
     },
-    tags: ['Service', 'Mixage'],
-    genre: 'Service',
-    license: 'Standard',
-    isBoosted: false,
-    rating: 4.8,
+    tags: ['mixing', 'professional', 'studio'],
+    genre: 'Audio Engineering',
+    license: 'On-Demand',
+    rating: 4.9,
+    viewCount: 500,
+    downloadCount: 0,
+    likeCount: 25,
+    imageUrl: 'https://picsum.photos/300/200?random=3',
     onPress: () => console.log('Service pressed'),
+    onToggleFavorite: productId => console.log('Toggle favorite:', productId),
   },
 };
 
-export const LowRating: Story = {
+export const KitType: Story = {
   args: {
     id: '4',
-    title: 'Beat Basique',
-    price: 5000,
+    title: 'Trap Kit Vol. 1',
+    type: 'kit',
+    price: 15000,
     currency: 'FCFA',
     creator: {
-      name: 'Débutant',
-      avatarUri: 'https://via.placeholder.com/100',
-      rating: 2.1,
+      name: 'Kit Producer',
+      avatarUri: 'https://picsum.photos/100/100?random=4',
+      rating: 4.3,
       isVerified: false,
     },
-    tags: ['Basique'],
-    genre: 'Hip-Hop',
-    bpm: 90,
-    license: 'Standard',
-    isBoosted: false,
-    rating: 2.3,
-    onPress: () => console.log('Product pressed'),
+    tags: ['kit', 'trap', 'drums', 'samples'],
+    genre: 'Trap',
+    bpm: 140,
+    license: 'Lease',
+    previewUri: 'https://example.com/kit-preview.mp3',
+    rating: 4.3,
+    viewCount: 800,
+    downloadCount: 120,
+    likeCount: 67,
+    imageUrl: 'https://picsum.photos/300/200?random=4',
+    onPress: () => console.log('Kit pressed'),
+    onPlayPreview: () => console.log('Kit preview played'),
+    onToggleFavorite: productId => console.log('Toggle favorite:', productId),
   },
 };
 
-export const NoPreview: Story = {
+export const WithoutImage: Story = {
   args: {
     id: '5',
-    title: 'Sample Pack',
-    price: 10000,
+    title: 'Beat Without Image',
+    type: 'beat',
+    price: 20000,
     currency: 'FCFA',
-    creator: {
-      name: 'Sample Creator',
-      avatarUri: 'https://via.placeholder.com/100',
-      rating: 3.5,
-      isVerified: false,
-    },
-    tags: ['Samples', 'Pack'],
-    genre: 'Various',
-    license: 'Standard',
-    isBoosted: false,
-    rating: 3.2,
+    creator: mockCreator,
+    tags: ['experimental'],
+    genre: 'Experimental',
+    bpm: 100,
+    license: 'Basic',
+    previewUri: 'https://example.com/preview5.mp3',
+    rating: 3.8,
+    viewCount: 300,
+    downloadCount: 15,
+    likeCount: 12,
+    // Pas d'imageUrl - utilise le placeholder
     onPress: () => console.log('Product pressed'),
+    onPlayPreview: () => console.log('Preview played'),
+    onToggleFavorite: productId => console.log('Toggle favorite:', productId),
   },
+};
+
+export const AllTypes: Story = {
+  render: () => (
+    <>
+      <ProductPreview
+        id="1"
+        title="Trap Beat"
+        type="beat"
+        price={25000}
+        creator={mockCreator}
+        tags={['trap']}
+        genre="Trap"
+        bpm={140}
+        license="Basic"
+        viewCount={1000}
+        downloadCount={50}
+        likeCount={75}
+        imageUrl="https://picsum.photos/300/200?random=1"
+        onPress={() => {}}
+        onToggleFavorite={() => {}}
+      />
+      <ProductPreview
+        id="2"
+        title="Sample Pack"
+        type="sample"
+        price={10000}
+        creator={mockCreator}
+        tags={['samples']}
+        genre="Various"
+        license="Non-Exclusive"
+        viewCount={500}
+        downloadCount={200}
+        likeCount={30}
+        imageUrl="https://picsum.photos/300/200?random=2"
+        onPress={() => {}}
+        onToggleFavorite={() => {}}
+      />
+      <ProductPreview
+        id="3"
+        title="Kit Bundle"
+        type="kit"
+        price={30000}
+        creator={mockCreator}
+        tags={['kit', 'bundle']}
+        genre="Hip-Hop"
+        bpm={130}
+        license="Exclusive"
+        viewCount={2000}
+        downloadCount={100}
+        likeCount={150}
+        imageUrl="https://picsum.photos/300/200?random=3"
+        onPress={() => {}}
+        onToggleFavorite={() => {}}
+      />
+    </>
+  ),
 };

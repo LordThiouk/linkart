@@ -1,6 +1,6 @@
 # Documentation des Services
 
-> Généré le: 2025-10-27
+> Généré le: 2025-10-29
 
 ## api
 

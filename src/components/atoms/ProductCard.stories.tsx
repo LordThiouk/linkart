@@ -1,7 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import { View, Text } from 'react-native';
+/* eslint-disable @typescript-eslint/no-empty-function */
+import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { ProductCard } from './ProductCard';
 import { PaperProvider } from 'react-native-paper';
+import { View } from 'react-native';
+import React from 'react';
 import { theme } from '../../theme';
 
 const meta: Meta<typeof ProductCard> = {
@@ -10,30 +12,33 @@ const meta: Meta<typeof ProductCard> = {
   decorators: [
     Story => (
       <PaperProvider theme={theme}>
-        <View
-          style={{
-            flex: 1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            padding: 20,
-            backgroundColor: theme.colors.background,
-          }}
-        >
+        <View style={{ padding: 20, backgroundColor: theme.colors.background }}>
           <Story />
         </View>
       </PaperProvider>
     ),
   ],
   argTypes: {
-    variant: {
-      control: { type: 'select' },
-      options: ['elevated', 'outlined', 'filled'],
-    },
-    padding: {
-      control: { type: 'select' },
-      options: ['none', 'small', 'medium', 'large'],
-    },
-    marginBottom: { control: 'number' },
+    id: { control: 'text' },
+    title: { control: 'text' },
+    artist: { control: 'text' },
+    price: { control: 'number' },
+    imageUrl: { control: 'text' },
+    viewCount: { control: 'number' },
+    downloadCount: { control: 'number' },
+    likeCount: { control: 'number' },
+    onPress: { action: 'pressed' },
+    onPlay: { action: 'played' },
+  },
+  args: {
+    id: 'product-123',
+    title: 'Trap Beat 2025',
+    artist: 'BeatMaster',
+    price: 25000,
+    imageUrl: 'https://i.pravatar.cc/300?img=68',
+    viewCount: 1250,
+    downloadCount: 42,
+    likeCount: 89,
   },
 };
 
@@ -41,58 +46,97 @@ export default meta;
 
 type Story = StoryObj<typeof ProductCard>;
 
-export const Elevated: Story = {
-  args: {
-    children: <Text>This is an elevated product card.</Text>,
-    variant: 'elevated',
-  },
+const InteractiveWrapper = ({ ...args }: any) => {
+  return <ProductCard {...args} onPress={() => {}} onPlay={() => {}} />;
 };
 
-export const Outlined: Story = {
-  args: {
-    children: <Text>This is an outlined product card.</Text>,
-    variant: 'outlined',
-  },
+export const Default: Story = {
+  render: args => <InteractiveWrapper {...args} />,
 };
 
-export const Filled: Story = {
-  args: {
-    children: <Text>This is a filled product card.</Text>,
-    variant: 'filled',
-  },
+export const Favorited: Story = {
+  render: args => <InteractiveWrapper {...args} />,
 };
 
-export const SmallPadding: Story = {
-  args: {
-    children: <Text>Product card with small padding.</Text>,
-    variant: 'elevated',
-    padding: 'small',
-  },
+export const WithPlayButton: Story = {
+  render: args => <InteractiveWrapper {...args} />,
 };
 
-export const LargePadding: Story = {
-  args: {
-    children: <Text>Product card with large padding.</Text>,
-    variant: 'elevated',
-    padding: 'large',
-  },
+export const HighMetrics: Story = {
+  render: args => <InteractiveWrapper {...args} />,
 };
 
-export const ProductContent: Story = {
-  args: {
-    children: (
-      <View>
-        <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 8 }}>Afrobeat Masterpiece</Text>
-        <Text style={{ color: theme.colors.onSurfaceVariant, marginBottom: 12 }}>
-          Beat moderne avec influences afro et trap
-        </Text>
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Text style={{ fontSize: 16, fontWeight: '600', color: theme.colors.primary }}>15,000 FCFA</Text>
-          <Text style={{ fontSize: 12, color: theme.colors.onSurfaceVariant }}>BPM: 140</Text>
-        </View>
+export const ZeroMetrics: Story = {
+  render: args => <InteractiveWrapper {...args} />,
+};
+
+export const ExpensiveBeat: Story = {
+  render: args => <InteractiveWrapper {...args} />,
+};
+
+export const LongTitle: Story = {
+  render: args => <InteractiveWrapper {...args} />,
+};
+
+export const GridLayout: Story = {
+  render: () => (
+    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+      <View style={{ flex: 1, minWidth: 150 }}>
+        <ProductCard
+          id="1"
+          title="Trap Beat"
+          artist="Producer 1"
+          price={25000}
+          imageUrl="https://i.pravatar.cc/300?img=1"
+          viewCount={1250}
+          downloadCount={42}
+          likeCount={89}
+          onPress={() => {}}
+        />
       </View>
-    ),
-    variant: 'elevated',
-    padding: 'medium',
-  },
+      <View style={{ flex: 1, minWidth: 150 }}>
+        <ProductCard
+          id="2"
+          title="Hip-Hop Beat"
+          artist="Producer 2"
+          price={30000}
+          imageUrl="https://i.pravatar.cc/300?img=2"
+          viewCount={2500}
+          downloadCount={75}
+          likeCount={150}
+          onPress={() => {}}
+        />
+      </View>
+    </View>
+  ),
+};
+
+export const AllStates: Story = {
+  render: () => (
+    <View style={{ gap: 20 }}>
+      <ProductCard
+        id="1"
+        title="New Beat"
+        artist="New Producer"
+        price={20000}
+        imageUrl="https://i.pravatar.cc/300?img=3"
+        viewCount={0}
+        downloadCount={0}
+        likeCount={0}
+        onPress={() => {}}
+      />
+      <ProductCard
+        id="2"
+        title="Popular Beat"
+        artist="Popular Producer"
+        price={50000}
+        imageUrl="https://i.pravatar.cc/300?img=4"
+        viewCount={100000}
+        downloadCount={500}
+        likeCount={2000}
+        onPress={() => {}}
+        onPlay={() => {}}
+      />
+    </View>
+  ),
 };

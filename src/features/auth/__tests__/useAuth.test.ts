@@ -2,15 +2,25 @@ import { renderHook, act } from '@testing-library/react-native';
 import { useAuth } from '../hooks/useAuth';
 
 // Mock Supabase
-jest.mock('../../auth/hooks/useAuth', () => ({
-  supabase: {
+jest.mock('@supabase/supabase-js', () => ({
+  createClient: jest.fn(() => ({
     auth: {
       signInWithOtp: jest.fn(),
       verifyOtp: jest.fn(),
       signOut: jest.fn(),
-      getUser: jest.fn(),
+      getSession: jest.fn(),
+      onAuthStateChange: jest.fn(() => ({
+        data: { subscription: { unsubscribe: jest.fn() } },
+      })),
     },
-  },
+    from: jest.fn(() => ({
+      select: jest.fn(),
+      upsert: jest.fn(),
+      update: jest.fn(),
+      eq: jest.fn(),
+      single: jest.fn(),
+    })),
+  })),
 }));
 
 describe('useAuth', () => {
@@ -28,8 +38,9 @@ describe('useAuth', () => {
 
   it('handles sign in with phone', async () => {
     const mockSignIn = jest.fn().mockResolvedValue({ data: {}, error: null });
-    const { supabase } = require('../../auth/hooks/useAuth');
-    supabase.auth.signInWithOtp = mockSignIn;
+    const { createClient } = require('@supabase/supabase-js');
+    const mockSupabase = createClient();
+    mockSupabase.auth.signInWithOtp = mockSignIn;
 
     const { result } = renderHook(() => useAuth());
 
@@ -39,13 +50,17 @@ describe('useAuth', () => {
 
     expect(mockSignIn).toHaveBeenCalledWith({
       phone: '+221771234567',
+      options: {
+        channel: 'sms',
+      },
     });
   });
 
   it('handles sign in with email', async () => {
     const mockSignIn = jest.fn().mockResolvedValue({ data: {}, error: null });
-    const { supabase } = require('../../auth/hooks/useAuth');
-    supabase.auth.signInWithOtp = mockSignIn;
+    const { createClient } = require('@supabase/supabase-js');
+    const mockSupabase = createClient();
+    mockSupabase.auth.signInWithOtp = mockSignIn;
 
     const { result } = renderHook(() => useAuth());
 
@@ -55,6 +70,9 @@ describe('useAuth', () => {
 
     expect(mockSignIn).toHaveBeenCalledWith({
       email: 'test@example.com',
+      options: {
+        emailRedirectTo: undefined,
+      },
     });
   });
 
@@ -63,8 +81,9 @@ describe('useAuth', () => {
       data: { user: { id: '123' } },
       error: null,
     });
-    const { supabase } = require('../../auth/hooks/useAuth');
-    supabase.auth.verifyOtp = mockVerifyOtp;
+    const { createClient } = require('@supabase/supabase-js');
+    const mockSupabase = createClient();
+    mockSupabase.auth.verifyOtp = mockVerifyOtp;
 
     const { result } = renderHook(() => useAuth());
 
@@ -73,15 +92,17 @@ describe('useAuth', () => {
     });
 
     expect(mockVerifyOtp).toHaveBeenCalledWith({
+      phone: '+221000000000',
       token: '123456',
-      type: 'phone',
+      type: 'sms',
     });
   });
 
   it('handles sign out', async () => {
     const mockSignOut = jest.fn().mockResolvedValue({ error: null });
-    const { supabase } = require('../../auth/hooks/useAuth');
-    supabase.auth.signOut = mockSignOut;
+    const { createClient } = require('@supabase/supabase-js');
+    const mockSupabase = createClient();
+    mockSupabase.auth.signOut = mockSignOut;
 
     const { result } = renderHook(() => useAuth());
 
@@ -97,8 +118,9 @@ describe('useAuth', () => {
       data: null,
       error: { message: 'Invalid phone number' },
     });
-    const { supabase } = require('../../auth/hooks/useAuth');
-    supabase.auth.signInWithOtp = mockSignIn;
+    const { createClient } = require('@supabase/supabase-js');
+    const mockSupabase = createClient();
+    mockSupabase.auth.signInWithOtp = mockSignIn;
 
     const { result } = renderHook(() => useAuth());
 

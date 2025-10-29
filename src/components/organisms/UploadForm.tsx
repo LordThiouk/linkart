@@ -1,9 +1,15 @@
+/**
+ * @deprecated Ce composant est obsolète et sera supprimé dans la v3.0.
+ * Utilisez les nouveaux composants ProductUploadForm et ServiceUploadForm à la place.
+ * @see ProductUploadForm
+ * @see ServiceUploadForm
+ */
+
 import React, { useState } from 'react';
-import { View, ViewStyle, ScrollView } from 'react-native';
-import { Title, Chip } from 'react-native-paper';
-// import { useTheme } from 'react-native-paper'; // Not used
-import { Input, Text, SectionCard, Button } from '../atoms';
+import { View, Text, ViewStyle, ScrollView, Button } from 'react-native';
 import { tokens } from '../../theme';
+import { Input, SectionCard } from '../atoms';
+import { Chip, Title } from 'react-native-paper';
 
 export interface UploadFormProps {
   onSubmit: (data: UploadFormData) => void;
@@ -127,9 +133,7 @@ export const UploadForm: React.FC<UploadFormProps> = ({ onSubmit, loading = fals
           </View>
 
           <View style={{ marginBottom: tokens.spacing.md }}>
-            <Text variant="body2" style={{ marginBottom: tokens.spacing.sm }}>
-              Licence
-            </Text>
+            <Text style={{ marginBottom: 8 }}>Licence</Text>
             <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: tokens.spacing.sm }}>
               {LICENSES.map(license => (
                 <Chip
@@ -156,9 +160,7 @@ export const UploadForm: React.FC<UploadFormProps> = ({ onSubmit, loading = fals
               onChangeText={setNewTag}
               style={{ flex: 1, marginRight: tokens.spacing.sm }}
             />
-            <Button variant="outline" onPress={handleAddTag} style={{ alignSelf: 'flex-end' }}>
-              Ajouter
-            </Button>
+            <Button title="Ajouter" onPress={handleAddTag} />
           </View>
 
           {formData.tags.length > 0 && (
@@ -176,30 +178,12 @@ export const UploadForm: React.FC<UploadFormProps> = ({ onSubmit, loading = fals
         <SectionCard style={{ marginBottom: tokens.spacing.md }}>
           <Title style={{ marginBottom: tokens.spacing.md }}>Fichiers</Title>
 
-          <Button
-            variant="outline"
-            icon="upload"
-            onPress={() => console.log('Upload preview')}
-            style={{ marginBottom: tokens.spacing.sm }}
-          >
-            Upload Preview (30s max)
-          </Button>
-
-          <Button variant="outline" icon="upload" onPress={() => console.log('Upload full file')}>
-            Upload Fichier Complet
-          </Button>
+          <Button title="Upload Preview (30s max)" onPress={() => console.log('Upload preview')} />
+          <Button title="Upload Fichier Complet" onPress={() => console.log('Upload full file')} />
         </SectionCard>
 
         {/* Bouton de soumission */}
-        <Button
-          variant="primary"
-          onPress={handleSubmit}
-          loading={loading}
-          disabled={!isFormValid || loading}
-          style={{ marginTop: tokens.spacing.md }}
-        >
-          Publier le produit
-        </Button>
+        <Button title="Publier le produit" onPress={handleSubmit} disabled={!isFormValid || loading} />
       </View>
     </ScrollView>
   );

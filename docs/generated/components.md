@@ -1,6 +1,6 @@
 # Documentation des Composants
 
-> Généré le: 2025-10-27
+> Généré le: 2025-10-29
 
 ## Atoms
 
@@ -117,6 +117,24 @@ interface DividerProps {
 
 ---
 
+### HeartIcon
+
+**Props:**
+
+```typescript
+interface HeartIconProps {
+
+  productId: string;
+  size?: 'sm' | 'md' | 'lg';
+  disabled?: boolean;
+  showAnimation?: boolean;
+  testID?: string;
+
+}
+```
+
+---
+
 ### Icon
 
 **Props:**
@@ -184,6 +202,42 @@ interface LoadingSpinnerProps {
 
 ---
 
+### MetricItem
+
+**Props:**
+
+```typescript
+interface MetricItemProps {
+
+  icon: 'eye' | 'download' | 'heart';
+  value: number | string;
+  size?: 'sm' | 'md';
+  color?: string;
+  testID?: string;
+
+}
+```
+
+---
+
+### PlayButton
+
+**Props:**
+
+```typescript
+interface PlayButtonProps {
+
+  isPlaying: boolean;
+  size: 'sm' | 'md' | 'lg';
+  onPress: () => void;
+  disabled?: boolean;
+  testID?: string;
+
+}
+```
+
+---
+
 ### ProductCard
 
 **Props:**
@@ -191,11 +245,16 @@ interface LoadingSpinnerProps {
 ```typescript
 interface ProductCardProps {
 
-  children: React.ReactNode;
-  variant?: 'elevated' | 'outlined' | 'filled';
-  marginBottom?: number;
-  padding?: 'none' | 'small' | 'medium' | 'large';
-  style?: ViewStyle;
+  id: string;
+  title: string;
+  artist: string;
+  price: number;
+  imageUrl: string;
+  viewCount: number;
+  downloadCount: number;
+  likeCount: number;
+  onPress: (id: string) => void;
+  onPlay?: (id: string) => void;
   testID?: string;
 
 }
@@ -413,6 +472,23 @@ interface StatLabelProps {
 
 ---
 
+### StatsContainer
+
+**Props:**
+
+```typescript
+interface StatsContainerProps {
+
+  children: React.ReactNode;
+  style?: ViewStyle;
+  gap?: number;
+  marginBottom?: number;
+
+}
+```
+
+---
+
 ### StatValue
 
 **Props:**
@@ -425,23 +501,6 @@ interface StatValueProps {
   color?: string;
   fontSize?: number;
   fontWeight?: string;
-
-}
-```
-
----
-
-### StatsContainer
-
-**Props:**
-
-```typescript
-interface StatsContainerProps {
-
-  children: React.ReactNode;
-  style?: ViewStyle;
-  gap?: number;
-  marginBottom?: number;
 
 }
 ```
@@ -470,6 +529,22 @@ interface ToastProps {
 
 ---
 
+### WebLinearGradient
+
+**Props:**
+
+```typescript
+interface WebLinearGradientProps {
+
+  colors: string[];
+  style?: ViewStyle;
+  children?: React.ReactNode;
+  start?: { x: number; y: number 
+}
+```
+
+---
+
 ## Molecules
 
 ### AudioPlayer
@@ -479,12 +554,44 @@ interface ToastProps {
 ```typescript
 interface AudioPlayerProps {
 
+  title: string;
+  artist: string;
+  artworkUrl: string;
   uri: string;
   duration?: number;
+  productId: string;
   onPlay?: () => void;
   onPause?: () => void;
   onEnd?: () => void;
+  onNext?: () => void;
+  onPress?: () => void;
+  sticky?: boolean;
   style?: ViewStyle;
+  testID?: string;
+
+}
+```
+
+---
+
+### PlaylistCard
+
+**Props:**
+
+```typescript
+interface PlaylistCardProps {
+
+  id: string;
+  title: string;
+  description?: string;
+  typebeat?: string;
+  ambiance?: string;
+  beatCount: number;
+  duration?: string;
+  coverImage?: string;
+  isPlaying?: boolean;
+  onPress: (playlistId: string) => void;
+  onPlay?: (playlistId: string) => void;
   testID?: string;
 
 }
@@ -505,6 +612,25 @@ interface PriceDisplayProps {
   size?: 'small' | 'medium' | 'large';
   color?: string;
   style?: ViewStyle;
+  testID?: string;
+
+}
+```
+
+---
+
+### ProductMetrics
+
+**Props:**
+
+```typescript
+interface ProductMetricsProps {
+
+  viewCount: number;
+  downloadCount: number;
+  likeCount: number;
+  size?: 'sm' | 'md';
+  layout?: 'horizontal' | 'vertical';
   testID?: string;
 
 }
@@ -549,10 +675,30 @@ interface SearchBarProps {
   value: string;
   onChangeText: (text: string) => void;
   onSearch?: (query: string) => void;
-  filters?: {
-    label: string;
-    value: string;
-    selected?: boolean;
+  onFocus?: () => void;
+  onBlur?: () => void;
+  style?: ViewStyle;
+  testID?: string;
+
+}
+```
+
+---
+
+### ServiceCard
+
+**Props:**
+
+```typescript
+interface ServiceCardProps {
+
+  id: string;
+  title: string;
+  provider: {
+    id: string;
+    name: string;
+    avatar?: string;
+    verified?: boolean;
   
 }
 ```
@@ -610,6 +756,58 @@ interface CheckoutFormProps {
 
 ---
 
+### ContentTabs
+
+**Props:**
+
+```typescript
+interface ContentTabsProps {
+
+  activeTab: string;
+  onTabPress: (tabId: string) => void;
+
+}
+```
+
+---
+
+### FeaturedPacks
+
+**Props:**
+
+```typescript
+interface FeaturedPacksProps {
+
+  packs: {
+    id: string;
+    title: string;
+    beatCount: number;
+    genre: string;
+    price: string;
+  
+}
+```
+
+---
+
+### FilterPills
+
+**Props:**
+
+```typescript
+interface FilterPillsProps {
+
+  filters: FilterPill[];
+  onFilterPress: (filterId: string) => void;
+  onFilterRemove?: (filterId: string) => void;
+  showRemoveButton?: boolean;
+  testID?: string;
+
+}
+```
+
+---
+
 ### Header
 
 **Props:**
@@ -630,6 +828,46 @@ interface HeaderProps {
   rightActions?: React.ReactNode;
   style?: ViewStyle;
   testID?: string;
+
+}
+```
+
+---
+
+### HeroBanner
+
+**Props:**
+
+```typescript
+interface HeroBannerProps {
+
+  id: string;
+  title: string;
+  artist: string;
+  duration: string;
+  backgroundImage?: string;
+  backgroundGradient?: string[];
+  isPlaying: boolean;
+  onPress: (id: string) => void;
+  onPlay: (id: string) => void;
+  onBuy?: (id: string) => void;
+
+}
+```
+
+---
+
+### MarketplaceHeader
+
+**Props:**
+
+```typescript
+interface MarketplaceHeaderProps {
+
+  onSearch: (query: string) => void;
+  onFilterPress: (filterId: string) => void;
+  activeFilters: string[];
+  searchQuery: string;
 
 }
 ```
@@ -659,6 +897,23 @@ interface ProductListProps {
 
 ---
 
+### ServicesSection
+
+**Props:**
+
+```typescript
+interface ServicesSectionProps {
+
+  services: any[];
+  onServicePress: (serviceId: string) => void;
+  onBookService?: (serviceId: string) => void;
+  onToggleFavorite?: (serviceId: string) => void;
+
+}
+```
+
+---
+
 ### TabBar
 
 **Props:**
@@ -674,6 +929,22 @@ interface TabBarProps {
       icon: string;
       badge?: string;
     
+}
+```
+
+---
+
+### TrendingSection
+
+**Props:**
+
+```typescript
+interface TrendingSectionProps {
+
+  products: any[];
+  onProductPress: (productId: string) => void;
+  onToggleFavorite?: (productId: string) => void;
+
 }
 ```
 

@@ -1,7 +1,8 @@
 # Documentation Technique Interne Linkart
 
-> Version: v2.0 Auteur: Papa Diop Dernière mise à jour: 2025-10-27 Objet: Documentation technique
-> complète pour développeurs et DevOps de la marketplace musicale Linkart
+> Version: v2.2 Auteur: Papa Diop Dernière mise à jour: 2025-10-28 Objet: Documentation technique
+> complète pour développeurs et DevOps de la marketplace musicale Linkart. Phase 3 complétée avec
+> composants adaptés et intégration complète.
 
 ---
 
@@ -248,6 +249,37 @@ conversations (1) --> (N) messages
 bookings (1) --> (N) ratings (service)
 ```
 
+#### Tables Métriques
+
+**favorites** : Système de likes/favoris
+
+- Relations : users (1:N), products (1:N)
+- Contrainte unique : (user_id, product_id)
+- Index : user_id, product_id, created_at
+
+**product_plays** : Logs des lectures preview
+
+- Relations : products (N:1), users (N:1 optional)
+- Champs : product_id, user_id, ip, ua, duration_seconds
+- Index : product_id, user_id, created_at
+
+**Colonnes agrégées products** :
+
+- view_count : mis à jour par trigger sur product_plays INSERT
+- download_count : mis à jour par trigger sur download_logs INSERT
+- like_count : mis à jour par trigger sur favorites INSERT/DELETE
+
+#### Triggers Métriques
+
+**increment_product_views** : Incrémente view_count à chaque INSERT dans product_plays
+
+**update_product_likes** : Incrémente/décrémente like_count à chaque INSERT/DELETE dans favorites
+
+**increment_product_downloads** : Incrémente download_count à chaque INSERT dans download_logs
+
+Ces triggers garantissent la cohérence automatique entre les logs détaillés et les compteurs
+agrégés.
+
 ### 3.2 Migrations
 
 **Structure des migrations :**
@@ -420,6 +452,10 @@ export const theme = {
   },
 };
 ```
+
+Note: L'app mobile utilise actuellement un thème basé sur React Native Paper (MD3) dans
+`src/theme/index.ts` avec tokens (espacement, rayons, ombres). NativeBase reste compatible et pourra
+être aligné ultérieurement; les tokens centralisés facilitent la convergence.
 
 ---
 
@@ -717,7 +753,23 @@ npx react-native start --reset-cache
 
 ## 9. Changelog
 
-### v2.1 (2025-10-27)
+### v2.2 (2025-10-28)
+
+- **Phase 3 complétée** : ProductCard, SearchBar, AudioPlayer adaptés avec nouveaux composants
+- **Tests unitaires** : Mise à jour des tests pour tous les composants Phase 3
+- **Stories Storybook** : Mise à jour des stories pour tous les composants Phase 3
+- **Documentation** : Mise à jour avec statut des composants Phase 3
+- **Architecture** : Composants modulaires et réutilisables avec intégration complète
+
+### v2.1 (2025-10-28)
+
+- **Métriques produits** : Ajout des tables favorites et product_plays pour tracking
+- **Colonnes agrégées** : view_count, download_count, like_count dans products
+- **Triggers PostgreSQL** : Automatisation de la mise à jour des compteurs
+- **Système de favoris** : Documentation complète du système likes/favoris
+- **Performance** : Optimisations pour affichage des métriques publiques
+
+### v2.0 (2025-10-27)
 
 - **Architecture services** : Ajout des Edge Functions pour réservations et messagerie
 - **Schéma base de données** : Nouvelles tables bookings, service_pricing, conversations, messages
@@ -725,8 +777,21 @@ npx react-native start --reset-cache
 - **Index performance** : Optimisations pour requêtes services
 - **Frontend modules** : Ajout des features bookings et conversations
 
+### v2.1 (2025-10-27)
+
+- **Phase 2 complétée** : ServiceCard, PlaylistCard, HeroBanner, FilterPills créés
+- **Tests unitaires** : Création des tests pour tous les composants Phase 2
+- **Stories Storybook** : Création des stories pour tous les composants Phase 2
+- **Documentation** : Mise à jour avec statut des composants Phase 2
+- **Architecture** : Composants modulaires et réutilisables
+
 ### v2.0 (2025-10-27)
 
+- **Phase 1 complétée** : HeartIcon, PlayButton, MetricItem, ProductMetrics créés
+- **Tests unitaires** : Création des tests pour tous les composants Phase 1
+- **Stories Storybook** : Création des stories pour tous les composants Phase 1
+- **Documentation** : Mise à jour avec statut des composants Phase 1
+- **Architecture** : Composants modulaires et réutilisables
 - Documentation complète selon les règles du projet
 - Architecture détaillée avec diagrammes
 - Patterns de développement standardisés

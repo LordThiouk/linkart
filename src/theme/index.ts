@@ -215,14 +215,7 @@ const LightTheme: MD3Theme = {
   fonts: configureFonts({ config: fontConfig }),
 };
 
-// --- 5. Exportations ---
-export const darkTheme = DarkTheme;
-export const lightTheme = LightTheme;
-
-// Le thème sombre est celui par défaut pour l'application mobile.
-export const theme = darkTheme;
-
-// --- 6. Tokens de Design Moderne ---
+// --- 5. Tokens de Design Moderne ---
 export const tokens = {
   // Espacement moderne (basé sur 8px grid)
   spacing: {
@@ -320,7 +313,46 @@ export const tokens = {
   },
 };
 
-// --- 7. Styles personnalisés pour les composants ---
+// --- 6. Thème étendu avec tokens ---
+// Étendre le thème avec nos tokens personnalisés
+const extendThemeWithTokens = (baseTheme: MD3Theme) => ({
+  ...baseTheme,
+  spacing: tokens.spacing,
+  radii: tokens.radii,
+  shadows: tokens.shadows,
+  animations: tokens.animations,
+  zIndex: tokens.zIndex,
+  breakpoints: tokens.breakpoints,
+  colors: {
+    ...baseTheme.colors,
+    // Ajouter nos couleurs personnalisées
+    music: colors.music,
+    gradients: colors.gradients,
+    success: colors.success,
+    successContainer: colors.successContainer,
+    onSuccess: colors.onSuccess,
+    onSuccessContainer: colors.onSuccessContainer,
+    warning: colors.warning,
+    warningContainer: colors.warningContainer,
+    onWarning: colors.onWarning,
+    onWarningContainer: colors.onWarningContainer,
+    info: colors.info,
+    infoContainer: colors.infoContainer,
+    onInfo: colors.onInfo,
+    onInfoContainer: colors.onInfoContainer,
+    accent: colors.secondary,
+    muted: baseTheme.dark ? colors.dark['400'] : colors.light['400'],
+  },
+});
+
+// --- 8. Exportations ---
+export const darkTheme = extendThemeWithTokens(DarkTheme);
+export const lightTheme = extendThemeWithTokens(LightTheme);
+
+// Le thème sombre est celui par défaut pour l'application mobile.
+export const theme = darkTheme;
+
+// --- 9. Styles personnalisés pour les composants ---
 export const componentStyles = {
   // Styles pour les boutons modernes
   button: {

@@ -1,6 +1,6 @@
 # Documentation des Fonctionnalités
 
-> Généré le: 2025-10-27
+> Généré le: 2025-10-29
 
 ## 🎯 Admin
 
@@ -87,6 +87,11 @@ export type { CreateProductData, UpdateProductData } from './services/productSer
 
 ```
 
+### Composants
+
+- **ProductUploadForm.stories**
+- **ProductUploadForm**
+
 ### Hooks
 
 - **useProducts**
@@ -120,6 +125,15 @@ export type { RatingFormData } from './components/RatingForm';
 
 ---
 
+## 🎯 Services
+
+### Composants
+
+- **ServiceUploadForm.stories**
+- **ServiceUploadForm**
+
+---
+
 ## 🎯 Uploads
 
 ### Exports
@@ -138,6 +152,8 @@ export type { FileMetadata } from './services/uploadService';
 
 - **FileUpload.stories**
 - **FileUpload**
+- **UploadFormContainer.stories**
+- **UploadFormContainer**
 
 ### Hooks
 

@@ -21,21 +21,107 @@ jest.mock('expo-secure-store', () => ({
   deleteItemAsync: jest.fn(),
 }));
 
+jest.mock('expo-haptics', () => ({
+  impactAsync: jest.fn(),
+  ImpactFeedbackStyle: {
+    Light: 'light',
+  },
+}));
+
 // Mock Supabase
 jest.mock('@supabase/supabase-js', () => ({
   createClient: jest.fn(() => ({
     auth: {
-      signInWithOtp: jest.fn(),
-      signOut: jest.fn(),
-      getSession: jest.fn(),
+      signInWithOtp: jest.fn().mockResolvedValue({ data: {}, error: null }),
+      verifyOtp: jest.fn().mockResolvedValue({ data: {}, error: null }),
+      signOut: jest.fn().mockResolvedValue({ error: null }),
+      getSession: jest.fn().mockResolvedValue({ data: { session: null }, error: null }),
+      onAuthStateChange: jest.fn(() => ({
+        data: { subscription: { unsubscribe: jest.fn() } },
+      })),
     },
     from: jest.fn(() => ({
-      select: jest.fn(),
-      insert: jest.fn(),
-      update: jest.fn(),
-      delete: jest.fn(),
+      select: jest.fn().mockReturnThis(),
+      insert: jest.fn().mockReturnThis(),
+      update: jest.fn().mockReturnThis(),
+      delete: jest.fn().mockReturnThis(),
+      upsert: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      single: jest.fn().mockResolvedValue({ data: null, error: null }),
     })),
   })),
+}));
+
+// Mock React Native Paper
+jest.mock('react-native-paper', () => {
+  const mockTheme = {
+    colors: {
+      primary: '#6366F1',
+      onPrimary: '#FFFFFF',
+      surface: '#111111',
+      onSurface: '#F5F5F5',
+      onSurfaceVariant: '#A3A3A3',
+      outline: '#404040',
+      music: {
+        pink: '#EC4899',
+      },
+    },
+    roundness: 16,
+    spacing: {
+      xs: 4,
+      sm: 8,
+      md: 16,
+      lg: 24,
+      xl: 32,
+    },
+    fonts: {
+      titleMedium: {
+        fontSize: 16,
+        fontFamily: 'Poppins_500Medium',
+      },
+      bodySmall: {
+        fontSize: 12,
+        fontFamily: 'Inter_400Regular',
+      },
+      labelMedium: {
+        fontSize: 12,
+        fontFamily: 'Inter_500Medium',
+      },
+    },
+  };
+
+  return {
+    useTheme: jest.fn(() => mockTheme),
+    PaperProvider: 'PaperProvider',
+    Button: 'Button',
+    Card: 'Card',
+    Text: 'Text',
+    Surface: 'Surface',
+    IconButton: 'IconButton',
+    ActivityIndicator: 'ActivityIndicator',
+    Divider: 'Divider',
+    Badge: 'Badge',
+    Avatar: 'Avatar',
+    Chip: 'Chip',
+    Portal: 'Portal',
+    Modal: 'Modal',
+    Provider: 'Provider',
+    MD3DarkTheme: {},
+    MD3LightTheme: {},
+    configureFonts: jest.fn(),
+  };
+});
+
+// Mock Lucide React Native
+jest.mock('lucide-react-native', () => ({
+  Heart: 'Heart',
+  Play: 'Play',
+  Pause: 'Pause',
+  Eye: 'Eye',
+  Download: 'Download',
+  Search: 'Search',
+  X: 'X',
+  SkipForward: 'SkipForward',
 }));
 
 // Mock Sentry
@@ -44,10 +130,6 @@ jest.mock('@sentry/react-native', () => ({
   captureException: jest.fn(),
   captureMessage: jest.fn(),
 }));
-
-// Mock React Native modules
-jest.mock('react-native/Libraries/Animated/NativeAnimatedHelper');
-jest.mock('react-native/Libraries/EventEmitter/NativeEventEmitter');
 
 // Mock Expo modules
 jest.mock('expo-constants', () => ({

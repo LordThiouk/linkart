@@ -1,7 +1,8 @@
 # Documentation API Linkart
 
-> Version: v2.0 Auteur: Papa Diop Dernière mise à jour: 2025-10-27 Objet: Documentation complète des
-> APIs et intégrations pour la marketplace musicale Linkart
+> Version: v2.3 Auteur: Papa Diop Dernière mise à jour: 2025-10-28 Objet: Documentation complète des
+> APIs et intégrations pour la marketplace musicale Linkart. Phase 3 complétée avec composants
+> adaptés et intégration complète.
 
 ---
 
@@ -104,8 +105,6 @@ Finalise l'upload et crée le produit en statut `pending`.
 {
   "title": "Trap Beat 2025",
   "type": "beat",
-  "price": 50000,
-  "license": "Exclusive",
   "previewKey": "previews/user123/beat456_preview.mp3",
   "fileKey": "beats/user123/beat456.zip",
   "metadata": {
@@ -115,6 +114,9 @@ Finalise l'upload et crée le produit en statut `pending`.
   }
 }
 ```
+
+Note: La tarification (prix/licence) est gérée via `product_pricing` et non dans `products`.
+Utiliser `GET /api/products/:id/pricing` pour récupérer les options.
 
 **Response:**
 
@@ -139,7 +141,7 @@ Récupère la liste des produits actifs avec filtres.
 
 **Query Parameters:**
 
-- `type`: `beat` | `sample` | `kit` | `service`
+- `type`: `beat` | `sample` | `kit`
 - `genre`: `trap` | `afrobeat` | `hip-hop` | etc.
 - `minPrice`: number
 - `maxPrice`: number
@@ -161,6 +163,9 @@ Récupère la liste des produits actifs avec filtres.
         "price": 50000,
         "previewUrl": "presigned-url",
         "rating": 4.5,
+        "view_count": 1250,
+        "download_count": 42,
+        "like_count": 89,
         "seller": {
           "name": "Producer Name",
           "verified": true
@@ -177,23 +182,43 @@ Récupère la liste des produits actifs avec filtres.
 }
 ```
 
-### 3.2 Marketplace & Recherche
+### 3.2bis Favoris (Beats/Kits)
 
-#### `GET /api/products`
+#### `POST /api/favorites`
 
-**Capability requise** : Aucune (public)
+Toggle un favori pour un produit. Les favoris sont les "likes" et incrémentent le `like_count` du
+produit.
 
-Récupère la liste des produits actifs avec filtres.
+**Request:**
 
-**Query Parameters:**
+```json
+{
+  "productId": "uuid"
+}
+```
 
-- `type`: `beat` | `sample` | `kit` | `service`
-- `genre`: `trap` | `afrobeat` | `hip-hop` | etc.
-- `minPrice`: number
-- `maxPrice`: number
-- `sortBy`: `newest` | `price_asc` | `price_desc` | `rating`
-- `page`: number (pagination)
-- `limit`: number (défaut: 20)
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "is_favorite": true,
+    "like_count": 90
+  }
+}
+```
+
+Notes:
+
+- Contrainte unique (user_id, product_id).
+- Rollback UI en cas d'erreur.
+- Optimistic UI recommandé côté client.
+- Le `like_count` du produit est automatiquement mis à jour.
+
+#### `GET /api/favorites`
+
+Retourne la liste des produits favoris de l'utilisateur.
 
 **Response:**
 
@@ -205,25 +230,136 @@ Récupère la liste des produits actifs avec filtres.
       {
         "id": "uuid",
         "title": "Trap Beat 2025",
-        "type": "beat",
-        "price": 50000,
         "previewUrl": "presigned-url",
-        "rating": 4.5,
-        "seller": {
-          "name": "Producer Name",
-          "verified": true
-        }
+        "view_count": 1250,
+        "download_count": 42,
+        "like_count": 89
       }
-    ],
-    "pagination": {
-      "page": 1,
-      "limit": 20,
-      "total": 150,
-      "hasMore": true
-    }
+    ]
   }
 }
 ```
+
+### Playlists (Éditoriales)
+
+#### `GET /api/playlists`
+
+Liste les playlists éditoriales publiées (public).
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": [
+    {
+      "id": "uuid",
+      "title": "Trap Hits 2025",
+      "description": "Les meilleurs trap beats",
+      "typebeat": "Trap",
+      "ambiance": "Énergique",
+      "bpmRange": "140-160",
+      "coverUrl": "presigned-url",
+      "beatCount": 15
+    }
+  ]
+}
+```
+
+#### `GET /api/playlists/:id`
+
+Retourne le détail d'une playlist et l'ordre des beats.
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": {
+    "id": "uuid",
+    "title": "Trap Hits 2025",
+    "description": "Les meilleurs trap beats",
+    "items": [
+      { "productId": "uuid1", "order": 1 },
+      { "productId": "uuid2", "order": 2 }
+    ]
+  }
+}
+```
+
+#### `POST /api/admin/playlists`
+
+Crée une playlist éditoriale (admin uniquement).
+
+**Request:**
+
+```json
+{
+  "title": "Trap Hits 2025",
+  "description": "Les meilleurs trap beats",
+  "typebeat": "Trap",
+  "ambiance": "Énergique",
+  "bpmRange": "140-160"
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true,
+  "data": { "id": "uuid", "is_published": false }
+}
+```
+
+#### `PUT /api/admin/playlists/:id`
+
+Met à jour les métadonnées ou le statut publication (admin).
+
+**Request:**
+
+```json
+{
+  "title": "Trap Hits 2025",
+  "description": "Updated",
+  "is_published": true
+}
+```
+
+#### `POST /api/admin/playlists/:id/items`
+
+Ajoute un beat à une playlist avec un ordre précis (admin).
+
+**Request:**
+
+```json
+{
+  "productId": "uuid",
+  "order": 3
+}
+```
+
+#### `POST /api/products/:id/play`
+
+Log une lecture de preview (pour métriques).
+
+**Request:**
+
+```json
+{
+  "durationSeconds": 25
+}
+```
+
+**Response:**
+
+```json
+{
+  "success": true
+}
+```
+
+Note: Appelé automatiquement par le player après 1 seconde de lecture.
 
 #### `GET /api/products/:id/pricing`
 
@@ -784,6 +920,9 @@ Génère une URL presignée pour télécharger un fichier acheté.
 }
 ```
 
+Note: Les fichiers achetés et les contrats PDF sont accessibles via des URLs presignées temporaires
+(TTL 15 minutes). Aucun lien public permanent n'est exposé.
+
 **Response:**
 
 ```json
@@ -1246,7 +1385,7 @@ CREATE POLICY "Users can view own data" ON users
 
 - **Upload** : TTL 5 minutes
 - **Download** : TTL 15 minutes
-- **Contrats** : Accès permanent (après achat)
+- **Contrats** : Accès via presigned GET (TTL 15 minutes)
 
 ### 6.3 Audit Trail
 
@@ -1282,14 +1421,13 @@ await fetch(uploadUrl, {
   body: previewFile,
 });
 
-// 3. Finaliser produit
+// 3. Finaliser produit (tarification gérée séparément via product_pricing)
 await fetch('/api/upload-complete', {
   method: 'POST',
   headers: { Authorization: `Bearer ${token}` },
   body: JSON.stringify({
     title: 'Trap Beat 2025',
     type: 'beat',
-    price: 50000,
     previewKey: 'previews/user123/beat456_preview.mp3',
   }),
 });
@@ -1298,12 +1436,13 @@ await fetch('/api/upload-complete', {
 ### 7.2 Flow Achat (Beats/Kits)
 
 ```typescript
-// 1. Initier paiement
+// 1. Initier paiement (inclure pricingId)
 const paymentResponse = await fetch('/api/pay', {
   method: 'POST',
   headers: { Authorization: `Bearer ${token}` },
   body: JSON.stringify({
     productId: 'uuid',
+    pricingId: 'uuid',
     paymentMethod: 'wave',
     phoneNumber: '+221701234567',
   }),
@@ -1384,8 +1523,36 @@ await fetch('/api/ratings', {
 
 ## 8. Changelog
 
+### v2.3 (2025-10-28)
+
+- **Phase 3 complétée** : ProductCard, SearchBar, AudioPlayer adaptés avec nouveaux composants
+- **Tests unitaires** : Mise à jour des tests pour tous les composants Phase 3
+- **Stories Storybook** : Mise à jour des stories pour tous les composants Phase 3
+- **Documentation** : Mise à jour avec statut des composants Phase 3
+- **Architecture** : Composants modulaires et réutilisables avec intégration complète
+
+### v2.2 (2025-10-28)
+
+- **Ajout: Métriques produits** : view_count, download_count, like_count dans les réponses API
+- **Nouveau endpoint** : POST /api/products/:id/play pour logger les lectures preview
+- **Système de favoris** : Clarification que favoris = likes avec mise à jour du like_count
+- **Performance** : Optimisation des réponses avec métriques agrégées
+
+### v2.2 (2025-10-27)
+
+- **Phase 2 complétée** : ServiceCard, PlaylistCard, HeroBanner, FilterPills créés
+- **Tests unitaires** : Création des tests pour tous les composants Phase 2
+- **Stories Storybook** : Création des stories pour tous les composants Phase 2
+- **Documentation** : Mise à jour avec statut des composants Phase 2
+- **Architecture** : Composants modulaires et réutilisables
+
 ### v2.1 (2025-10-27)
 
+- **Phase 1 complétée** : HeartIcon, PlayButton, MetricItem, ProductMetrics créés
+- **Tests unitaires** : Création des tests pour tous les composants Phase 1
+- **Stories Storybook** : Création des stories pour tous les composants Phase 1
+- **Documentation** : Mise à jour avec statut des composants Phase 1
+- **Architecture** : Composants modulaires et réutilisables
 - **Nouveaux endpoints réservations** : Système de booking complet pour services
 - **Messagerie conditionnelle** : Chat uniquement pour services, pas pour beats/kits
 - **Restriction paiements** : Blocage des achats de services via `/api/pay`

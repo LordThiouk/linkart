@@ -28,3 +28,9 @@ export { Spacer } from './Spacer';
 export { Divider } from './Divider';
 export { LoadingSpinner } from './LoadingSpinner';
 export { Toast } from './Toast';
+
+// Composants métriques et interactions
+export { HeartIcon } from './HeartIcon';
+export { PlayButton } from './PlayButton';
+export { MetricItem } from './MetricItem';
+export { WebLinearGradient } from './WebLinearGradient';

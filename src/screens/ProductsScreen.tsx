@@ -1,19 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { View, FlatList } from 'react-native';
-import { Searchbar, Button, Card, Paragraph, Chip, useTheme } from 'react-native-paper';
+import { Searchbar, Button, useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import {
-  Container,
-  ProductCard,
-  ProductIcon,
-  ProductInfo,
-  ProductTitle,
-  ProductPrice,
-  ProductTags,
-  ProductFooter,
-  RatingContainer,
-} from '../components/atoms';
-import { RatingStars } from '../components/molecules';
+import { Container, ProductCard } from '../components/atoms';
 
 interface Product {
   id: string;
@@ -25,14 +14,11 @@ interface Product {
   genre: string;
   bpm?: number;
   duration?: string;
+  imageUrl?: string;
+  viewCount?: number;
+  downloadCount?: number;
+  likeCount?: number;
 }
-
-const iconMap = {
-  beat: 'music-note',
-  kit: 'archive-music-outline',
-  sample: 'waveform',
-  service: 'headphones',
-};
 
 export function ProductsScreen() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -87,55 +73,18 @@ export function ProductsScreen() {
   }, []);
 
   const renderProduct = ({ item }: { item: Product }) => (
-    <ProductCard>
-      <Card.Content>
-        <View style={{ flexDirection: 'row', alignItems: 'flex-start' }}>
-          <ProductIcon iconName={iconMap[item.type]} />
-
-          <ProductInfo>
-            <View
-              style={{
-                flexDirection: 'row',
-                justifyContent: 'space-between',
-                alignItems: 'flex-start',
-                marginBottom: 8,
-              }}
-            >
-              <View style={{ flex: 1, marginRight: 8 }}>
-                <ProductTitle numberOfLines={2}>{item.title}</ProductTitle>
-                <Paragraph>par {item.artist}</Paragraph>
-              </View>
-              <ProductPrice>{item.price.toLocaleString()} F</ProductPrice>
-            </View>
-
-            <ProductTags>
-              <Chip mode="outlined" style={{ marginRight: 8, marginBottom: 4 }}>
-                {item.genre}
-              </Chip>
-              {item.bpm && (
-                <Chip mode="outlined" style={{ marginRight: 8, marginBottom: 4 }}>
-                  {item.bpm} BPM
-                </Chip>
-              )}
-              {item.duration && (
-                <Chip mode="outlined" style={{ marginRight: 8, marginBottom: 4 }}>
-                  {item.duration}
-                </Chip>
-              )}
-            </ProductTags>
-
-            <ProductFooter>
-              <RatingContainer>
-                <RatingStars rating={item.rating} size={16} />
-              </RatingContainer>
-              <Button mode="outlined" compact>
-                Voir
-              </Button>
-            </ProductFooter>
-          </ProductInfo>
-        </View>
-      </Card.Content>
-    </ProductCard>
+    <ProductCard
+      id={item.id}
+      title={item.title}
+      artist={item.artist}
+      price={item.price}
+      imageUrl={item.imageUrl || 'https://picsum.photos/300/300'}
+      viewCount={item.viewCount || 0}
+      downloadCount={item.downloadCount || 0}
+      likeCount={item.likeCount || 0}
+      onPress={id => console.log('Product pressed:', id)}
+      onPlay={id => console.log('Play preview:', id)}
+    />
   );
 
   return (

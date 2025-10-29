@@ -1,88 +1,129 @@
 import React, { useState } from 'react';
-import { View, ViewStyle } from 'react-native';
-import { Searchbar, Chip } from 'react-native-paper';
+import { View, TextInput, TouchableOpacity, ViewStyle } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import { tokens } from '../../theme';
+import { Search, X } from 'lucide-react-native';
 
 export interface SearchBarProps {
   placeholder?: string;
   value: string;
   onChangeText: (text: string) => void;
   onSearch?: (query: string) => void;
-  filters?: {
-    label: string;
-    value: string;
-    selected?: boolean;
-  }[];
-  onFilterChange?: (filter: string) => void;
+  onFocus?: () => void;
+  onBlur?: () => void;
   style?: ViewStyle;
   testID?: string;
 }
 
 export const SearchBar: React.FC<SearchBarProps> = ({
-  placeholder = 'Rechercher des beats...',
+  placeholder = 'Rechercher beats, artistes, services...',
   value,
   onChangeText,
   onSearch,
-  filters = [],
-  onFilterChange,
+  onFocus,
+  onBlur,
   style,
   testID,
 }) => {
   const theme = useTheme();
-  const [isSearching, setIsSearching] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
-  const handleSearch = () => {
-    setIsSearching(true);
-    onSearch?.(value);
-    // Simuler une recherche (à remplacer par l'appel API réel)
-    setTimeout(() => setIsSearching(false), 1000);
+  const handleFocus = () => {
+    setIsFocused(true);
+    onFocus?.();
   };
 
-  const handleFilterPress = (filterValue: string) => {
-    onFilterChange?.(filterValue);
+  const handleBlur = () => {
+    setIsFocused(false);
+    onBlur?.();
+  };
+
+  const handleSearch = () => {
+    if (value.trim()) {
+      onSearch?.(value.trim());
+    }
+  };
+
+  const handleClear = () => {
+    onChangeText('');
   };
 
   return (
-    <View style={style} testID={testID}>
-      <Searchbar
-        placeholder={placeholder}
-        value={value}
-        onChangeText={onChangeText}
-        onIconPress={handleSearch}
-        onSubmitEditing={handleSearch}
-        loading={isSearching}
-        style={{
+    <View
+      style={[
+        {
+          flexDirection: 'row',
+          alignItems: 'center',
           backgroundColor: theme.colors.surface,
-          elevation: 2,
-        }}
+          borderRadius: theme.roundness,
+          borderWidth: 1,
+          borderColor: isFocused ? theme.colors.primary : theme.colors.outline,
+          paddingHorizontal: 16,
+          paddingVertical: 8,
+          elevation: isFocused ? 4 : 1,
+          shadowColor: '#000',
+          shadowOffset: { width: 0, height: isFocused ? 2 : 1 },
+          shadowOpacity: isFocused ? 0.25 : 0.1,
+          shadowRadius: isFocused ? 4 : 1,
+        },
+        style,
+      ]}
+      testID={testID}
+    >
+      {/* Search Icon */}
+      <Search
+        size={20}
+        color={isFocused ? theme.colors.primary : theme.colors.onSurfaceVariant}
+        style={{ marginRight: 8 }}
       />
 
-      {filters.length > 0 && (
-        <View
+      {/* Text Input */}
+      <TextInput
+        style={{
+          flex: 1,
+          fontSize: theme.fonts.bodyMedium.fontSize,
+          fontFamily: theme.fonts.bodyMedium.fontFamily,
+          color: theme.colors.onSurface,
+          paddingVertical: 4,
+        }}
+        placeholder={placeholder}
+        placeholderTextColor={theme.colors.onSurfaceVariant}
+        value={value}
+        onChangeText={onChangeText}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        onSubmitEditing={handleSearch}
+        returnKeyType="search"
+        testID={`${testID}-input`}
+      />
+
+      {/* Clear Button */}
+      {value.length > 0 && (
+        <TouchableOpacity
+          onPress={handleClear}
           style={{
-            flexDirection: 'row',
-            flexWrap: 'wrap',
-            marginTop: tokens.spacing.md,
-            gap: tokens.spacing.sm,
+            padding: 4,
+            marginLeft: 8,
           }}
+          testID={`${testID}-clear`}
         >
-          {filters.map(filter => (
-            <Chip
-              key={filter.value}
-              selected={filter.selected}
-              onPress={() => handleFilterPress(filter.value)}
-              style={{
-                backgroundColor: filter.selected ? theme.colors.primary : theme.colors.surface,
-              }}
-              textStyle={{
-                color: filter.selected ? theme.colors.onPrimary : theme.colors.onSurface,
-              }}
-            >
-              {filter.label}
-            </Chip>
-          ))}
-        </View>
+          <X size={18} color={theme.colors.onSurfaceVariant} />
+        </TouchableOpacity>
+      )}
+
+      {/* Search Button */}
+      {value.length > 0 && (
+        <TouchableOpacity
+          onPress={handleSearch}
+          style={{
+            padding: 4,
+            marginLeft: 8,
+            backgroundColor: theme.colors.primary,
+            borderRadius: theme.roundness / 2,
+          }}
+          testID={`${testID}-search`}
+        >
+          <Search size={18} color={theme.colors.onPrimary} />
+        </TouchableOpacity>
       )}
     </View>
   );

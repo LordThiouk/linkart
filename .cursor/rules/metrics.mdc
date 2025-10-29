@@ -1,0 +1,44 @@
+---
+alwaysApply: true
+version: v1.0
+created: 2025-10-28
+---
+
+## Métriques Produits (Publiques)
+
+Chaque produit (beat/kit/sample) expose trois métriques publiques :
+
+1. **view_count** : Nombre de lectures preview (incrémenté à chaque play > 1s)
+2. **download_count** : Nombre de téléchargements (incrémenté via trigger sur download_logs)
+3. **like_count** : Nombre de favoris (incrémenté/décrémenté via trigger sur favorites)
+
+**Règles d'affichage :**
+- Affichage public sur toutes les product cards
+- Format : nombres abrégés (1.2K, 1.5M)
+- Icônes : eye, download, heart
+- Toujours afficher même si 0
+
+**Règles techniques :**
+- Colonnes agrégées dans `products` (performance)
+- Logs détaillés dans tables séparées (`product_plays`, `favorites`, `download_logs`)
+- Mise à jour automatique via triggers PostgreSQL
+- Pas de décrémentation pour view_count et download_count (monotone)
+
+## Système de Favoris (Likes)
+
+Les favoris sont le système de "likes" de la plateforme :
+
+**Règles :**
+- 1 favori = 1 like = +1 au like_count du produit
+- Un user ne peut favoriser un produit qu'une fois (contrainte unique)
+- Toggle : si existe → delete, sinon → insert
+- Optimistic UI obligatoire côté client avec rollback sur erreur
+- HeartIcon outline → filled avec animation
+
+**Tables :**
+- `favorites` : table de jonction user_id + product_id
+- `products.like_count` : colonne agrégée mise à jour par trigger
+
+**API :**
+- `POST /api/favorites` : toggle favorite
+- `GET /api/favorites` : liste des favoris user

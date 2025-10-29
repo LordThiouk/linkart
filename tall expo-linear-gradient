@@ -1,0 +1,45 @@
+[33mcommit 02fda1328d0d84fa0a58236e805c3448db032483[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: LordThiouk <pirlothiouk@gmail.com>
+Date:   Mon Oct 27 19:20:55 2025 +0000
+
+    feat: add Design System v2.0 with favorites and editorial playlists
+    
+    - Add comprehensive design system documentation (design-system.md)
+    - Add components library documentation (components-library.md)
+    - Add migration guide for existing components (migration-guide.md)
+    - Add detailed screen specifications (screens-specs.md)
+    - Add playlists feature documentation (playlists-feature.md)
+    - Add likes/favorites feature documentation (likes-feature.md)
+    - Update all cursor rules to include Design System v2.0 requirements
+    - Update app flow to include favorites and playlists flows
+    - Update backend structure to include favorites and playlists tables
+    - Update testing strategy to include new feature tests
+    - Update all documentation to reflect new architecture
+    
+    Design System v2.0 includes:
+    - HeartIcon and PlayButton components
+    - Editorial playlists (admin-created)
+    - Favorites system with optimistic UI
+    - Gradient effects and modern styling
+    - Comprehensive component library
+
+.cursor/rules/app_flow_document.mdc
+.cursor/rules/backend_structure_document.mdc
+.cursor/rules/cursor_project_rules.mdc
+.cursor/rules/cursor_rules.mdc
+.cursor/rules/frontend_guidelines_document.mdc
+.cursor/rules/implementation_plan.mdc
+.cursor/rules/security_guideline_document.mdc
+.cursor/rules/tech_stack_document.mdc
+.cursor/rules/testing.mdc
+docs/README.md
+docs/api/README.md
+docs/product/README.md
+docs/product/components-library.md
+docs/product/design-system.md
+docs/product/likes-feature.md
+docs/product/migration-guide.md
+docs/product/playlists-feature.md
+docs/product/screens-specs.md
+docs/product/services-model.md
+docs/public/README.md

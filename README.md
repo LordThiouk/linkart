@@ -48,6 +48,13 @@ application simple, sécurisée et monétisable.
 - **Cloudflare R2** - Stockage des fichiers audio
 - **URLs presignées** - Accès sécurisé aux fichiers
 
+### Tests
+
+- **Storybook** - Tests d'interaction et documentation UI
+- **Play Functions** - Tests d'interaction modernes
+- **Addon A11y** - Tests d'accessibilité automatiques
+- **Jest** - Tests unitaires (configuration simplifiée)
+
 ### Paiements
 
 - **Wave API** - Paiements mobiles
@@ -119,10 +126,13 @@ npm run dev:mobile       # Démarrer l'app mobile uniquement
 npm run dev:functions   # Démarrer les Edge Functions
 
 # Tests
-npm run test            # Tests unitaires
-npm run test:unit       # Tests unitaires uniquement
-npm run test:integration # Tests d'intégration
+npm run test            # Tests unitaires Jest
+npm run test:simple     # Tests avec configuration simplifiée
 npm run test:coverage   # Tests avec couverture
+npm run storybook       # Tests d'interaction Storybook
+npm run test:storybook  # Tests visuels (Storybook doit être actif)
+npm run test:storybook:ci # Tests visuels en CI (lance Storybook automatiquement)
+npm run build-storybook # Build Storybook pour production
 
 # Qualité de code
 npm run lint            # ESLint
@@ -222,6 +232,19 @@ Pour toute question ou problème :
 
 - Créer une issue sur GitHub
 - Contacter l'équipe : support@linkart.sn
+
+## 📚 Documentation
+
+### Guides Principaux
+
+- **[TESTS.md](./TESTS.md)** - Guide complet des tests (Storybook, A11y, Visual Regression)
+- **[SETUP.md](./SETUP.md)** - Installation et configuration du projet
+
+### Documentation Détaillée
+
+- [docs/TESTING.md](./docs/TESTING.md) - Guide de tests détaillé
+- [docs/internal/](./docs/internal/) - Documentation technique interne
+- [docs/product/](./docs/product/) - Documentation produit et design
 
 ## 🗺 Roadmap
 
