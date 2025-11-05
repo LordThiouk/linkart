@@ -14,10 +14,8 @@ export const api = axios.create({
 api.interceptors.request.use(
   async config => {
     try {
-      const { createClient } = require('@supabase/supabase-js');
-      const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
-      const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
-      const supabase = createClient(supabaseUrl, supabaseAnonKey);
+      // Utiliser le client Supabase centralisé
+      const { supabase } = await import('../utils/supabase/client');
 
       const {
         data: { session },

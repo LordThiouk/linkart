@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../../auth/hooks/useAuth';
+import { supabase } from '../../../utils/supabase/client';
 import { Product, Transaction, Withdrawal, Rating } from '../../../types';
 
 export interface AdminStats {
@@ -83,7 +83,7 @@ export const useAdmin = () => {
       if (flaggedRatingsError) throw flaggedRatingsError;
 
       // Calculer les revenus
-      const totalRevenue = transactions?.reduce((sum, t) => sum + (t.commission || 0), 0) || 0;
+      const totalRevenue = transactions?.reduce((sum: number, t) => sum + (t.commission || 0), 0) || 0;
 
       const stats: AdminStats = {
         totalUsers: users?.length || 0,

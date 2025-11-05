@@ -1,4 +1,4 @@
-import { supabase } from '../../auth/hooks/useAuth';
+import { supabase } from '../../../utils/supabase/client';
 import { UploadResponse } from '../../../types';
 
 export interface FileMetadata {
@@ -96,7 +96,7 @@ export class UploadService {
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return files?.map(f => f.file_key) || [];
+    return files?.map((f: { file_key: string }) => f.file_key) || [];
   }
 
   static async deleteFile(fileKey: string): Promise<void> {

@@ -64,19 +64,21 @@ export const Input: React.FC<InputProps> = ({
       left={leftIcon ? <PaperTextInput.Icon icon={leftIcon} /> : undefined}
       right={rightIcon ? <PaperTextInput.Icon icon={rightIcon} onPress={onRightIconPress} /> : undefined}
       mode="outlined"
-      style={[
-        {
-          backgroundColor: theme.colors.surface,
-          borderRadius: tokens.radii.md,
-        },
-        style,
-      ]}
+      style={
+        [
+          {
+            backgroundColor: theme.colors.surface,
+            borderRadius: tokens.radii.md,
+          },
+          style,
+        ] as unknown as ViewStyle
+      }
       contentStyle={[
         {
           fontSize: 16,
           color: theme.colors.onSurface,
         },
-        textStyle,
+        textStyle as TextStyle,
       ]}
       outlineStyle={{
         borderRadius: tokens.radii.md,

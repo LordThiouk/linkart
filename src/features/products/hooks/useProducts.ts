@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../../auth/hooks/useAuth';
+import { supabase } from '../../../utils/supabase/client';
 import { Product, ProductFilters } from '../../../types';
 
 export interface UseProductsOptions {

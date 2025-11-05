@@ -2,7 +2,17 @@ module.exports = {
   extends: ['expo', 'prettier', 'plugin:storybook/recommended'],
   parser: '@typescript-eslint/parser',
   plugins: ['@typescript-eslint', 'prettier', 'react-native'],
-  ignorePatterns: ['.history/**/*', 'node_modules/**/*', 'dist/**/*', 'build/**/*', 'src/types/supabase.ts'],
+  ignorePatterns: [
+    '.history/**/*',
+    'node_modules/**/*',
+    'dist/**/*',
+    'build/**/*',
+    'src/types/supabase.ts',
+    'figma/**/*',
+    'metro/mocks/**/*',
+    'expo-env.d.ts',
+    'storybook-static/**/*',
+  ],
   rules: {
     'prettier/prettier': 'error',
     '@typescript-eslint/no-unused-vars': 'error',

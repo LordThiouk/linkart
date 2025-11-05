@@ -9,3 +9,5 @@ storybook-static/
 *.config.js
 *.config.ts
 .history/
+figma/
+metro/mocks/

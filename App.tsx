@@ -1,3 +1,7 @@
+// Storybook React Native - Activé via variable d'environnement
+// Pour activer Storybook, définir EXPO_PUBLIC_STORYBOOK_ENABLED=true dans .env
+// Par défaut, l'app normale est chargée
+
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { Provider as PaperProvider } from 'react-native-paper';
@@ -12,6 +16,23 @@ import { theme } from './src/theme';
 import { AppNavigator } from './src/navigation/AppNavigator';
 import { AuthProvider } from './src/contexts/AuthContext';
 import { ErrorBoundary } from './src/components/ErrorBoundary';
+// Log des variables d'environnement au démarrage de l'app
+console.log("🚀 [App] Démarrage de l'application Linkart...");
+console.log(
+  '📋 [App] Variables EXPO_PUBLIC_* disponibles:',
+  Object.keys(process.env).filter(key => key.startsWith('EXPO_PUBLIC_'))
+);
+console.log(
+  '📋 [App] EXPO_PUBLIC_SUPABASE_URL:',
+  process.env.EXPO_PUBLIC_SUPABASE_URL ? `${process.env.EXPO_PUBLIC_SUPABASE_URL.substring(0, 30)}...` : 'undefined'
+);
+console.log(
+  '📋 [App] EXPO_PUBLIC_SUPABASE_ANON_KEY:',
+  process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY
+    ? `${process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY.substring(0, 20)}...`
+    : 'undefined'
+);
+console.log('📋 [App] EXPO_PUBLIC_STORYBOOK_ENABLED:', process.env.EXPO_PUBLIC_STORYBOOK_ENABLED);
 
 // Initialize Sentry
 Sentry.init({
@@ -28,7 +49,14 @@ Sentry.init({
   },
 });
 
-export default Sentry.wrap(function App() {
+// Condition pour activer Storybook via variable d'environnement
+// Si Storybook est activé, charger Storybook au lieu de l'app normale
+const STORYBOOK_ENABLED = process.env.EXPO_PUBLIC_STORYBOOK_ENABLED === 'true';
+
+// ============================================================================
+// APP NORMALE (par défaut)
+// ============================================================================
+function App() {
   const [fontsLoaded] = useFonts({
     Poppins_700Bold,
     Poppins_600SemiBold,
@@ -59,4 +87,34 @@ export default Sentry.wrap(function App() {
       </SafeAreaProvider>
     </ErrorBoundary>
   );
-});
+}
+
+// Export conditionnel : Storybook ou App normale
+console.log('📦 [App] STORYBOOK_ENABLED:', STORYBOOK_ENABLED);
+console.log('📦 [App] Export conditionnel:', STORYBOOK_ENABLED ? 'Storybook' : 'App normale');
+
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+let AppExport: React.ComponentType;
+if (STORYBOOK_ENABLED) {
+  console.log('📦 [App] Chargement du module Storybook...');
+  try {
+    const storybookModule = require('./.rnstorybook');
+    console.log('✅ [App] Module Storybook chargé:', storybookModule ? 'oui' : 'non');
+    console.log('✅ [App] storybookModule.default:', storybookModule.default ? 'défini' : 'undefined');
+    AppExport = storybookModule.default;
+  } catch (error) {
+    console.error('❌ [App] Erreur lors du chargement de Storybook:', error);
+    if (error instanceof Error) {
+      console.error('❌ [App] Error type:', error.constructor.name);
+      console.error('❌ [App] Error message:', error.message);
+      console.error('❌ [App] Error stack:', error.stack);
+    }
+    // Fallback vers App normale en cas d'erreur
+    console.warn('⚠️ [App] Fallback vers App normale');
+    AppExport = Sentry.wrap(App);
+  }
+} else {
+  AppExport = Sentry.wrap(App);
+}
+
+export default AppExport;

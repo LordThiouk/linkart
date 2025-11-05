@@ -1,21 +1,8 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import * as Sentry from '@sentry/react-native';
 
 import { User } from '../types';
-
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
-
-const supabase = createClient(supabaseUrl, supabaseAnonKey, {
-  auth: {
-    storage: AsyncStorage,
-    autoRefreshToken: true,
-    persistSession: true,
-    detectSessionInUrl: false,
-  },
-});
+import { supabase } from '../utils/supabase/client';
 
 interface AuthContextType {
   user: User | null;
@@ -36,44 +23,93 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    console.log('🔐 [AuthContext] Initialisation du AuthProvider...');
+    console.log('🔐 [AuthContext] Client Supabase:', supabase ? 'défini' : 'undefined');
+    console.log('🔐 [AuthContext] supabase.auth:', supabase?.auth ? 'défini' : 'undefined');
+
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        fetchUserProfile(session.user.id);
-      } else {
+    console.log('🔐 [AuthContext] Appel de supabase.auth.getSession()...');
+    supabase.auth
+      .getSession()
+      .then(({ data: { session }, error }) => {
+        console.log('🔐 [AuthContext] getSession() résultat:', { session: session ? 'défini' : 'null', error });
+        if (error) {
+          console.error('❌ [AuthContext] Erreur getSession():', error);
+        }
+        if (session?.user) {
+          console.log('🔐 [AuthContext] Session trouvée, récupération du profil...');
+          fetchUserProfile(session.user.id);
+        } else {
+          console.log('🔐 [AuthContext] Aucune session, mise à jour du loading...');
+          setLoading(false);
+        }
+      })
+      .catch(error => {
+        console.error('❌ [AuthContext] Erreur lors de getSession():', error);
+        console.error('❌ [AuthContext] Error type:', error?.constructor?.name);
+        console.error('❌ [AuthContext] Error message:', (error as Error)?.message);
+        console.error('❌ [AuthContext] Error stack:', (error as Error)?.stack);
         setLoading(false);
-      }
-    });
+      });
 
     // Listen for auth changes
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (session?.user) {
-        await fetchUserProfile(session.user.id);
-      } else {
-        setUser(null);
-        setLoading(false);
-      }
-    });
+    console.log('🔐 [AuthContext] Configuration de onAuthStateChange()...');
+    try {
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange(async (event, session) => {
+        console.log('🔐 [AuthContext] onAuthStateChange event:', event);
+        console.log('🔐 [AuthContext] onAuthStateChange session:', session ? 'défini' : 'null');
+        if (session?.user) {
+          console.log('🔐 [AuthContext] Session trouvée dans onAuthStateChange, récupération du profil...');
+          await fetchUserProfile(session.user.id);
+        } else {
+          console.log('🔐 [AuthContext] Aucune session dans onAuthStateChange');
+          setUser(null);
+          setLoading(false);
+        }
+      });
+      console.log('🔐 [AuthContext] Subscription créée:', subscription ? 'défini' : 'undefined');
 
-    return () => subscription.unsubscribe();
+      return () => {
+        console.log('🔐 [AuthContext] Nettoyage de la subscription...');
+        subscription.unsubscribe();
+      };
+    } catch (error) {
+      console.error('❌ [AuthContext] Erreur lors de onAuthStateChange():', error);
+      if (error instanceof Error) {
+        console.error('❌ [AuthContext] Error type:', error.constructor.name);
+        console.error('❌ [AuthContext] Error message:', error.message);
+        console.error('❌ [AuthContext] Error stack:', error.stack);
+      } else {
+        console.error('❌ [AuthContext] Error (unknown type):', JSON.stringify(error));
+      }
+    }
   }, []);
 
   const fetchUserProfile = async (userId: string) => {
+    console.log('👤 [AuthContext] fetchUserProfile appelé avec userId:', userId);
     try {
+      console.log('👤 [AuthContext] Appel de supabase.from("users")...');
       const { data, error } = await supabase.from('users').select('*').eq('id', userId).single();
+      console.log('👤 [AuthContext] Résultat de la requête:', { data: data ? 'défini' : 'null', error });
 
       if (error) {
-        console.error('Error fetching user profile:', error);
+        console.error('❌ [AuthContext] Erreur lors de la récupération du profil:', error);
         Sentry.captureException(error);
         setLoading(false);
         return;
       }
 
+      console.log('✅ [AuthContext] Profil utilisateur récupéré avec succès');
       setUser(data);
     } catch (error) {
-      console.error('Error in fetchUserProfile:', error);
+      console.error('❌ [AuthContext] Erreur dans fetchUserProfile:', error);
+      if (error instanceof Error) {
+        console.error('❌ [AuthContext] Error type:', error.constructor.name);
+        console.error('❌ [AuthContext] Error message:', error.message);
+        console.error('❌ [AuthContext] Error stack:', error.stack);
+      }
       Sentry.captureException(error);
     } finally {
       setLoading(false);
@@ -94,7 +130,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         return { error };
       }
 
-      return { error: null };
+      return { error: null as any };
     } catch (error) {
       Sentry.captureException(error);
       return { error };
@@ -229,7 +265,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const refreshUser = async () => {
-    if (user) {
+    if (user && user.id) {
       await fetchUserProfile(user.id);
     }
   };

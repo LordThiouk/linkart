@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../../auth/hooks/useAuth';
+import { supabase } from '../../../utils/supabase/client';
 import { Boost } from '../../../types';
 
 export interface BoostOption {

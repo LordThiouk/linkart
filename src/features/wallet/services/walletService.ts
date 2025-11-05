@@ -1,4 +1,4 @@
-import { supabase } from '../../auth/hooks/useAuth';
+import { supabase } from '../../../utils/supabase/client';
 import { Withdrawal, Transaction } from '../../../types';
 
 export interface WithdrawalRequest {
@@ -39,13 +39,25 @@ export class WalletService {
 
     if (monthlyError) throw monthlyError;
 
-    const monthlyEarnings =
-      monthlyTransactions
-        ?.filter((t: any) => t.seller_id === user.user.id)
-        ?.reduce((sum, t) => sum + (t.amount - t.commission), 0) || 0;
+    type TransactionWithStatus = {
+      amount: number;
+      commission: number;
+      seller_id: string;
+      buyer_id: string;
+    };
 
-    const monthlySpent =
-      monthlyTransactions?.filter((t: any) => t.buyer_id === user.user.id)?.reduce((sum, t) => sum + t.amount, 0) || 0;
+    const sellerTransactions = (monthlyTransactions || []).filter(
+      (t: TransactionWithStatus) => t.seller_id === user.user.id
+    ) as unknown as TransactionWithStatus[];
+    const monthlyEarnings = sellerTransactions.reduce(
+      (sum: number, t: TransactionWithStatus) => sum + (t.amount - t.commission),
+      0
+    );
+
+    const buyerTransactions = (monthlyTransactions || []).filter(
+      (t: TransactionWithStatus) => t.buyer_id === user.user.id
+    ) as unknown as TransactionWithStatus[];
+    const monthlySpent = buyerTransactions.reduce((sum: number, t: TransactionWithStatus) => sum + t.amount, 0);
 
     return {
       balance: wallet.balance || 0,

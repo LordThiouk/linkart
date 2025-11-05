@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { supabase } from '../../auth/hooks/useAuth';
+import { supabase } from '../../../utils/supabase/client';
 import { Rating } from '../../../types';
 
 export interface RatingData {
@@ -90,7 +90,7 @@ export const useRatings = (options: UseRatingsOptions = {}) => {
         if (statsError) throw statsError;
 
         const total = statsData?.length || 0;
-        const sum = statsData?.reduce((acc, r) => acc + r.rating, 0) || 0;
+        const sum = statsData?.reduce((acc: number, r: { rating: number }) => acc + r.rating, 0) || 0;
         const average = total > 0 ? sum / total : 0;
 
         setTotalRatings(total);

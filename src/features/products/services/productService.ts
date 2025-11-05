@@ -1,4 +1,4 @@
-import { supabase } from '../../auth/hooks/useAuth';
+import { supabase } from '../../../utils/supabase/client';
 import { ProductInsert, ProductUpdate } from '../../../types';
 
 export interface CreateProductData extends Omit<ProductInsert, 'creator_id' | 'status'> {
@@ -121,7 +121,7 @@ export class ProductService {
     if (error) throw error;
 
     // Retourner les genres uniques
-    const uniqueGenres = [...new Set(genres.map(g => g.genre))];
+    const uniqueGenres = [...new Set(genres.map((g: { genre: string }) => g.genre))];
     return uniqueGenres;
   }
 

@@ -6,7 +6,13 @@ yarn-error.log*
 
 # History files
 .history/
-
+.rnstorybook/
+.rnstorybook-static/
+.rnstorybook-static/**/*
+.rnstorybook-static/
+.rnstorybook-static/index.html
+.rnstorybook-static/iframe.html
+.rnstorybook-static/iframe.html
 # Expo
 .expo/
 dist/
@@ -117,3 +123,4 @@ Thumbs.db
 
 expo-env.d.ts
 # @end expo-cli
+.env.local
