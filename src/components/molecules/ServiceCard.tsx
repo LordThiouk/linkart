@@ -1,10 +1,11 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import { Avatar } from '../atoms/Avatar';
-import { Button } from '../atoms/Button';
+import Avatar from '../atoms/Avatar';
+import Button from '../atoms/Button';
 import { HeartIcon } from '../atoms/HeartIcon';
-import { Badge } from '../atoms/Badge';
+import Badge from '../atoms/Badge';
+import { UserProfile } from './UserProfile';
 
 export interface ServiceCardProps {
   id: string;
@@ -94,15 +95,16 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
       {/* Header avec avatar et HeartIcon */}
       <View style={styles.header}>
         <View style={styles.providerInfo}>
-          <Avatar uri={provider.avatar} size={32} name={provider.name} />
-          <View style={styles.providerDetails}>
-            <Text style={[styles.providerName, { color: theme.colors.onSurface }]}>{provider.name}</Text>
-            {provider.verified && (
-              <Badge variant="success" size="small">
-                Vérifié
-              </Badge>
-            )}
-          </View>
+          <Avatar name={provider.name} size="sm" />
+          <UserProfile
+            name={provider.name}
+            avatarUri={provider.avatar}
+            rating={rating}
+            isVerified={provider.verified}
+            size="small"
+            showRating={true}
+            showLocation={true}
+          />
         </View>
 
         {onToggleFavorite ? (
@@ -130,7 +132,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
 
         {/* Métadonnées */}
         <View style={styles.metadata}>
-          <Badge variant="default" size="small">
+          <Badge variant="default" size="sm">
             {category}
           </Badge>
 
@@ -141,11 +143,7 @@ export const ServiceCard: React.FC<ServiceCardProps> = ({
         <View style={styles.footer}>
           <Text style={[styles.price, { color: theme.colors.primary }]}>{formatPrice()}</Text>
 
-          {onBook && (
-            <Button variant="primary" size="small" onPress={handleBookPress} style={styles.bookButton}>
-              Réserver
-            </Button>
-          )}
+          {onBook && <Button variant="primary" size="sm" onPress={handleBookPress} fullWidth={true} title="Réserver" />}
         </View>
       </View>
     </TouchableOpacity>

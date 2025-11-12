@@ -1,10 +1,9 @@
-/* eslint-disable react/jsx-no-duplicate-props */
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import { Button } from '../../../components/atoms/Button';
-import { Input } from '../../../components/atoms/Input';
-import { Badge } from '../../../components/atoms/Badge';
+import Button from '../../../components/atoms/Button';
+import Input from '../../../components/atoms/Input';
+import Badge from '../../../components/atoms/Badge';
 
 interface ServiceFormData {
   title: string;
@@ -158,9 +157,9 @@ export const ServiceUploadForm: React.FC<ServiceUploadFormProps> = ({ onSubmit, 
           <Text style={[styles.label, { color: theme.colors.onSurface }]}>Titre du service *</Text>
           <Input
             value={formData.title}
-            onChangeText={text => updateField('title', text)}
+            onChangeText={(text: string) => updateField('title', text)}
             placeholder="Ex: Mixage professionnel"
-            error={!!errors.title}
+            error={errors.title}
             testID="service-title-input"
           />
           {errors.title && <Text style={[styles.errorText, { color: theme.colors.error }]}>{errors.title}</Text>}
@@ -175,7 +174,7 @@ export const ServiceUploadForm: React.FC<ServiceUploadFormProps> = ({ onSubmit, 
             placeholder="Décrivez votre service..."
             multiline
             numberOfLines={4}
-            error={!!errors.description}
+            error={errors.description}
             testID="service-description-input"
           />
           {errors.description && (
@@ -279,7 +278,7 @@ export const ServiceUploadForm: React.FC<ServiceUploadFormProps> = ({ onSubmit, 
                   }
                   placeholder="0"
                   keyboardType="numeric"
-                  error={!!errors.fixed_price}
+                  error={errors.fixed_price}
                   testID="fixed-price-input"
                 />
                 {errors.fixed_price && (
@@ -339,7 +338,7 @@ export const ServiceUploadForm: React.FC<ServiceUploadFormProps> = ({ onSubmit, 
               placeholder="Ex: Contactez-moi pour discuter de vos besoins et obtenir un devis personnalisé..."
               multiline
               numberOfLines={4}
-              error={!!errors.on_demand_message}
+              error={errors.on_demand_message}
               testID="on-demand-message-input"
             />
             {errors.on_demand_message && (
@@ -353,7 +352,7 @@ export const ServiceUploadForm: React.FC<ServiceUploadFormProps> = ({ onSubmit, 
           <View style={styles.field}>
             <View style={styles.tieredHeader}>
               <Text style={[styles.label, { color: theme.colors.onSurface }]}>Options de Prix</Text>
-              <Button title="+ Ajouter" onPress={addTier} variant="secondary" size="small" testID="add-tier-button" />
+              <Button title="+ Ajouter" onPress={addTier} variant="secondary" size="sm" />
             </View>
 
             {formData.tiered_pricing?.map((tier, index) => (
@@ -415,18 +414,11 @@ export const ServiceUploadForm: React.FC<ServiceUploadFormProps> = ({ onSubmit, 
               style={styles.tagInput}
               testID="service-tag-input"
             />
-            <Button
-              title="+"
-              onPress={addTag}
-              variant="secondary"
-              size="small"
-              disabled={!currentTag.trim()}
-              testID="add-service-tag-button"
-            />
+            <Button title="+" onPress={addTag} variant="secondary" size="sm" disabled={!currentTag.trim()} />
           </View>
           <View style={styles.tagsContainer}>
             {formData.tags.map(tag => (
-              <TouchableOpacity key={tag} onPress={() => removeTag(tag)} testID={`service-tag-${tag}`}>
+              <TouchableOpacity key={tag} onPress={() => removeTag(tag)}>
                 <Badge>{tag}</Badge>
               </TouchableOpacity>
             ))}
@@ -444,13 +436,7 @@ export const ServiceUploadForm: React.FC<ServiceUploadFormProps> = ({ onSubmit, 
         </View>
 
         {/* Submit Button */}
-        <Button
-          title="Publier le Service"
-          onPress={handleSubmit}
-          loading={loading}
-          disabled={loading}
-          testID="submit-service-button"
-        />
+        <Button title="Publier le Service" onPress={handleSubmit} loading={loading} disabled={loading} />
       </View>
     </ScrollView>
   );

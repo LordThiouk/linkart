@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, ImageBackground } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { PlayButton } from '../atoms/PlayButton';
-import { Badge } from '../atoms/Badge';
+import Badge from '../atoms/Badge';
 
 export interface PlaylistCardProps {
   id: string;
@@ -92,7 +92,7 @@ export const PlaylistCard: React.FC<PlaylistCardProps> = ({
         {/* Badge durée */}
         {duration && (
           <View style={styles.durationBadge}>
-            <Badge variant="default" size="small">
+            <Badge variant="default" size="sm">
               {duration}
             </Badge>
           </View>

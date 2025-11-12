@@ -1,19 +1,11 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { FavoritesScreenFigma } from './FavoritesScreenFigma';
-import { PaperProvider } from 'react-native-paper';
-import { theme } from '../theme';
 
 const meta: Meta<typeof FavoritesScreenFigma> = {
   title: 'Screens/FavoritesScreenFigma',
   component: FavoritesScreenFigma,
-  decorators: [
-    Story => (
-      <PaperProvider theme={theme}>
-        <Story />
-      </PaperProvider>
-    ),
-  ],
+  decorators: [Story => <Story />],
   parameters: {
     layout: 'fullscreen',
   },
@@ -28,7 +20,7 @@ const meta: Meta<typeof FavoritesScreenFigma> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof FavoritesScreenFigma>;
+type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {

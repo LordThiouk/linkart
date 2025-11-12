@@ -1,8 +1,6 @@
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react-native';
 import { SearchBar } from '../SearchBar';
-import { PaperProvider } from 'react-native-paper';
-import { theme } from '../../../theme';
 
 // Mock lucide-react-native icons
 jest.mock('lucide-react-native', () => ({
@@ -11,7 +9,7 @@ jest.mock('lucide-react-native', () => ({
 }));
 
 const renderWithTheme = (component: React.ReactElement) => {
-  return render(<PaperProvider theme={theme}>{component}</PaperProvider>);
+  return render(component);
 };
 
 describe('SearchBar', () => {

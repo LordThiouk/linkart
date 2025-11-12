@@ -1,20 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { PlaylistCard } from './PlaylistCard';
-import { PaperProvider } from 'react-native-paper';
 import { View } from 'react-native';
 import React from 'react';
-import { theme } from '../../theme';
+import { colors } from '../../theme';
 
 const meta: Meta<typeof PlaylistCard> = {
   title: 'Molecules/PlaylistCard',
   component: PlaylistCard,
   decorators: [
     Story => (
-      <PaperProvider theme={theme}>
-        <View style={{ padding: 20, backgroundColor: theme.colors.background }}>
-          <Story />
-        </View>
-      </PaperProvider>
+      <View style={{ padding: 20, backgroundColor: colors.background }}>
+        <Story />
+      </View>
     ),
   ],
   argTypes: {

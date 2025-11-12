@@ -1,18 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { ProductDetailScreen } from './ProductDetailScreen';
-import { PaperProvider } from 'react-native-paper';
-import { theme } from '../theme';
 
 const meta: Meta<typeof ProductDetailScreen> = {
   title: 'Screens/ProductDetailScreen',
   component: ProductDetailScreen,
-  decorators: [
-    Story => (
-      <PaperProvider theme={theme}>
-        <Story />
-      </PaperProvider>
-    ),
-  ],
+  decorators: [Story => <Story />],
   parameters: {
     layout: 'fullscreen',
   },

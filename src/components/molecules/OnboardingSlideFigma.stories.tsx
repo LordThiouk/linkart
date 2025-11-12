@@ -1,19 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { OnboardingSlideFigma } from './OnboardingSlideFigma';
-import { PaperProvider } from 'react-native-paper';
 import { Music2, DollarSign, Users } from 'lucide-react-native';
-import { theme } from '../../theme';
 
 const meta: Meta<typeof OnboardingSlideFigma> = {
   title: 'Molecules/OnboardingSlideFigma',
   component: OnboardingSlideFigma,
-  decorators: [
-    Story => (
-      <PaperProvider theme={theme}>
-        <Story />
-      </PaperProvider>
-    ),
-  ],
+  decorators: [Story => <Story />],
   parameters: {
     layout: 'fullscreen',
   },

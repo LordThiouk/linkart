@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { useTheme } from 'react-native-paper';
-import { Button } from '../../../components/atoms/Button';
-import { Input } from '../../../components/atoms/Input';
-import { Badge } from '../../../components/atoms/Badge';
+import Button from '../../../components/atoms/Button';
+import Input from '../../../components/atoms/Input';
+import Badge from '../../../components/atoms/Badge';
 
 interface ProductFormData {
   title: string;
@@ -155,9 +155,9 @@ export const ProductUploadForm: React.FC<ProductUploadFormProps> = ({ onSubmit, 
           <Text style={[styles.label, { color: theme.colors.onSurface }]}>Titre du produit *</Text>
           <Input
             value={formData.title}
-            onChangeText={text => updateField('title', text)}
+            onChangeText={(text: string) => updateField('title', text)}
             placeholder="Ex: Dark Trap Beat"
-            error={!!errors.title}
+            error={errors.title || undefined}
             testID="product-title-input"
           />
           {errors.title && <Text style={[styles.errorText, { color: theme.colors.error }]}>{errors.title}</Text>}
@@ -168,11 +168,11 @@ export const ProductUploadForm: React.FC<ProductUploadFormProps> = ({ onSubmit, 
           <Text style={[styles.label, { color: theme.colors.onSurface }]}>Description *</Text>
           <Input
             value={formData.description}
-            onChangeText={text => updateField('description', text)}
+            onChangeText={(text: string) => updateField('description', text)}
             placeholder="Décrivez votre beat..."
             multiline
             numberOfLines={4}
-            error={!!errors.description}
+            error={errors.description || undefined}
             testID="product-description-input"
           />
           {errors.description && (
@@ -216,10 +216,10 @@ export const ProductUploadForm: React.FC<ProductUploadFormProps> = ({ onSubmit, 
           <Text style={[styles.label, { color: theme.colors.onSurface }]}>BPM (optionnel)</Text>
           <Input
             value={formData.bpm?.toString() || ''}
-            onChangeText={text => updateField('bpm', text ? parseInt(text) : 0)}
+            onChangeText={(text: string) => updateField('bpm', text ? parseInt(text) : 0)}
             placeholder="Ex: 140"
             keyboardType="numeric"
-            error={!!errors.bpm}
+            error={errors.bpm || undefined}
             testID="product-bpm-input"
           />
           {errors.bpm && <Text style={[styles.errorText, { color: theme.colors.error }]}>{errors.bpm}</Text>}
@@ -236,18 +236,11 @@ export const ProductUploadForm: React.FC<ProductUploadFormProps> = ({ onSubmit, 
               style={styles.tagInput}
               testID="product-tag-input"
             />
-            <Button
-              title="+"
-              onPress={addTag}
-              variant="secondary"
-              size="small"
-              disabled={!currentTag.trim()}
-              testID="add-tag-button"
-            />
+            <Button title="+" onPress={addTag} variant="secondary" size="sm" disabled={!currentTag.trim()} />
           </View>
           <View style={styles.tagsContainer}>
             {formData.tags.map(tag => (
-              <Badge key={tag} children={tag} variant="default" size="small" visible={true} testID={`tag-${tag}`} />
+              <Badge key={tag} children={tag} variant="default" size="sm" visible={true} testID={`tag-${tag}`} />
             ))}
           </View>
         </View>
@@ -313,10 +306,10 @@ export const ProductUploadForm: React.FC<ProductUploadFormProps> = ({ onSubmit, 
                       <Text style={[styles.configLabel, { color: theme.colors.onSurface }]}>Prix (FCFA)</Text>
                       <Input
                         value={isSelected.price.toString()}
-                        onChangeText={text => updateLicense(licenseType.key, 'price', parseInt(text) || 0)}
+                        onChangeText={(text: string) => updateLicense(licenseType.key, 'price', parseInt(text) || 0)}
                         placeholder="0"
                         keyboardType="numeric"
-                        error={!!errors[`license_${formData.licenses.indexOf(isSelected)}_price`]}
+                        error={errors[`license_${formData.licenses.indexOf(isSelected)}_price`] || undefined}
                         testID={`license-${licenseType.key}-price`}
                       />
                     </View>
@@ -324,11 +317,11 @@ export const ProductUploadForm: React.FC<ProductUploadFormProps> = ({ onSubmit, 
                       <Text style={[styles.configLabel, { color: theme.colors.onSurface }]}>Termes et conditions</Text>
                       <Input
                         value={isSelected.terms}
-                        onChangeText={text => updateLicense(licenseType.key, 'terms', text)}
+                        onChangeText={(text: string) => updateLicense(licenseType.key, 'terms', text)}
                         placeholder="Décrivez les termes de cette licence..."
                         multiline
                         numberOfLines={3}
-                        error={!!errors[`license_${formData.licenses.indexOf(isSelected)}_terms`]}
+                        error={errors[`license_${formData.licenses.indexOf(isSelected)}_terms`] || undefined}
                         testID={`license-${licenseType.key}-terms`}
                       />
                     </View>
@@ -389,13 +382,7 @@ export const ProductUploadForm: React.FC<ProductUploadFormProps> = ({ onSubmit, 
         </View>
 
         {/* Submit Button */}
-        <Button
-          title="Publier le Produit"
-          onPress={handleSubmit}
-          loading={loading}
-          disabled={loading}
-          testID="submit-product-button"
-        />
+        <Button title="Publier le Produit" onPress={handleSubmit} loading={loading} disabled={loading} />
       </View>
     </ScrollView>
   );

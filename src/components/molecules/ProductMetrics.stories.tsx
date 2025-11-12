@@ -1,18 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { ProductMetrics } from './ProductMetrics';
-import { PaperProvider } from 'react-native-paper';
-import { theme } from '../../theme';
 
 const meta: Meta<typeof ProductMetrics> = {
   title: 'Molecules/ProductMetrics',
   component: ProductMetrics,
-  decorators: [
-    Story => (
-      <PaperProvider theme={theme}>
-        <Story />
-      </PaperProvider>
-    ),
-  ],
+  decorators: [Story => <Story />],
   parameters: {
     layout: 'centered',
   },

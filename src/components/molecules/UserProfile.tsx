@@ -1,8 +1,10 @@
 import React from 'react';
 import { View, ViewStyle } from 'react-native';
-import { Avatar, Text, Badge } from '../atoms';
+import Avatar from '../atoms/Avatar';
+import { Text } from '../atoms';
+import Badge from '../atoms/Badge';
 import { useTheme } from 'react-native-paper';
-import { tokens } from '../../theme';
+import { spacing } from '../../theme';
 
 export interface UserProfileProps {
   name: string;
@@ -35,17 +37,6 @@ export const UserProfile: React.FC<UserProfileProps> = ({
 }) => {
   const theme = useTheme();
 
-  const getAvatarSize = () => {
-    switch (size) {
-      case 'small':
-        return 32;
-      case 'large':
-        return 64;
-      default:
-        return 48;
-    }
-  };
-
   const getTextSize = () => {
     switch (size) {
       case 'small':
@@ -54,6 +45,17 @@ export const UserProfile: React.FC<UserProfileProps> = ({
         return 18;
       default:
         return 16;
+    }
+  };
+
+  const getAvatarSize = (): 'sm' | 'default' | 'lg' => {
+    switch (size) {
+      case 'small':
+        return 'sm';
+      case 'large':
+        return 'lg';
+      default:
+        return 'default';
     }
   };
 
@@ -69,7 +71,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
       testID={testID}
     >
       <View style={{ position: 'relative' }}>
-        <Avatar uri={avatarUri} name={name} size={getAvatarSize()} />
+        <Avatar name={name} size={getAvatarSize()} />
         {isOnline && (
           <View
             style={{
@@ -87,7 +89,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
         )}
       </View>
 
-      <View style={{ marginLeft: tokens.spacing.md, flex: 1 }}>
+      <View style={{ marginLeft: spacing.md, flex: 1 }}>
         <View style={{ flexDirection: 'row', alignItems: 'center' }}>
           <Text
             style={{
@@ -99,7 +101,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
             {name}
           </Text>
           {isVerified && (
-            <Badge variant="info" size="small" style={{ marginLeft: tokens.spacing.sm }}>
+            <Badge variant="info" size="sm" style={{ marginLeft: spacing.sm }}>
               ✓
             </Badge>
           )}
@@ -110,7 +112,7 @@ export const UserProfile: React.FC<UserProfileProps> = ({
             variant="body2"
             style={{
               color: theme.colors.onSurfaceVariant,
-              marginTop: tokens.spacing.xs,
+              marginTop: spacing.xs,
             }}
           >
             {location}
@@ -118,12 +120,12 @@ export const UserProfile: React.FC<UserProfileProps> = ({
         )}
 
         {showRating && rating !== undefined && (
-          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: tokens.spacing.xs }}>
+          <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: spacing.xs }}>
             <Text
               variant="body2"
               style={{
                 color: theme.colors.onSurfaceVariant,
-                marginRight: tokens.spacing.xs,
+                marginRight: spacing.xs,
               }}
             >
               {rating.toFixed(1)}

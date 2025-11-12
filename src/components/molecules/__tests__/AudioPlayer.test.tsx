@@ -1,8 +1,6 @@
 import React from 'react';
 import { render, fireEvent, screen } from '@testing-library/react-native';
 import { AudioPlayer } from '../AudioPlayer';
-import { PaperProvider } from 'react-native-paper';
-import { theme } from '../../../theme';
 
 // Mock expo-av
 jest.mock('expo-av', () => ({
@@ -46,7 +44,7 @@ jest.mock('../../atoms/PlayButton', () => ({
 }));
 
 const renderWithTheme = (component: React.ReactElement) => {
-  return render(<PaperProvider theme={theme}>{component}</PaperProvider>);
+  return render(component);
 };
 
 describe('AudioPlayer', () => {

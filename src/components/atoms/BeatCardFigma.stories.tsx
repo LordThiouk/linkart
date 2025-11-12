@@ -1,16 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
+import { View } from 'react-native';
 import { BeatCardFigma, BeatCardFigmaProps } from './BeatCardFigma';
-import { PaperProvider } from 'react-native-paper';
-import { theme } from '../../theme';
+import { colors, spacing } from '../../theme';
 
 const meta: Meta<typeof BeatCardFigma> = {
   title: 'Atoms/BeatCardFigma',
   component: BeatCardFigma,
   decorators: [
     Story => (
-      <PaperProvider theme={theme}>
+      <View style={{ flex: 1, padding: spacing.lg, backgroundColor: colors.background }}>
         <Story />
-      </PaperProvider>
+      </View>
     ),
   ],
   parameters: {

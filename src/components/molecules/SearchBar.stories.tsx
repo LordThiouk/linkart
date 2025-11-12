@@ -1,20 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { SearchBar } from './SearchBar';
-import { PaperProvider } from 'react-native-paper';
 import { View, Text } from 'react-native';
 import React, { useState } from 'react';
-import { theme } from '../../theme';
+import { colors } from '../../theme';
 
 const meta: Meta<typeof SearchBar> = {
   title: 'Molecules/SearchBar',
   component: SearchBar,
   decorators: [
     Story => (
-      <PaperProvider theme={theme}>
-        <View style={{ padding: 20, backgroundColor: theme.colors.background }}>
-          <Story />
-        </View>
-      </PaperProvider>
+      <View style={{ padding: 20, backgroundColor: colors.background }}>
+        <Story />
+      </View>
     ),
   ],
   argTypes: {
@@ -117,8 +114,8 @@ export const AllInteractions: Story = {
           onBlur={() => console.log('Blurred')}
           placeholder="Test all interactions..."
         />
-        <View style={{ padding: 10, backgroundColor: theme.colors.surfaceVariant, borderRadius: 8 }}>
-          <Text style={{ color: theme.colors.onSurfaceVariant }}>Current value: "{value}"</Text>
+        <View style={{ padding: 10, backgroundColor: colors.surfaceElevated, borderRadius: 8 }}>
+          <Text style={{ color: colors.textSecondary }}>Current value: "{value}"</Text>
         </View>
       </View>
     );

@@ -1,27 +1,27 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { View, Text } from 'react-native';
 import { SectionCard } from './SectionCard';
-import { PaperProvider } from 'react-native-paper';
-import { theme } from '../../theme';
+
+import { colors, spacing } from '../../theme';
 
 const meta: Meta<typeof SectionCard> = {
   title: 'Atoms/SectionCard',
   component: SectionCard,
   decorators: [
     Story => (
-      <PaperProvider theme={theme}>
+      <View style={{ flex: 1, padding: spacing.lg, backgroundColor: colors.background }}>
         <View
           style={{
             flex: 1,
             justifyContent: 'center',
             alignItems: 'center',
             padding: 20,
-            backgroundColor: theme.colors.background,
+            backgroundColor: colors.background,
           }}
         >
           <Story />
         </View>
-      </PaperProvider>
+      </View>
     ),
   ],
   argTypes: {
@@ -99,12 +99,12 @@ export const ComplexContent: Story = {
     children: (
       <View>
         <Text style={{ fontSize: 18, fontWeight: 'bold', marginBottom: 8 }}>Product Title</Text>
-        <Text style={{ color: theme.colors.onSurfaceVariant, marginBottom: 12 }}>
+        <Text style={{ color: colors.textSecondary, marginBottom: 12 }}>
           This is a more complex card with multiple text elements and styling.
         </Text>
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <Text style={{ fontWeight: '600' }}>Price: 15,000 FCFA</Text>
-          <Text style={{ color: theme.colors.primary }}>Available</Text>
+          <Text style={{ color: colors.primary }}>Available</Text>
         </View>
       </View>
     ),

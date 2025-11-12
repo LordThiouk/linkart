@@ -1,154 +1,213 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import { View } from 'react-native';
-import { Input } from './Input';
-import { PaperProvider } from 'react-native-paper';
-import { theme } from '../../theme';
-import { useState } from 'react';
+/**
+ * Input Stories
+ * Version: 2.0 - Design System
+ *
+ * Storybook stories pour tous les variants du Input
+ */
 
-const meta: Meta<typeof Input> = {
+import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
+import { View } from 'react-native';
+import Input from './Input';
+import { colors } from '../../theme';
+
+const meta = {
   title: 'Atoms/Input',
   component: Input,
   decorators: [
     Story => (
-      <PaperProvider theme={theme}>
-        <View style={{ flex: 1, justifyContent: 'center', padding: 20, backgroundColor: theme.colors.background }}>
+      <View
+        style={{
+          alignItems: 'center',
+          justifyContent: 'center',
+          flex: 1,
+          padding: 20,
+          backgroundColor: colors.background,
+        }}
+      >
+        <View style={{ width: '100%', maxWidth: 400 }}>
           <Story />
         </View>
-      </PaperProvider>
+      </View>
     ),
   ],
   argTypes: {
-    error: { control: 'boolean' },
-    disabled: { control: 'boolean' },
-    secureTextEntry: { control: 'boolean' },
-    multiline: { control: 'boolean' },
-    onChangeText: { action: 'text changed' },
+    variant: {
+      control: 'select',
+      options: ['default', 'filled', 'outline'],
+      description: 'Style variant du input',
+    },
+    size: {
+      control: 'select',
+      options: ['sm', 'default', 'lg'],
+      description: 'Taille du input',
+    },
+    disabled: {
+      control: 'boolean',
+      description: 'État désactivé',
+    },
+    fullWidth: {
+      control: 'boolean',
+      description: 'Largeur pleine',
+    },
   },
-};
+} satisfies Meta<typeof Input>;
 
 export default meta;
 
-type Story = StoryObj<typeof Input>;
+type Story = StoryObj<typeof meta>;
 
-export const Outlined: Story = {
+/**
+ * Input par défaut
+ */
+export const Default: Story = {
   args: {
-    label: 'Email',
-    placeholder: 'Enter your email',
-    value: '',
-    onChangeText: text => console.log(text),
-  },
-  render: args => {
-    const [value, setValue] = useState(args.value);
-    return <Input {...args} value={value} onChangeText={setValue} />;
+    placeholder: 'Entrez votre texte...',
   },
 };
 
-export const Filled: Story = {
+/**
+ * Input avec label
+ */
+export const WithLabel: Story = {
   args: {
-    label: 'Password',
-    placeholder: 'Enter your password',
-    value: '',
-    onChangeText: text => console.log(text),
-    secureTextEntry: true,
-  },
-  render: args => {
-    const [value, setValue] = useState(args.value);
-    return <Input {...args} value={value} onChangeText={setValue} />;
+    label: "Nom d'utilisateur",
+    placeholder: 'john_doe',
   },
 };
 
-export const Underlined: Story = {
-  args: {
-    label: 'Username',
-    placeholder: 'Enter your username',
-    value: '',
-    onChangeText: text => console.log(text),
-  },
-  render: args => {
-    const [value, setValue] = useState(args.value);
-    return <Input {...args} value={value} onChangeText={setValue} />;
-  },
-};
-
-export const WithLeftIcon: Story = {
-  args: {
-    label: 'Search',
-    placeholder: 'Search anything...',
-    value: '',
-    onChangeText: text => console.log(text),
-  },
-  render: args => {
-    const [value, setValue] = useState(args.value);
-    return <Input {...args} value={value} onChangeText={setValue} />;
-  },
-};
-
-export const WithRightIcon: Story = {
-  args: {
-    label: 'Password',
-    placeholder: 'Enter text',
-    value: 'hidden text',
-    onChangeText: text => console.log(text),
-    onRightIconPress: () => console.log('Right icon pressed'),
-  },
-  render: args => {
-    const [value, setValue] = useState(args.value);
-    return <Input {...args} value={value} onChangeText={setValue} />;
-  },
-};
-
-export const WithError: Story = {
-  args: {
-    label: 'Email',
-    placeholder: 'Enter your email',
-    value: 'invalid@email',
-    onChangeText: text => console.log(text),
-    error: true,
-  },
-  render: args => {
-    const [value, setValue] = useState(args.value);
-    return <Input {...args} value={value} onChangeText={setValue} />;
-  },
-};
-
+/**
+ * Input avec helper text
+ */
 export const WithHelperText: Story = {
   args: {
-    label: 'Phone',
-    placeholder: '+221 77 123 45 67',
-    value: '',
-    onChangeText: text => console.log(text),
-  },
-  render: args => {
-    const [value, setValue] = useState(args.value);
-    return <Input {...args} value={value} onChangeText={setValue} />;
+    label: 'Email',
+    placeholder: 'email@example.com',
+    helperText: 'Nous ne partagerons jamais votre email',
   },
 };
 
+/**
+ * Input avec erreur
+ */
+export const WithError: Story = {
+  args: {
+    label: 'Mot de passe',
+    placeholder: '••••••••',
+    error: 'Le mot de passe doit contenir au moins 8 caractères',
+    secureTextEntry: true,
+  },
+};
+
+/**
+ * Input variant filled
+ */
+export const Filled: Story = {
+  args: {
+    label: 'Rechercher',
+    placeholder: 'Rechercher des beats...',
+    variant: 'filled',
+  },
+};
+
+/**
+ * Input variant outline
+ */
+export const Outline: Story = {
+  args: {
+    label: 'Titre du beat',
+    placeholder: 'Mon beat trap...',
+    variant: 'outline',
+  },
+};
+
+/**
+ * Input small
+ */
+export const Small: Story = {
+  args: {
+    label: 'Petit input',
+    placeholder: 'Texte...',
+    size: 'sm',
+  },
+};
+
+/**
+ * Input large
+ */
+export const Large: Story = {
+  args: {
+    label: 'Grand input',
+    placeholder: 'Texte...',
+    size: 'lg',
+  },
+};
+
+/**
+ * Input désactivé
+ */
 export const Disabled: Story = {
   args: {
-    label: 'Disabled Field',
-    placeholder: 'Cannot be edited',
-    value: 'Fixed value',
-    onChangeText: text => console.log(text),
+    label: 'Input désactivé',
+    placeholder: 'Non éditable',
     disabled: true,
-  },
-  render: args => {
-    const [value, setValue] = useState(args.value);
-    return <Input {...args} value={value} onChangeText={setValue} />;
+    value: 'Valeur fixe',
   },
 };
 
-export const Multiline: Story = {
+/**
+ * Input pleine largeur
+ */
+export const FullWidth: Story = {
   args: {
     label: 'Description',
-    placeholder: 'Describe your product...',
-    value: '',
-    onChangeText: text => console.log(text),
+    placeholder: 'Décrivez votre beat...',
+    fullWidth: true,
     multiline: true,
     numberOfLines: 4,
   },
-  render: args => {
-    const [value, setValue] = useState(args.value);
-    return <Input {...args} value={value} onChangeText={setValue} />;
+};
+
+/**
+ * Input avec valeur par défaut
+ */
+export const WithValue: Story = {
+  args: {
+    label: 'Nom du beat',
+    value: 'Trap Beat 2025',
+  },
+};
+
+/**
+ * Input de type email
+ */
+export const EmailType: Story = {
+  args: {
+    label: 'Email',
+    placeholder: 'votre@email.com',
+    keyboardType: 'email-address',
+    autoCapitalize: 'none',
+    autoComplete: 'email',
+  },
+};
+
+/**
+ * Input de type téléphone
+ */
+export const PhoneType: Story = {
+  args: {
+    label: 'Téléphone',
+    placeholder: '+221 XX XXX XX XX',
+    keyboardType: 'phone-pad',
+  },
+};
+
+/**
+ * Input de type nombre
+ */
+export const NumberType: Story = {
+  args: {
+    label: 'Prix (FCFA)',
+    placeholder: '25000',
+    keyboardType: 'numeric',
   },
 };

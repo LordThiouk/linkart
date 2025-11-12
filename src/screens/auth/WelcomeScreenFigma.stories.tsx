@@ -1,8 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { WelcomeScreenFigma } from './WelcomeScreenFigma';
-import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { theme } from '../../theme';
 
 const meta: Meta<typeof WelcomeScreenFigma> = {
   title: 'Screens/Auth/WelcomeScreenFigma',
@@ -10,9 +8,7 @@ const meta: Meta<typeof WelcomeScreenFigma> = {
   decorators: [
     Story => (
       <SafeAreaProvider>
-        <PaperProvider theme={theme}>
-          <Story />
-        </PaperProvider>
+        <Story />
       </SafeAreaProvider>
     ),
   ],

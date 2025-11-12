@@ -8,7 +8,7 @@ import { RatingStars } from './RatingStars';
 import { UserProfile } from './UserProfile';
 import { PriceDisplay } from './PriceDisplay';
 import { ProductPreviewData } from '../../types';
-import { tokens } from '../../theme';
+import { spacing } from '../../theme';
 
 export interface ProductPreviewProps extends ProductPreviewData {
   onPress?: () => void;
@@ -57,7 +57,7 @@ export const ProductPreview: React.FC<ProductPreviewProps> = ({
       <Card
         style={[
           {
-            marginBottom: tokens.spacing.md,
+            marginBottom: spacing.md,
             elevation: isBoosted ? 4 : 2,
             backgroundColor: theme.colors.surface,
             borderRadius: theme.roundness,
@@ -65,9 +65,9 @@ export const ProductPreview: React.FC<ProductPreviewProps> = ({
           style,
         ]}
       >
-        <Card.Content style={{ padding: tokens.spacing.md }}>
+        <Card.Content style={{ padding: spacing.md }}>
           {/* Image avec HeartIcon */}
-          <View style={{ position: 'relative', marginBottom: tokens.spacing.md }}>
+          <View style={{ position: 'relative', marginBottom: spacing.md }}>
             {imageUrl ? (
               <Image
                 source={{ uri: imageUrl }}
@@ -99,8 +99,8 @@ export const ProductPreview: React.FC<ProductPreviewProps> = ({
               <View
                 style={{
                   position: 'absolute',
-                  top: tokens.spacing.sm,
-                  right: tokens.spacing.sm,
+                  top: spacing.sm,
+                  right: spacing.sm,
                 }}
               >
                 <HeartIcon productId={id} />
@@ -109,13 +109,13 @@ export const ProductPreview: React.FC<ProductPreviewProps> = ({
           </View>
 
           {/* Titre et prix */}
-          <View style={{ marginBottom: tokens.spacing.sm }}>
+          <View style={{ marginBottom: spacing.sm }}>
             <Text
               style={{
                 fontSize: theme.fonts.titleMedium.fontSize,
                 fontFamily: theme.fonts.titleMedium.fontFamily,
                 color: theme.colors.onSurface,
-                marginBottom: tokens.spacing.xs,
+                marginBottom: spacing.xs,
               }}
               numberOfLines={2}
             >
@@ -134,7 +134,7 @@ export const ProductPreview: React.FC<ProductPreviewProps> = ({
 
           {/* Métriques */}
           {(viewCount > 0 || downloadCount > 0 || likeCount > 0) && (
-            <View style={{ marginBottom: tokens.spacing.sm }}>
+            <View style={{ marginBottom: spacing.sm }}>
               <ProductMetrics viewCount={viewCount} downloadCount={downloadCount} likeCount={likeCount} size="sm" />
             </View>
           )}
@@ -143,17 +143,17 @@ export const ProductPreview: React.FC<ProductPreviewProps> = ({
           <UserProfile
             name={creator.name}
             avatarUri={creator.avatarUri}
-            rating={creator.rating}
-            isVerified={creator.isVerified}
+            rating={creator.rating || 0}
+            isVerified={creator.isVerified || false}
             size="small"
-            showRating={false}
-            showLocation={false}
+            showRating={true}
+            showLocation={true}
           />
 
           {/* Tags */}
           {(tags.length > 0 || genre || bpm) && (
-            <View style={{ marginTop: tokens.spacing.sm }}>
-              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: tokens.spacing.xs }}>
+            <View style={{ marginTop: spacing.sm }}>
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.xs }}>
                 {[...(genre ? [genre] : []), ...(bpm ? [`${bpm} BPM`] : []), ...tags].map((tag, index) => (
                   <Chip key={index} mode="outlined" compact>
                     {tag}
@@ -165,14 +165,14 @@ export const ProductPreview: React.FC<ProductPreviewProps> = ({
 
           {/* Rating */}
           {rating !== undefined && (
-            <View style={{ marginTop: tokens.spacing.sm }}>
+            <View style={{ marginTop: spacing.sm }}>
               <RatingStars rating={rating} size={16} readonly />
             </View>
           )}
 
           {/* Play Button */}
           {previewUri && (
-            <View style={{ marginTop: tokens.spacing.sm }}>
+            <View style={{ marginTop: spacing.sm }}>
               <PlayButton isPlaying={false} onPress={onPlayPreview || (() => console.log('Play preview'))} size="sm" />
             </View>
           )}

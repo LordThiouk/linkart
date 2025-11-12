@@ -1,8 +1,8 @@
 import React from 'react';
-import { View, Text, ImageBackground, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, ImageBackground, StyleSheet } from 'react-native';
 import { WebLinearGradient } from '../atoms/WebLinearGradient';
 import { PlayButton } from '../atoms/PlayButton';
-import { Button } from '../atoms/Button';
+import Button from '../atoms/Button';
 
 interface HeroBannerProps {
   id: string;
@@ -73,18 +73,12 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({
 
       <View style={styles.actionsContainer}>
         <PlayButton isPlaying={isPlaying} size="lg" onPress={() => onPlay(id)} />
-        {onBuy && (
-          <Button variant="primary" size="medium" title="Acheter" onPress={() => onBuy(id)} style={styles.buyButton} />
-        )}
+        {onBuy && <Button variant="primary" size="default" title="Acheter" onPress={() => onBuy(id)} />}
       </View>
     </View>
   );
 
-  return (
-    <TouchableOpacity onPress={() => onPress(id)} style={styles.container} testID="hero-banner">
-      {renderBackgroundImage()}
-    </TouchableOpacity>
-  );
+  return <View style={styles.container}>{renderBackgroundImage()}</View>;
 };
 
 const styles = StyleSheet.create({

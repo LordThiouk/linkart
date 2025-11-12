@@ -1,19 +1,11 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { SplashScreen } from './SplashScreen';
-import { PaperProvider } from 'react-native-paper';
-import { theme } from '../theme';
 
 const meta: Meta<typeof SplashScreen> = {
   title: 'Screens/SplashScreen',
   component: SplashScreen,
-  decorators: [
-    Story => (
-      <PaperProvider theme={theme}>
-        <Story />
-      </PaperProvider>
-    ),
-  ],
+  decorators: [Story => <Story />],
   parameters: {
     layout: 'fullscreen',
   },

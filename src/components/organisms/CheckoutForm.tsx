@@ -5,7 +5,7 @@ import { useTheme } from 'react-native-paper';
 import { Input, Text, SectionCard, Button } from '../atoms';
 import { PriceDisplay } from '../molecules';
 import { PaymentMethod } from '../../services';
-import { tokens } from '../../theme';
+import { spacing } from '../../theme';
 
 export interface CheckoutFormProps {
   productName: string;
@@ -42,26 +42,26 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
 
   return (
     <ScrollView style={[{ flex: 1 }, style]} testID={testID}>
-      <View style={{ padding: tokens.spacing.md }}>
+      <View style={{ padding: spacing.md }}>
         {/* Résumé de la commande */}
-        <SectionCard style={{ marginBottom: tokens.spacing.md }}>
-          <Title style={{ marginBottom: tokens.spacing.md }}>Résumé de la commande</Title>
+        <SectionCard style={{ marginBottom: spacing.md }}>
+          <Title style={{ marginBottom: spacing.md }}>Résumé de la commande</Title>
 
-          <View style={{ marginBottom: tokens.spacing.sm }}>
+          <View style={{ marginBottom: spacing.sm }}>
             <Text>{productName}</Text>
           </View>
 
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: tokens.spacing.sm }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.sm }}>
             <Text variant="body2">Prix du produit</Text>
             <PriceDisplay amount={price} currency={currency} size="small" />
           </View>
 
-          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: tokens.spacing.sm }}>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.sm }}>
             <Text variant="body2">Commission (5%)</Text>
             <PriceDisplay amount={commissionAmount} currency={currency} size="small" />
           </View>
 
-          <Divider style={{ marginVertical: tokens.spacing.sm }} />
+          <Divider style={{ marginVertical: spacing.sm }} />
 
           <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
             <Text variant="h6" style={{ fontWeight: 'bold' }}>
@@ -72,17 +72,17 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
         </SectionCard>
 
         {/* Méthodes de paiement */}
-        <SectionCard style={{ marginBottom: tokens.spacing.md }}>
-          <Title style={{ marginBottom: tokens.spacing.md }}>Méthode de paiement</Title>
+        <SectionCard style={{ marginBottom: spacing.md }}>
+          <Title style={{ marginBottom: spacing.md }}>Méthode de paiement</Title>
 
           {paymentMethods.map(method => (
-            <View key={method.id} style={{ marginBottom: tokens.spacing.sm }}>
+            <View key={method.id} style={{ marginBottom: spacing.sm }}>
               <RadioButton.Group onValueChange={onPaymentMethodChange} value={selectedPaymentMethod || ''}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <RadioButton value={method.id} />
                   <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center' }}>
-                    <Text style={{ marginLeft: tokens.spacing.sm, fontSize: 18 }}>{method.icon}</Text>
-                    <Text style={{ marginLeft: tokens.spacing.sm, flex: 1 }}>{method.name}</Text>
+                    <Text style={{ marginLeft: spacing.sm, fontSize: 18 }}>{method.icon}</Text>
+                    <Text style={{ marginLeft: spacing.sm, flex: 1 }}>{method.name}</Text>
                     {method.fee && (
                       <Text variant="body2" style={{ color: theme.colors.onSurfaceVariant }}>
                         +{method.fee} FCFA
@@ -96,8 +96,8 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
         </SectionCard>
 
         {/* Notes optionnelles */}
-        <SectionCard style={{ marginBottom: tokens.spacing.md }}>
-          <Title style={{ marginBottom: tokens.spacing.md }}>Notes (optionnel)</Title>
+        <SectionCard style={{ marginBottom: spacing.md }}>
+          <Title style={{ marginBottom: spacing.md }}>Notes (optionnel)</Title>
           <Input
             label="Message pour le vendeur"
             placeholder="Ajoutez un message..."
@@ -114,10 +114,9 @@ export const CheckoutForm: React.FC<CheckoutFormProps> = ({
           onPress={onSubmit}
           loading={loading}
           disabled={!selectedPaymentMethod || loading}
-          style={{ marginTop: tokens.spacing.md }}
-        >
-          Confirmer le paiement
-        </Button>
+          fullWidth={true}
+          title="Confirmer la commande"
+        />
       </View>
     </ScrollView>
   );

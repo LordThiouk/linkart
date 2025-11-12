@@ -1,17 +1,17 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
+import { View } from 'react-native';
 import { PlayButton } from './PlayButton';
-import { PaperProvider } from 'react-native-paper';
-import { theme } from '../../theme';
+import { colors, spacing } from '../../theme';
 
 const meta: Meta<typeof PlayButton> = {
   title: 'Atoms/PlayButton',
   component: PlayButton,
   decorators: [
     Story => (
-      <PaperProvider theme={theme}>
+      <View style={{ flex: 1, padding: spacing.lg, backgroundColor: colors.background }}>
         <Story />
-      </PaperProvider>
+      </View>
     ),
   ],
   parameters: {

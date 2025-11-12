@@ -3,10 +3,10 @@ alwaysApply: true
 ---
 # Linkart — Frontend Guidelines Document
 
-> Version: v2.0
+> Version: v3.0
 > Objectif : définir les standards techniques, l'architecture, les conventions UI/UX et les bonnes pratiques de développement pour l'application mobile Linkart (React Native + Expo).
 > 
-> **Architecture v2.0**: Séparation claire entre Products (beats/kits payants) et Services (professionnels gratuits) avec système multi-pricing pour les deux.
+> **Architecture v3.0**: Design System centralisé avec tokens 100% conformes Figma + Séparation Products/Services avec multi-pricing.
 
 ---
 
@@ -23,16 +23,18 @@ Elle doit être **rapide, modulaire, fiable, cohérente visuellement** et facile
 | ---------------------- | ------------------------------ | --------------------------------------------------- |
 | Framework              | React Native (Expo SDK)        | Build Android & iOS                                 |
 | Langage                | TypeScript                     | Typage strict                                       |
-| UI                     | NativeBase + NativeWind        | NativeBase pour structure, NativeWind pour rapidité |
+| **Styling**            | **Design System + StyleSheet** | **Tokens centralisés 100% conforme Figma**          |
 | State management       | Zustand                        | Léger, scalable, persistant                         |
 | Navigation             | React Navigation v7            | Stack + Tab navigators                              |
 | Auth                   | Supabase Auth (OTP)            | Téléphone & email                                   |
 | API                    | Supabase Edge Functions (REST) | Toutes les opérations backend                       |
 | Téléversement fichiers | Presigned URLs (R2)            | Via `upload-request`                                |
 | Audio                  | expo-av                        | Pré-écoute 30s                                      |
+| Animations             | react-native-reanimated        | Animations natives performantes                     |
 | Erreurs                | Sentry                         | Crash & logs                                        |
 | Linter                 | ESLint + Prettier              | Qualité de code                                     |
 | Tests UI               | Jest + Testing Library         | Composants clés                                     |
+| Storybook              | @storybook/react-native-web-vite | Documentation composants                          |
 
 ---
 
@@ -68,7 +70,14 @@ app/
 │   └── SettingsScreen.tsx
 ├── store/               # Zustand stores
 ├── services/            # Appels API (axios/fetch)
-├── theme/               # couleurs.ts, spacing.ts, index.ts
+├── theme/               # ✅ Design System centralisé
+│   ├── colors.ts        # Palette Figma complète (100% conforme)
+│   ├── spacing.ts       # xs, sm, md, lg, xl, xxl
+│   ├── typography.ts    # Poppins + Inter, fontSize, lineHeight
+│   ├── radii.ts         # borderRadius variants
+│   ├── shadows.ts       # iOS + Android shadows
+│   ├── helpers.ts       # Fonctions style réutilisables
+│   └── index.ts         # Export central
 └── App.tsx
 ```
 
@@ -78,86 +87,223 @@ app/
 
 ---
 
-## 4. Thème et design tokens
+## 4. Design System v3.0 — Tokens Centralisés
 
-* Le thème global est défini dans `src/theme/index.ts`.
-* Aucun code hex ne doit apparaître ailleurs.
-* `theme/index.ts` crée un objet `nativeBaseTheme` via `extendTheme()`.
-* Tous les composants utilisent `useTheme()` pour accéder aux couleurs et tailles.
-* **Design System v2.0** : Voir `docs/product/design-system.md` pour les spécifications complètes.
+✅ **100% conforme avec `figma/styles/globals.css`**
 
-### Exemple :
+### Architecture
 
-```ts
-export const colors = {
-  primary: '#6366F1',      // Indigo (boutons, accents)
-  secondary: '#F59E0B',    // Orange (prix, highlights)
-  music: {
-    pink: '#EC4899',       // Rose (heart icon, éléments spéciaux)
-  },
-  dark: {
-    '950': '#0A0A0A',      // Fond principal
-    '900': '#111111',      // Surface cards
-    '800': '#1A1A1A',      // Surface élevée
-    '100': '#F5F5F5',      // Texte principal
-    '300': '#D4D4D4',      // Texte secondaire
-    '400': '#A3A3A3',      // Texte tertiaire
-  },
-};
 ```
+src/theme/
+├── colors.ts       # 32 tokens couleur (100% Figma)
+├── spacing.ts      # 6 tokens spacing
+├── typography.ts   # Fonts + sizes + weights
+├── radii.ts        # BorderRadius variants
+├── shadows.ts      # iOS + Android shadows
+├── helpers.ts      # Style helpers réutilisables
+└── index.ts        # Export central
+```
+
+### Règles Strictes
+
+❌ **JAMAIS** hardcoder de valeurs :
+```typescript
+// ❌ MAUVAIS
+backgroundColor: '#6366F1',
+padding: 16,
+fontSize: 18,
+borderRadius: 24,
+```
+
+✅ **TOUJOURS** utiliser les tokens :
+```typescript
+// ✅ BON
+import { colors, spacing, typography, radii } from '@/theme';
+
+const styles = StyleSheet.create({
+  container: {
+    backgroundColor: colors.primary,
+    padding: spacing.md,
+    borderRadius: radii.xxl,
+  },
+  text: {
+    fontSize: typography.fontSize.titleMd,
+    fontFamily: typography.fontFamily.poppins.semibold,
+    color: colors.textPrimary,
+  },
+});
+```
+
+### Palette Complète
+
+```typescript
+// Brand Colors
+primary: '#6366F1'        // Indigo (actions principales)
+secondary: '#F59E0B'      // Orange doré (actions secondaires)
+accent: '#EC4899'         // Pink (éléments spéciaux)
+
+// Backgrounds
+background: '#0A0A0A'     // Fond principal
+surface: '#111111'        // Cards
+surfaceElevated: '#1A1A1A' // Surfaces élevées
+
+// Text
+textPrimary: '#F5F5F5'    // Titres
+textSecondary: '#D4D4D4'  // Texte corps
+textMuted: '#A3A3A3'      // Hints
+
+// UI
+border: '#404040'
+ring: '#6366F1'           // Focus states
+```
+
+📄 **Documentation complète** :
+- `docs/internal/DESIGN_TOKENS_AUDIT.md` — Audit conformité
+- `.cursor/rules/design-tokens.mdc` — Règles d'usage
+- `docs/internal/FIGMA_TO_RN_MIGRATION_PLAN.md` — Plan migration
 
 ---
 
-## 5. Design System v2.0
+## 5. Composants Design System
 
-### 5.1 Documentation
+### 5.1 Standards de Création
 
-* **Design System** : `docs/product/design-system.md` - Principes, couleurs, typographie, espacements
-* **Components Library** : `docs/product/components-library.md` - Catalogue complet des composants
-* **Migration Guide** : `docs/product/migration-guide.md` - Plan de migration des composants existants
-* **Screens Specs** : `docs/product/screens-specs.md` - Spécifications détaillées des écrans
-* **Playlists Feature** : `docs/product/playlists-feature.md` - Système de playlists éditoriales
-* **Likes Feature** : `docs/product/likes-feature.md` - Système de favoris
+**Chaque composant DOIT** :
+- ✅ Utiliser les tokens de `@/theme` (jamais de valeurs hardcodées)
+- ✅ Utiliser `StyleSheet.create()` pour les styles
+- ✅ Avoir des animations avec `react-native-reanimated`
+- ✅ Avoir une story Storybook
+- ✅ Être documenté avec JSDoc
+- ✅ Avoir des props typées TypeScript
 
-### 5.2 Nouveaux Composants
+### 5.2 Template de Composant
 
-#### Atoms
-* `HeartIcon` - Toggle favorite avec animation
-* `PlayButton` - Bouton play/pause avec variants
-* `Pill/Chip` - Tags avec close button
+```typescript
+import { StyleSheet } from 'react-native';
+import Animated from 'react-native-reanimated';
+import { colors, spacing, radii, typography } from '@/theme';
 
-#### Molecules
-* `ServiceCard` - Cards pour services professionnels
-* `PlaylistCard` - Cards pour playlists éditoriales
-* `MiniPlayer` - Player sticky avec heart icon
+interface MyComponentProps {
+  title: string;
+  variant?: 'primary' | 'secondary';
+  onPress: () => void;
+}
 
-#### Organisms
-* `HeroBanner` - Grande carte featured avec gradient
-* `FilterPills` - Filtres scrollables horizontaux
-* `TrendingSection` - Section horizontale des tendances
-* `ServicesSection` - Section verticale des services
+export default function MyComponent({
+  title,
+  variant = 'primary',
+  onPress,
+}: MyComponentProps) {
+  return (
+    <Animated.View style={[styles.base, styles[variant]]}>
+      {/* ... */}
+    </Animated.View>
+  );
+}
 
-## 6. Composants réutilisables
+const styles = StyleSheet.create({
+  base: {
+    padding: spacing.md,
+    borderRadius: radii.lg,
+  },
+  primary: {
+    backgroundColor: colors.primary,
+  },
+  secondary: {
+    backgroundColor: colors.secondary,
+  },
+});
+```
 
-### 6.1 Atoms
+### 5.3 Composants Disponibles
 
-* `ButtonPrimary`, `InputField`, `TextLabel`, `Badge`, `Avatar`.
-* **Nouveaux** : `HeartIcon`, `PlayButton`, `Pill/Chip`.
-* Tous acceptent `variant`, `size`, et props d'accessibilité.
+#### Atoms (Composants de base)
+* `Button` ✅ — 4 variants, 3 sizes, animations
+* `HeartIcon` — Toggle favorite avec animation
+* `PlayButton` — Bouton play/pause avec variants
+* `Input` — Champs de formulaire
+* `Badge` — Badges et tags
 
-### 6.2 Molecules
+#### Molecules (Composants composés)
+* `ProductCard` — Cards pour beats/kits
+* `ServiceCard` — Cards pour services professionnels
+* `PlaylistCard` — Cards pour playlists éditoriales
+* `MiniPlayer` — Player sticky avec heart icon
+* `RatingStars` — Système de notation
 
-* `ProductCard`, `ServiceCard`, `AudioPlayer`, `RatingStars`, `BoostBadge`.
-* `PricingCard` (pour licences et tiers), `BookingCard`, `MessageBubble`.
-* **Nouveaux** : `PlaylistCard`, `MiniPlayer` (adapté).
-* Règle : aucune logique réseau.
+#### Organisms (Sections complètes)
+* `HeroBanner` — Grande carte featured avec gradient
+* `FilterPills` — Filtres scrollables horizontaux
+* `TrendingSection` — Section horizontale des tendances
+* `ServicesSection` — Section verticale des services
 
-### 6.3 Organisms
+## 6. Règles de Styling
 
-* `ProductList`, `ServiceList`, `CheckoutForm`, `BookingForm`, `UploadForm`, `ProfileHeader`.
-* `PricingSelector` (sélection licence/tier), `ChatInterface`, `BookingCalendar`.
-* **Nouveaux** : `HeroBanner`, `FilterPills`, `TrendingSection`, `ServicesSection`.
-* Peuvent gérer de la logique locale (state/UI).
+### 6.1 Interdictions Strictes
+
+❌ **JAMAIS** :
+- Hardcoder des couleurs (`#6366F1`, `rgb(...)`)
+- Hardcoder des espacements (`padding: 16`)
+- Hardcoder des tailles de font (`fontSize: 18`)
+- Hardcoder des borderRadius (`borderRadius: 24`)
+- Utiliser des styles inline sauf cas exceptionnel
+
+### 6.2 Bonnes Pratiques
+
+✅ **TOUJOURS** :
+- Importer tokens : `import { colors, spacing } from '@/theme'`
+- Utiliser `StyleSheet.create()` pour les styles
+- Créer des variants avec des clés dynamiques
+- Documenter les styles avec des commentaires
+- Tester les composants dans Storybook
+
+### 6.3 Exemple Complet
+
+```typescript
+import { StyleSheet, View, Text, Pressable } from 'react-native';
+import Animated, { useAnimatedStyle } from 'react-native-reanimated';
+import { colors, spacing, radii, typography } from '@/theme';
+
+interface CardProps {
+  title: string;
+  variant?: 'default' | 'elevated';
+  onPress?: () => void;
+}
+
+export default function Card({ title, variant = 'default', onPress }: CardProps) {
+  const animatedStyle = useAnimatedStyle(() => ({
+    // Animation logic
+  }));
+
+  return (
+    <Pressable onPress={onPress}>
+      <Animated.View style={[styles.base, styles[variant], animatedStyle]}>
+        <Text style={styles.title}>{title}</Text>
+      </Animated.View>
+    </Pressable>
+  );
+}
+
+const styles = StyleSheet.create({
+  base: {
+    padding: spacing.lg,
+    borderRadius: radii.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
+  },
+  default: {
+    backgroundColor: colors.surface,
+  },
+  elevated: {
+    backgroundColor: colors.surfaceElevated,
+  },
+  title: {
+    fontSize: typography.fontSize.titleMd,
+    fontFamily: typography.fontFamily.poppins.semibold,
+    color: colors.textPrimary,
+  },
+});
+```
 
 ---
 
@@ -344,12 +490,35 @@ export const fetchPlaylistDetail = async (playlistId: string) => {
 | ---- | --------------- | ------------------------------ |
 | Unit | Jest            | Test des hooks et stores       |
 | UI   | Testing Library | Test composants interactifs    |
+| **Design System** | **Storybook + Visual** | **Test variants, animations, tokens** |
 | E2E  | Playwright      | Scénarios achat, upload, login |
 | **Multi-pricing** | Jest | Test sélection licence/tier |
 | **Booking** | Testing Library | Test flow réservation |
 | **Messaging** | Testing Library | Test interface chat |
 | **Favoris** | Testing Library | Test toggle favorite et sync |
 | **Playlists** | Testing Library | Test lecture continue et contrôles |
+
+### 14.1 Tests Design System
+
+**Chaque composant doit avoir** :
+- ✅ Story Storybook avec tous les variants
+- ✅ Tests Jest pour la logique (si applicable)
+- ✅ Tests visuels (Storybook Web)
+- ✅ Vérification conformité tokens (pas de hardcoding)
+
+**Exemple de test** :
+```typescript
+describe('Button', () => {
+  it('should use design tokens', () => {
+    const { getByText } = render(<Button title="Test" onPress={jest.fn()} />);
+    const button = getByText('Test').parent;
+    // Vérifier que les styles utilisent les tokens
+    expect(button?.props.style).toMatchObject({
+      backgroundColor: colors.primary,
+    });
+  });
+});
+```
 
 ---
 
@@ -380,7 +549,46 @@ export const fetchPlaylistDetail = async (playlistId: string) => {
 
 ---
 
-## 17. Futur (phases suivantes)
+## 17. Récapitulatif Design System v3.0
+
+### ✅ Conformité Figma : 100%
+
+Notre Design System est **100% conforme** avec `figma/styles/globals.css` :
+- ✅ **32 tokens couleur** alignés
+- ✅ **6 tokens spacing** identiques
+- ✅ **Typography Poppins + Inter** exacte
+- ✅ **BorderRadius** variants conformes
+
+### 📦 Avantages
+
+1. **Cohérence visuelle** : Tous les composants utilisent les mêmes valeurs
+2. **Maintenabilité** : Changer une couleur = impact global
+3. **Performance** : StyleSheet.create natif (pas de CSS-in-JS)
+4. **Type Safety** : TypeScript pour éviter les erreurs
+5. **Scalabilité** : Facile d'ajouter de nouveaux tokens
+6. **Storybook** : Documentation interactive des composants
+
+### 📚 Documentation Complète
+
+- `docs/internal/DESIGN_TOKENS_AUDIT.md` — Audit conformité 100%
+- `docs/internal/FIGMA_TO_RN_MIGRATION_PLAN.md` — Plan migration
+- `.cursor/rules/design-tokens.mdc` — Règles d'usage strictes
+- Storybook Web — Documentation interactive (http://localhost:6006)
+
+### 🚀 Prochains Composants
+
+Suivre le pattern Button pour créer :
+1. Input + InputField
+2. Card + CardHeader + CardContent
+3. Label, Textarea, Select
+4. Dialog, Sheet (modals)
+5. Tabs, Checkbox, Radio, Switch
+
+**Template disponible** dans section 5.2 de ce document.
+
+---
+
+## 18. Futur (phases suivantes)
 
 * Mode offline (caching produits et services).
 * Thème sombre auto.
