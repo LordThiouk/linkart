@@ -48,7 +48,7 @@ describe('Button', () => {
 
   it('renders with different sizes', () => {
     const { getByText } = render(
-      <Button size="large" onPress={() => {}}>
+      <Button size="lg" onPress={() => {}}>
         Large Button
       </Button>
     );

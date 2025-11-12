@@ -32,7 +32,7 @@ export class WalletService {
 
     const { data: monthlyTransactions, error: monthlyError } = await supabase
       .from('transactions')
-      .select('amount, commission, status')
+      .select('amount, commission, seller_id, buyer_id')
       .or(`buyer_id.eq.${user.user.id},seller_id.eq.${user.user.id}`)
       .gte('created_at', currentMonth.toISOString())
       .eq('status', 'released');
@@ -48,7 +48,7 @@ export class WalletService {
 
     const sellerTransactions = (monthlyTransactions || []).filter(
       (t: TransactionWithStatus) => t.seller_id === user.user.id
-    ) as unknown as TransactionWithStatus[];
+    );
     const monthlyEarnings = sellerTransactions.reduce(
       (sum: number, t: TransactionWithStatus) => sum + (t.amount - t.commission),
       0
@@ -56,7 +56,7 @@ export class WalletService {
 
     const buyerTransactions = (monthlyTransactions || []).filter(
       (t: TransactionWithStatus) => t.buyer_id === user.user.id
-    ) as unknown as TransactionWithStatus[];
+    );
     const monthlySpent = buyerTransactions.reduce((sum: number, t: TransactionWithStatus) => sum + t.amount, 0);
 
     return {

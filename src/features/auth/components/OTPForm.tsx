@@ -3,7 +3,7 @@ import { View, ViewStyle, TextInput } from 'react-native';
 import { Title } from 'react-native-paper';
 import { useTheme } from 'react-native-paper';
 import { Text, SectionCard, Button } from '../../../components/atoms';
-import { tokens } from '../../../theme';
+import { spacing } from '../../../theme';
 
 export interface OTPFormProps {
   phoneOrEmail: string;
@@ -59,21 +59,21 @@ export const OTPForm: React.FC<OTPFormProps> = ({
   };
 
   return (
-    <View style={[{ flex: 1, padding: tokens.spacing.md }, style]} testID={testID}>
+    <View style={[{ flex: 1, padding: spacing.md }, style]} testID={testID}>
       <SectionCard style={{ maxWidth: 400, width: '100%', alignSelf: 'center' }}>
-        <Title style={{ textAlign: 'center', marginBottom: tokens.spacing.md }}>Vérification OTP</Title>
+        <Title style={{ textAlign: 'center', marginBottom: spacing.md }}>Vérification OTP</Title>
 
         <Text
           style={{
             textAlign: 'center',
-            marginBottom: tokens.spacing.lg,
+            marginBottom: spacing.lg,
             color: theme.colors.onSurfaceVariant,
           }}
         >
           Nous avons envoyé un code à {phoneOrEmail}
         </Text>
 
-        <View style={{ marginBottom: tokens.spacing.lg }}>
+        <View style={{ marginBottom: spacing.lg }}>
           <TextInput
             value={otp}
             onChangeText={handleOTPChange}
@@ -86,8 +86,8 @@ export const OTPForm: React.FC<OTPFormProps> = ({
               letterSpacing: 8,
               borderBottomWidth: 2,
               borderBottomColor: theme.colors.primary,
-              paddingVertical: tokens.spacing.md,
-              marginBottom: tokens.spacing.md,
+              paddingVertical: spacing.md,
+              marginBottom: spacing.md,
             }}
             autoFocus
           />
@@ -98,16 +98,21 @@ export const OTPForm: React.FC<OTPFormProps> = ({
           onPress={() => onOTPSubmit(otp)}
           loading={loading}
           disabled={otp.length !== 6 || loading}
-          style={{ marginBottom: tokens.spacing.md }}
-        >
-          Vérifier le code
-        </Button>
+          fullWidth={true}
+          title="Vérifier le code"
+        />
 
         <View style={{ alignItems: 'center' }}>
           {canResend ? (
-            <Button variant="ghost" onPress={handleResend} loading={resendLoading} disabled={resendLoading}>
-              Renvoyer le code
-            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onPress={handleResend}
+              loading={resendLoading}
+              disabled={resendLoading}
+              fullWidth={true}
+              title="Renvoyer le code"
+            />
           ) : (
             <Text style={{ color: theme.colors.onSurfaceVariant }}>Renvoyer dans {formatTime(timeLeft)}</Text>
           )}
@@ -116,3 +121,5 @@ export const OTPForm: React.FC<OTPFormProps> = ({
     </View>
   );
 };
+
+export default OTPForm;

@@ -1,19 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { AudioPlayer } from './AudioPlayer';
-import { PaperProvider } from 'react-native-paper';
 import { View, Text } from 'react-native';
-import { theme } from '../../theme';
+import { colors } from '../../theme';
 
 const meta: Meta<typeof AudioPlayer> = {
   title: 'Molecules/AudioPlayer',
   component: AudioPlayer,
   decorators: [
     Story => (
-      <PaperProvider theme={theme}>
-        <View style={{ padding: 20, backgroundColor: theme.colors.background }}>
-          <Story />
-        </View>
-      </PaperProvider>
+      <View style={{ padding: 20, backgroundColor: colors.background }}>
+        <Story />
+      </View>
     ),
   ],
   argTypes: {
@@ -129,8 +126,8 @@ export const StickyPlayer: Story = {
   render: () => {
     return (
       <View style={{ height: 400, position: 'relative' }}>
-        <View style={{ padding: 20, backgroundColor: theme.colors.surfaceVariant }}>
-          <Text style={{ color: theme.colors.onSurfaceVariant }}>
+        <View style={{ padding: 20, backgroundColor: colors.surfaceElevated }}>
+          <Text style={{ color: colors.textSecondary }}>
             Scroll content here... The player should stick to the bottom.
           </Text>
         </View>

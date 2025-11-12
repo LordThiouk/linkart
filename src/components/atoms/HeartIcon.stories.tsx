@@ -1,16 +1,16 @@
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
+import { View } from 'react-native';
 import { HeartIcon } from './HeartIcon';
-import { PaperProvider } from 'react-native-paper';
-import { theme } from '../../theme';
+import { colors, spacing } from '../../theme';
 
 const meta: Meta<typeof HeartIcon> = {
   title: 'Atoms/HeartIcon',
   component: HeartIcon,
   decorators: [
     Story => (
-      <PaperProvider theme={theme}>
+      <View style={{ flex: 1, padding: spacing.lg, backgroundColor: colors.background }}>
         <Story />
-      </PaperProvider>
+      </View>
     ),
   ],
   parameters: {

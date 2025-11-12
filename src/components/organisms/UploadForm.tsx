@@ -7,7 +7,7 @@
 
 import React, { useState } from 'react';
 import { View, Text, ViewStyle, ScrollView, Button } from 'react-native';
-import { tokens } from '../../theme';
+import { spacing } from '../../theme';
 import { Input, SectionCard } from '../atoms';
 import { Chip, Title } from 'react-native-paper';
 
@@ -75,17 +75,17 @@ export const UploadForm: React.FC<UploadFormProps> = ({ onSubmit, loading = fals
 
   return (
     <ScrollView style={[{ flex: 1 }, style]} testID={testID}>
-      <View style={{ padding: tokens.spacing.md }}>
+      <View style={{ padding: spacing.md }}>
         {/* Informations de base */}
-        <SectionCard style={{ marginBottom: tokens.spacing.md }}>
-          <Title style={{ marginBottom: tokens.spacing.md }}>Informations du produit</Title>
+        <SectionCard style={{ marginBottom: spacing.md }}>
+          <Title style={{ marginBottom: spacing.md }}>Informations du produit</Title>
 
           <Input
             label="Titre *"
             placeholder="Nom de votre beat"
             value={formData.title || ''}
             onChangeText={text => handleInputChange('title', text)}
-            style={{ marginBottom: tokens.spacing.md }}
+            style={{ marginBottom: spacing.md }}
           />
 
           <Input
@@ -95,7 +95,7 @@ export const UploadForm: React.FC<UploadFormProps> = ({ onSubmit, loading = fals
             onChangeText={text => handleInputChange('description', text)}
             multiline
             numberOfLines={4}
-            style={{ marginBottom: tokens.spacing.md }}
+            style={{ marginBottom: spacing.md }}
           />
 
           <Input
@@ -104,16 +104,16 @@ export const UploadForm: React.FC<UploadFormProps> = ({ onSubmit, loading = fals
             value={formData.price?.toString() || ''}
             onChangeText={text => handleInputChange('price', parseInt(text) || 0)}
             keyboardType="numeric"
-            style={{ marginBottom: tokens.spacing.md }}
+            style={{ marginBottom: spacing.md }}
           />
         </SectionCard>
 
         {/* Détails techniques */}
-        <SectionCard style={{ marginBottom: tokens.spacing.md }}>
-          <Title style={{ marginBottom: tokens.spacing.md }}>Détails techniques</Title>
+        <SectionCard style={{ marginBottom: spacing.md }}>
+          <Title style={{ marginBottom: spacing.md }}>Détails techniques</Title>
 
-          <View style={{ flexDirection: 'row', marginBottom: tokens.spacing.md }}>
-            <View style={{ flex: 1, marginRight: tokens.spacing.sm }}>
+          <View style={{ flexDirection: 'row', marginBottom: spacing.md }}>
+            <View style={{ flex: 1, marginRight: spacing.sm }}>
               <Input
                 label="Genre *"
                 placeholder="Sélectionnez un genre"
@@ -121,7 +121,7 @@ export const UploadForm: React.FC<UploadFormProps> = ({ onSubmit, loading = fals
                 onChangeText={text => handleInputChange('genre', text)}
               />
             </View>
-            <View style={{ flex: 1, marginLeft: tokens.spacing.sm }}>
+            <View style={{ flex: 1, marginLeft: spacing.sm }}>
               <Input
                 label="BPM"
                 placeholder="120"
@@ -132,9 +132,9 @@ export const UploadForm: React.FC<UploadFormProps> = ({ onSubmit, loading = fals
             </View>
           </View>
 
-          <View style={{ marginBottom: tokens.spacing.md }}>
+          <View style={{ marginBottom: spacing.md }}>
             <Text style={{ marginBottom: 8 }}>Licence</Text>
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: tokens.spacing.sm }}>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
               {LICENSES.map(license => (
                 <Chip
                   key={license}
@@ -149,24 +149,24 @@ export const UploadForm: React.FC<UploadFormProps> = ({ onSubmit, loading = fals
         </SectionCard>
 
         {/* Tags */}
-        <SectionCard style={{ marginBottom: tokens.spacing.md }}>
-          <Title style={{ marginBottom: tokens.spacing.md }}>Tags</Title>
+        <SectionCard style={{ marginBottom: spacing.md }}>
+          <Title style={{ marginBottom: spacing.md }}>Tags</Title>
 
-          <View style={{ flexDirection: 'row', marginBottom: tokens.spacing.md }}>
+          <View style={{ flexDirection: 'row', marginBottom: spacing.md }}>
             <Input
               label="Ajouter un tag"
               placeholder="Ex: trap, afrobeat..."
               value={newTag}
               onChangeText={setNewTag}
-              style={{ flex: 1, marginRight: tokens.spacing.sm }}
+              style={{ flex: 1, marginRight: spacing.sm }}
             />
             <Button title="Ajouter" onPress={handleAddTag} />
           </View>
 
           {formData.tags.length > 0 && (
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: tokens.spacing.sm }}>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm }}>
               {formData.tags.map((tag: string) => (
-                <Chip key={tag} onClose={() => handleRemoveTag(tag)} style={{ marginBottom: tokens.spacing.xs }}>
+                <Chip key={tag} onClose={() => handleRemoveTag(tag)} style={{ marginBottom: spacing.xs }}>
                   {tag}
                 </Chip>
               ))}
@@ -175,8 +175,8 @@ export const UploadForm: React.FC<UploadFormProps> = ({ onSubmit, loading = fals
         </SectionCard>
 
         {/* Upload de fichiers */}
-        <SectionCard style={{ marginBottom: tokens.spacing.md }}>
-          <Title style={{ marginBottom: tokens.spacing.md }}>Fichiers</Title>
+        <SectionCard style={{ marginBottom: spacing.md }}>
+          <Title style={{ marginBottom: spacing.md }}>Fichiers</Title>
 
           <Button title="Upload Preview (30s max)" onPress={() => console.log('Upload preview')} />
           <Button title="Upload Fichier Complet" onPress={() => console.log('Upload full file')} />

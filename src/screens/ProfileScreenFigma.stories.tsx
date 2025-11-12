@@ -1,19 +1,11 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { ProfileScreenFigma } from './ProfileScreenFigma';
-import { PaperProvider } from 'react-native-paper';
-import { theme } from '../theme';
 
 const meta: Meta<typeof ProfileScreenFigma> = {
   title: 'Screens/ProfileScreenFigma',
   component: ProfileScreenFigma,
-  decorators: [
-    Story => (
-      <PaperProvider theme={theme}>
-        <Story />
-      </PaperProvider>
-    ),
-  ],
+  decorators: [Story => <Story />],
   parameters: {
     layout: 'fullscreen',
   },

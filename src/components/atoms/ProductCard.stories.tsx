@@ -1,21 +1,21 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { ProductCard } from './ProductCard';
-import { PaperProvider } from 'react-native-paper';
+
 import { View } from 'react-native';
 import React from 'react';
-import { theme } from '../../theme';
+import { colors, spacing } from '../../theme';
 
 const meta: Meta<typeof ProductCard> = {
   title: 'Atoms/ProductCard',
   component: ProductCard,
   decorators: [
     Story => (
-      <PaperProvider theme={theme}>
-        <View style={{ padding: 20, backgroundColor: theme.colors.background }}>
+      <View style={{ flex: 1, padding: spacing.lg, backgroundColor: colors.background }}>
+        <View style={{ padding: 20, backgroundColor: colors.background }}>
           <Story />
         </View>
-      </PaperProvider>
+      </View>
     ),
   ],
   argTypes: {

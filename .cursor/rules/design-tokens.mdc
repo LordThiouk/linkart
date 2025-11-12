@@ -1,0 +1,225 @@
+# Design Tokens — Conformité Figma
+
+> **Status**: ✅ 100% Conforme  
+> **Date**: 10 Novembre 2025  
+> **Source**: `figma/styles/globals.css` → `src/theme/`
+
+---
+
+## 📊 Conformité Globale
+
+Notre Design System React Native est **100% conforme** avec le design Figma :
+
+- **Colors**: 100% (tous les tokens + alias)
+- **Spacing**: 100%
+- **Typography**: 100%
+- **Border Radius**: 100%
+- **Total**: **100%** ✅
+
+📄 **Audit complet** : `docs/internal/DESIGN_TOKENS_AUDIT.md`
+
+---
+
+## 🎨 Structure des Tokens
+
+```
+src/theme/
+├── colors.ts       ✅ 100% conforme
+├── spacing.ts      ✅ 100% conforme
+├── typography.ts   ✅ 100% conforme
+├── radii.ts        ✅ 100% conforme
+├── shadows.ts      ✅ 100% conforme
+├── helpers.ts      ✅ Fonctions réutilisables
+└── index.ts        ✅ Export central
+```
+
+---
+
+## 🔧 Règles d'Usage
+
+### 1. **JAMAIS** hardcoder de couleurs
+
+❌ **Mauvais** :
+```typescript
+backgroundColor: '#6366F1',
+color: '#F5F5F5',
+```
+
+✅ **Bon** :
+```typescript
+import { colors } from '@/theme';
+
+backgroundColor: colors.primary,
+color: colors.textPrimary,
+```
+
+### 2. **TOUJOURS** utiliser les tokens pour spacing
+
+❌ **Mauvais** :
+```typescript
+paddingHorizontal: 16,
+marginVertical: 24,
+```
+
+✅ **Bon** :
+```typescript
+import { spacing } from '@/theme';
+
+paddingHorizontal: spacing.md,
+marginVertical: spacing.lg,
+```
+
+### 3. **TOUJOURS** utiliser les tokens pour typography
+
+❌ **Mauvais** :
+```typescript
+fontSize: 16,
+fontFamily: 'Poppins_600SemiBold',
+```
+
+✅ **Bon** :
+```typescript
+import { typography } from '@/theme';
+
+fontSize: typography.fontSize.body,
+fontFamily: typography.fontFamily.poppins.semibold,
+```
+
+### 4. **TOUJOURS** utiliser les tokens pour borderRadius
+
+❌ **Mauvais** :
+```typescript
+borderRadius: 24,
+```
+
+✅ **Bon** :
+```typescript
+import { radii } from '@/theme';
+
+borderRadius: radii.xxl,
+```
+
+---
+
+## 📋 Checklist Avant Commit
+
+Avant de commiter un nouveau composant, vérifier :
+
+- [ ] ✅ Aucune couleur hardcodée
+- [ ] ✅ Aucun spacing hardcodé
+- [ ] ✅ Aucune fontSize hardcodée
+- [ ] ✅ Aucun borderRadius hardcodé
+- [ ] ✅ Import des tokens depuis `@/theme`
+- [ ] ✅ StyleSheet.create() utilisé
+- [ ] ✅ Pas de style inline sauf nécessaire
+
+---
+
+## 🎯 Mapping Figma → React Native
+
+### Colors
+
+| Figma Variable | React Native Token | Valeur |
+|---|---|---|
+| `--primary` | `colors.primary` | `#6366F1` |
+| `--secondary` | `colors.secondary` | `#F59E0B` |
+| `--accent` | `colors.accent` | `#EC4899` |
+| `--background` | `colors.background` | `#0A0A0A` |
+| `--foreground` | `colors.foreground` | `#F5F5F5` |
+| `--card` | `colors.surface` | `#111111` |
+| `--muted` | `colors.muted` | `#1A1A1A` |
+| `--border` | `colors.border` | `#404040` |
+| `--destructive` | `colors.error` | `#EF4444` |
+| `--ring` | `colors.ring` | `#6366F1` |
+
+**Voir mapping complet** : `docs/internal/DESIGN_TOKENS_AUDIT.md`
+
+### Spacing
+
+| Figma Variable | React Native Token | Valeur |
+|---|---|---|
+| `--spacing-xs` | `spacing.xs` | `4` |
+| `--spacing-sm` | `spacing.sm` | `8` |
+| `--spacing-md` | `spacing.md` | `16` |
+| `--spacing-lg` | `spacing.lg` | `24` |
+| `--spacing-xl` | `spacing.xl` | `32` |
+| `--spacing-2xl` | `spacing.xxl` | `48` |
+
+### Typography
+
+| Figma Variable | React Native Token | Valeur |
+|---|---|---|
+| Poppins Bold | `typography.fontFamily.poppins.bold` | `'Poppins_700Bold'` |
+| Poppins SemiBold | `typography.fontFamily.poppins.semibold` | `'Poppins_600SemiBold'` |
+| Poppins Medium | `typography.fontFamily.poppins.medium` | `'Poppins_500Medium'` |
+| Inter Regular | `typography.fontFamily.inter.regular` | `'Inter_400Regular'` |
+| Inter Medium | `typography.fontFamily.inter.medium` | `'Inter_500Medium'` |
+
+---
+
+## 🚀 Exemples de Bonnes Pratiques
+
+### Button Component
+
+```typescript
+import { colors, spacing, radii, typography } from '@/theme';
+
+const styles = StyleSheet.create({
+  primary: {
+    backgroundColor: colors.primary,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    borderRadius: radii.xxl,
+  },
+  text: {
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.poppins.semibold,
+    color: colors.white,
+  },
+});
+```
+
+### Card Component
+
+```typescript
+import { colors, spacing, radii, shadows } from '@/theme';
+
+const styles = StyleSheet.create({
+  card: {
+    backgroundColor: colors.surface,
+    padding: spacing.lg,
+    borderRadius: radii.lg,
+    borderWidth: 1,
+    borderColor: colors.border,
+    ...shadows.md,
+  },
+});
+```
+
+---
+
+## ✅ Avantages de Cette Approche
+
+1. **Cohérence visuelle** : Tous les composants utilisent les mêmes valeurs
+2. **Maintenabilité** : Changer une couleur = impact global
+3. **Conformité Figma** : 100% aligné avec le design
+4. **Performance** : StyleSheet.create natif
+5. **Type Safety** : TypeScript pour éviter les erreurs
+6. **Scalabilité** : Facile d'ajouter de nouveaux tokens
+
+---
+
+## 🔄 Mise à Jour des Tokens
+
+Si Figma change, mettre à jour dans cet ordre :
+
+1. ✅ Mettre à jour `src/theme/*.ts`
+2. ✅ Vérifier tous les composants (TypeScript aide)
+3. ✅ Tester dans Storybook
+4. ✅ Mettre à jour `DESIGN_TOKENS_AUDIT.md`
+5. ✅ Mettre à jour cette règle si nécessaire
+
+---
+
+**Dernière mise à jour** : 10 Novembre 2025  
+**Prochaine revue** : Lors du prochain update Figma

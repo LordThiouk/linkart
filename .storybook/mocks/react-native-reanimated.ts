@@ -1,326 +1,271 @@
-// Mock pour react-native-reanimated dans Storybook
-// Les worklets ne fonctionnent pas dans le contexte web, donc on fournit des alternatives web-compatibles
+/**
+ * Mock de react-native-reanimated pour Storybook Web
+ * Version: 1.0
+ */
 
 import React from 'react';
-import { View, Text, TouchableOpacity, ViewStyle } from 'react-native';
-import { useState } from 'react';
+import { View, ViewProps } from 'react-native';
 
-// Mock pour useSharedValue
-export function useSharedValue<T>(initialValue: T) {
-  const [value, setValue] = useState(initialValue);
-  const sharedValue = {
-    value,
-    setValue,
-    // Ajouter les méthodes manquantes pour compatibilité
-    addListener: () => {},
-    removeListener: () => {},
-    removeAllListeners: () => {},
-  };
-  // Surcharger la propriété value pour permettre .value = ...
-  Object.defineProperty(sharedValue, 'value', {
-    get: () => value,
-    set: (newValue: T) => setValue(newValue),
-    enumerable: true,
-    configurable: true,
-  });
-  return sharedValue;
-}
+// Mock useSharedValue
+export const useSharedValue = (initialValue: any) => {
+  return { value: initialValue };
+};
 
-// Mock pour useAnimatedStyle
-export function useAnimatedStyle(styleFn: () => ViewStyle, dependencies?: any[]): ViewStyle {
-  // Dans Storybook, on retourne simplement le style calculé sans animation
-  try {
-    const style = styleFn();
-    // S'assurer que le style est toujours un objet valide
-    if (!style || typeof style !== 'object') {
-      return {};
-    }
-    return style;
-  } catch (error) {
-    console.warn('[Storybook Reanimated Mock] useAnimatedStyle error:', error);
-    return {};
-  }
-}
+// Mock useAnimatedStyle
+export const useAnimatedStyle = (callback: () => any) => {
+  return callback();
+};
 
-// Mock pour withTiming
-export function withTiming(toValue: number, config?: { duration?: number; easing?: any }) {
+// Mock withTiming
+export const withTiming = (toValue: any, config?: any, callback?: any) => {
   return toValue;
-}
+};
 
-// Mock pour withSpring
-export function withSpring(toValue: number, config?: any) {
-  return toValue;
-}
-
-// Mock pour withRepeat
-export function withRepeat(animation: any, iterations?: number, reverse?: boolean) {
-  return animation;
-}
-
-// Mock pour withSequence
-export function withSequence(...animations: any[]) {
+// Mock withSequence
+export const withSequence = (...animations: any[]) => {
   return animations[animations.length - 1];
-}
+};
 
-// Mock pour withDelay
-export function withDelay(delay: number, animation: any) {
-  // Dans Storybook, on retourne simplement l'animation sans délai
+// Mock withDelay
+export const withDelay = (delay: number, animation: any) => {
   return animation;
-}
+};
 
-// Mock pour Easing
+// Mock withRepeat
+export const withRepeat = (animation: any, numberOfReps?: number, reverse?: boolean) => {
+  return animation;
+};
+
+// Mock withSpring
+export const withSpring = (toValue: any, config?: any, callback?: any) => {
+  return toValue;
+};
+
+// Mock Easing
 export const Easing = {
   linear: (t: number) => t,
-  ease: (t: number) => t * (2 - t),
+  ease: (t: number) => t,
   quad: (t: number) => t * t,
   cubic: (t: number) => t * t * t,
-  poly: (n: number) => (t: number) => Math.pow(t, n),
-  sin: (t: number) => 1 - Math.cos((t * Math.PI) / 2),
-  circle: (t: number) => 1 - Math.sqrt(1 - t * t),
-  exp: (t: number) => Math.pow(2, 10 * (t - 1)),
-  elastic: (bounciness: number) => (t: number) => {
-    const p = 0.3;
-    return Math.pow(2, -10 * t) * Math.sin(((t - p / 4) * (2 * Math.PI)) / p) + 1;
-  },
-  back: (s: number) => (t: number) => {
-    return t * t * ((s + 1) * t - s);
-  },
-  bounce: (t: number) => {
-    if (t < 1 / 2.75) {
-      return 7.5625 * t * t;
-    } else if (t < 2 / 2.75) {
-      return 7.5625 * (t -= 1.5 / 2.75) * t + 0.75;
-    } else if (t < 2.5 / 2.75) {
-      return 7.5625 * (t -= 2.25 / 2.75) * t + 0.9375;
-    } else {
-      return 7.5625 * (t -= 2.625 / 2.75) * t + 0.984375;
-    }
-  },
-  in: (easing: any) => easing,
-  out: (easing: any) => (t: number) => 1 - easing(1 - t),
-  inOut: (easing: any) => (t: number) => {
-    if (t < 0.5) {
-      return easing(2 * t) / 2;
-    } else {
-      return 1 - easing(2 * (1 - t)) / 2;
-    }
-  },
+  bezier: (x1: number, y1: number, x2: number, y2: number) => (t: number) => t,
+  in: (easing: (t: number) => number) => easing,
+  out: (easing: (t: number) => number) => easing,
+  inOut: (easing: (t: number) => number) => easing,
 };
 
-// Mock pour Animated - DOIT être exporté comme default ET comme named export
-// Les composants peuvent faire "import Animated" (default) ou "import { Animated }" (named)
-const AnimatedComponents = {
-  View: View,
-  Text: Text,
-  Image: require('react-native').Image,
-  ScrollView: require('react-native').ScrollView,
-  FlatList: require('react-native').FlatList,
-  SectionList: require('react-native').SectionList,
-  createAnimatedComponent: (Component: any) => {
-    // S'assurer que createAnimatedComponent retourne toujours un composant valide
-    if (!Component) {
-      console.warn('[Storybook Reanimated Mock] createAnimatedComponent called with undefined component');
-      return View;
-    }
-    return Component;
-  },
+// Mock animations d'entrée
+export const FadeIn = {
+  duration: (ms: number) => FadeIn,
+  delay: (ms: number) => FadeIn,
 };
 
-// Export Animated comme named export
-export const Animated = AnimatedComponents;
+export const FadeInDown = {
+  duration: (ms: number) => FadeInDown,
+  delay: (ms: number) => FadeInDown,
+};
 
-// Mock pour les hooks d'entrée/sortie
-export function FadeIn(duration = 300) {
-  return { opacity: 1 };
-}
+export const FadeInLeft = {
+  duration: (ms: number) => FadeInLeft,
+  delay: (ms: number) => FadeInLeft,
+};
 
-// Mock pour FadeIn avec delay
-FadeIn.delay = (delay: number) => ({
-  opacity: 1,
-});
+export const FadeInUp = {
+  duration: (ms: number) => FadeInUp,
+  delay: (ms: number) => FadeInUp,
+};
 
-export function FadeOut(duration = 300) {
-  return { opacity: 0 };
-}
+// Mock useDerivedValue
+export const useDerivedValue = (callback: () => any) => {
+  return { value: callback() };
+};
 
-// Mock pour FadeOut avec delay
-FadeOut.delay = (delay: number) => ({
-  opacity: 0,
-});
+// Mock runOnJS
+export const runOnJS = (fn: (...args: any[]) => void) => {
+  return (...args: any[]) => fn(...args);
+};
 
-export function SlideInDown(duration = 300) {
-  return { transform: [{ translateY: 0 }] };
-}
+// Mock runOnUI
+export const runOnUI = (fn: (...args: any[]) => void) => {
+  return (...args: any[]) => fn(...args);
+};
 
-export function SlideOutUp(duration = 300) {
-  return { transform: [{ translateY: -100 }] };
-}
+// Mock cancelAnimation
+export const cancelAnimation = (animatedValue: any) => {
+  // No-op for web
+};
 
-export function SlideInUp(duration = 300) {
-  return { transform: [{ translateY: 0 }] };
-}
+// Mock interpolate
+export const interpolate = (value: number, inputRange: number[], outputRange: number[], extrapolate?: any) => {
+  return value;
+};
 
-export function SlideOutDown(duration = 300) {
-  return { transform: [{ translateY: 100 }] };
-}
-
-export function SlideInLeft(duration = 300) {
-  return { transform: [{ translateX: 0 }] };
-}
-
-export function SlideOutRight(duration = 300) {
-  return { transform: [{ translateX: 100 }] };
-}
-
-export function SlideInRight(duration = 300) {
-  return { transform: [{ translateX: 0 }] };
-}
-
-export function SlideOutLeft(duration = 300) {
-  return { transform: [{ translateX: -100 }] };
-}
-
-export function ZoomIn(duration = 300) {
-  return { transform: [{ scale: 1 }] };
-}
-
-export function ZoomOut(duration = 300) {
-  return { transform: [{ scale: 0 }] };
-}
-
-// Mock pour FadeInDown (utilisé dans FavoritesScreenFigma)
-export function FadeInDown(duration = 300) {
-  return {
-    opacity: 1,
-    transform: [{ translateY: 0 }],
-  };
-}
-
-// Mock pour FadeInDown avec delay
-FadeInDown.delay = (delay: number) => ({
-  opacity: 1,
-  transform: [{ translateY: 0 }],
-});
-
-// Mock pour FadeInLeft (utilisé dans plusieurs écrans)
-export function FadeInLeft(duration = 300) {
-  return {
-    opacity: 1,
-    transform: [{ translateX: 0 }],
-  };
-}
-
-// Mock pour FadeInLeft avec delay
-FadeInLeft.delay = (delay: number) => ({
-  opacity: 1,
-  transform: [{ translateX: 0 }],
-});
-
-// Mock pour FadeInUp (utilisé dans SearchFiltersScreenFigma)
-export function FadeInUp(duration = 300) {
-  return {
-    opacity: 1,
-    transform: [{ translateY: 0 }],
-  };
-}
-
-// Mock pour FadeInUp avec delay
-FadeInUp.delay = (delay: number) => ({
-  opacity: 1,
-  transform: [{ translateY: 0 }],
-});
-
-// Mock pour useDerivedValue (utilisé dans certains composants)
-export function useDerivedValue<T>(processor: () => T, dependencies?: any[]): { value: T } {
-  try {
-    const value = processor();
-    return { value };
-  } catch {
-    return { value: null as any };
-  }
-}
-
-// Mock pour runOnJS (pour compatibilité)
-export function runOnJS<A extends any[], R>(fn: (...args: A) => R) {
-  return fn;
-}
-
-// Mock pour runOnUI (pour compatibilité)
-export function runOnUI<A extends any[], R>(fn: (...args: A) => R) {
-  return fn;
-}
-
-// Mock pour cancelAnimation (pour compatibilité)
-export function cancelAnimation(sharedValue: any) {
-  // No-op dans Storybook
-}
-
-// Mock pour interpolate (pour compatibilité)
-export function interpolate(value: number, inputRange: number[], outputRange: number[], options?: any): number {
-  if (inputRange.length !== outputRange.length || inputRange.length < 2) {
-    return outputRange[0] || 0;
-  }
-  // Interpolation linéaire simple
-  for (let i = 0; i < inputRange.length - 1; i++) {
-    if (value >= inputRange[i] && value <= inputRange[i + 1]) {
-      const ratio = (value - inputRange[i]) / (inputRange[i + 1] - inputRange[i]);
-      return outputRange[i] + ratio * (outputRange[i + 1] - outputRange[i]);
-    }
-  }
-  return value < inputRange[0] ? outputRange[0] : outputRange[outputRange.length - 1];
-}
-
-// Mock pour Extrapolation (pour compatibilité)
+// Mock Extrapolation
 export const Extrapolation = {
-  IDENTITY: 'identity',
   CLAMP: 'clamp',
   EXTEND: 'extend',
+  IDENTITY: 'identity',
 };
 
-// Mock pour useAnimatedReaction (pour compatibilité)
-export function useAnimatedReaction<T>(
-  prepare: () => T,
-  react: (prepared: T, previous: T | null) => void,
-  dependencies?: any[]
-) {
-  // No-op dans Storybook
-}
+// Mock useAnimatedReaction
+export const useAnimatedReaction = (
+  prepare: () => any,
+  react: (prepareResult: any, preparePreviousResult: any) => void
+) => {
+  // No-op for web
+};
 
-// Mock pour useAnimatedScrollHandler (pour compatibilité)
-export function useAnimatedScrollHandler(handlers: any, dependencies?: any[]): (event: any) => void {
-  return () => {}; // No-op handler
-}
+// Mock useAnimatedScrollHandler
+export const useAnimatedScrollHandler = (handlers: any) => {
+  return () => {};
+};
 
-// Mock pour useAnimatedGestureHandler (pour compatibilité)
-export function useAnimatedGestureHandler(handlers: any, deps?: any[]) {
-  return () => {}; // No-op handler
-}
+// Mock useAnimatedGestureHandler
+export const useAnimatedGestureHandler = (handlers: any) => {
+  return () => {};
+};
 
-// Mock pour Gesture (pour compatibilité avec react-native-gesture-handler)
+// Mock useEvent (pour les gestes)
+export const useEvent = (handler: any, deps?: any[]) => {
+  return handler;
+};
+
+// Mock useHandler (pour les gestes)
+export const useHandler = (handlers: any, deps?: any[]) => {
+  return () => {};
+};
+
+// Mock useAnimatedProps
+export const useAnimatedProps = (callback: () => any) => {
+  return callback();
+};
+
+// Mock useWorkletCallback
+export const useWorkletCallback = (callback: any, deps?: any[]) => {
+  return callback;
+};
+
+// Mock useFrameCallback
+export const useFrameCallback = (callback: any) => {
+  // No-op for web
+};
+
+// Mock useAnimatedRef
+export const useAnimatedRef = () => {
+  return React.useRef(null);
+};
+
+// Mock measure
+export const measure = (animatedRef: any) => {
+  return null;
+};
+
+// Mock scrollTo
+export const scrollTo = (ref: any, x: number, y: number, animated: boolean) => {
+  // No-op for web
+};
+
+// Mock Gesture
 export const Gesture = {
   Tap: () => ({
-    onStart: () => ({}),
-    onEnd: () => ({}),
+    onBegin: () => Gesture.Tap(),
+    onStart: () => Gesture.Tap(),
+    onEnd: () => Gesture.Tap(),
+    onFinalize: () => Gesture.Tap(),
+    enabled: () => Gesture.Tap(),
   }),
   Pan: () => ({
-    onStart: () => ({}),
-    onUpdate: () => ({}),
-    onEnd: () => ({}),
+    onBegin: () => Gesture.Pan(),
+    onStart: () => Gesture.Pan(),
+    onUpdate: () => Gesture.Pan(),
+    onEnd: () => Gesture.Pan(),
+    onFinalize: () => Gesture.Pan(),
+    enabled: () => Gesture.Pan(),
+    activeOffsetX: () => Gesture.Pan(),
+    activeOffsetY: () => Gesture.Pan(),
+    runOnJS: () => Gesture.Pan(), // Support pour .runOnJS(true)
+  }),
+  Pinch: () => ({
+    onBegin: () => Gesture.Pinch(),
+    onStart: () => Gesture.Pinch(),
+    onUpdate: () => Gesture.Pinch(),
+    onEnd: () => Gesture.Pinch(),
+    onFinalize: () => Gesture.Pinch(),
+    enabled: () => Gesture.Pinch(),
+  }),
+  Rotation: () => ({
+    onBegin: () => Gesture.Rotation(),
+    onStart: () => Gesture.Rotation(),
+    onUpdate: () => Gesture.Rotation(),
+    onEnd: () => Gesture.Rotation(),
+    onFinalize: () => Gesture.Rotation(),
+    enabled: () => Gesture.Rotation(),
+  }),
+  Fling: () => ({
+    direction: () => Gesture.Fling(),
+    enabled: () => Gesture.Fling(),
   }),
   LongPress: () => ({
-    onStart: () => ({}),
-    onEnd: () => ({}),
+    onBegin: () => Gesture.LongPress(),
+    onStart: () => Gesture.LongPress(),
+    onEnd: () => Gesture.LongPress(),
+    onFinalize: () => Gesture.LongPress(),
+    enabled: () => Gesture.LongPress(),
+    minDuration: () => Gesture.LongPress(),
+  }),
+  Simultaneous: (...gestures: any[]) => ({
+    enabled: () => Gesture.Simultaneous(...gestures),
+  }),
+  Exclusive: (...gestures: any[]) => ({
+    enabled: () => Gesture.Exclusive(...gestures),
+  }),
+  Race: (...gestures: any[]) => ({
+    enabled: () => Gesture.Race(...gestures),
   }),
 };
 
-// Mock pour GestureDetector (pour compatibilité)
-export function GestureDetector({ gesture, children }: { gesture: any; children: any }) {
-  return children;
-}
+// Mock GestureDetector
+export const GestureDetector: React.FC<{ gesture: any; children: React.ReactNode }> = ({ children }) => {
+  return React.createElement(React.Fragment, null, children);
+};
 
-// Export par défaut - DOIT être Animated pour compatibilité avec "import Animated from 'react-native-reanimated'"
-// Tous les exports nommés sont déjà définis au-dessus avec "export function" ou "export const"
+// Mock GestureHandlerRootView
+export const GestureHandlerRootView: React.FC<ViewProps & { children: React.ReactNode }> = ({ children, ...props }) => {
+  return React.createElement(View, props, children);
+};
+
+// Mock Directions pour les gestes
+export const Directions = {
+  RIGHT: 1,
+  LEFT: 2,
+  UP: 4,
+  DOWN: 8,
+};
+
+// Mock State pour les gestes
+export const State = {
+  UNDETERMINED: 0,
+  FAILED: 1,
+  BEGAN: 2,
+  CANCELLED: 3,
+  ACTIVE: 4,
+  END: 5,
+};
+
+// Mock Animated components
+const createAnimatedComponent = (Component: any) => {
+  return React.forwardRef((props: any, ref: any) => {
+    return React.createElement(Component, { ...props, ref });
+  });
+};
+
+// Export par défaut
+const Animated = {
+  View: createAnimatedComponent(View),
+  Text: createAnimatedComponent(View),
+  ScrollView: createAnimatedComponent(View),
+  Image: createAnimatedComponent(View),
+  FlatList: createAnimatedComponent(View),
+  createAnimatedComponent,
+};
+
 export default Animated;
-
-// Export de createAnimatedComponent depuis Animated pour compatibilité
-export const createAnimatedComponent = Animated.createAnimatedComponent;

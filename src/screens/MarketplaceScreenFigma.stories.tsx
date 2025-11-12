@@ -1,19 +1,11 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { MarketplaceScreenFigma } from './MarketplaceScreenFigma';
-import { PaperProvider } from 'react-native-paper';
-import { theme } from '../theme';
 
 const meta: Meta<typeof MarketplaceScreenFigma> = {
   title: 'Screens/MarketplaceScreenFigma',
   component: MarketplaceScreenFigma,
-  decorators: [
-    Story => (
-      <PaperProvider theme={theme}>
-        <Story />
-      </PaperProvider>
-    ),
-  ],
+  decorators: [Story => <Story />],
   parameters: {
     layout: 'fullscreen',
   },
@@ -25,7 +17,7 @@ const meta: Meta<typeof MarketplaceScreenFigma> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof MarketplaceScreenFigma>;
+type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {

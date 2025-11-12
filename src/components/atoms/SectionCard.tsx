@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, ViewStyle } from 'react-native';
-import { useTheme } from 'react-native-paper';
-import { tokens, componentStyles } from '../../theme';
+import { colors, spacing, radii, shadows } from '../../theme';
 
 export interface SectionCardProps {
   children: React.ReactNode;
@@ -15,32 +14,30 @@ export interface SectionCardProps {
 export const SectionCard: React.FC<SectionCardProps> = ({
   children,
   variant = 'elevated',
-  marginBottom = tokens.spacing.md,
+  marginBottom = spacing.md,
   padding = 'medium',
   style,
   testID,
 }) => {
-  const theme = useTheme();
-
   const getVariantStyles = (): ViewStyle => {
     switch (variant) {
       case 'elevated':
         return {
-          backgroundColor: theme.colors.surface,
-          ...componentStyles.card,
-          ...tokens.shadows.md,
+          backgroundColor: colors.surface,
+          borderRadius: radii.lg,
+          ...shadows.md,
         };
       case 'outlined':
         return {
-          backgroundColor: theme.colors.surface,
-          borderColor: theme.colors.outline,
+          backgroundColor: colors.surface,
+          borderColor: colors.border,
           borderWidth: 1,
-          borderRadius: tokens.radii.lg,
+          borderRadius: radii.lg,
         };
       case 'filled':
         return {
-          backgroundColor: theme.colors.surfaceVariant,
-          borderRadius: tokens.radii.lg,
+          backgroundColor: colors.surfaceElevated,
+          borderRadius: radii.lg,
         };
       default:
         return {};
@@ -52,13 +49,13 @@ export const SectionCard: React.FC<SectionCardProps> = ({
       case 'none':
         return { padding: 0 };
       case 'small':
-        return { padding: tokens.spacing.sm };
+        return { padding: spacing.sm };
       case 'medium':
-        return { padding: tokens.spacing.md };
+        return { padding: spacing.md };
       case 'large':
-        return { padding: tokens.spacing.lg };
+        return { padding: spacing.lg };
       default:
-        return { padding: tokens.spacing.md };
+        return { padding: spacing.md };
     }
   };
 

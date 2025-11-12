@@ -1,25 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { PlaylistDetailScreen } from './PlaylistDetailScreen';
-import { PaperProvider } from 'react-native-paper';
-import { theme } from '../theme';
 
 const meta: Meta<typeof PlaylistDetailScreen> = {
   title: 'Screens/PlaylistDetailScreen',
   component: PlaylistDetailScreen,
-  decorators: [
-    Story => (
-      <PaperProvider theme={theme}>
-        <Story />
-      </PaperProvider>
-    ),
-  ],
+  decorators: [Story => <Story />],
   parameters: {
     layout: 'fullscreen',
   },
 };
 
 export default meta;
-type Story = StoryObj<typeof meta>;
+type Story = StoryObj<typeof PlaylistDetailScreen>;
 
 export const Default: Story = {
   args: {

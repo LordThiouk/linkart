@@ -4,7 +4,7 @@ import { Title, RadioButton } from 'react-native-paper';
 import { useTheme } from 'react-native-paper';
 import { Input, Text, SectionCard, Button } from '../../../components/atoms';
 import { PriceDisplay } from '../../../components/molecules';
-import { tokens } from '../../../theme';
+import { spacing } from '../../../theme';
 
 export interface WithdrawalFormProps {
   balance: number;
@@ -64,44 +64,43 @@ export const WithdrawalForm: React.FC<WithdrawalFormProps> = ({
 
   return (
     <ScrollView style={[{ flex: 1 }, style]} testID={testID}>
-      <View style={{ padding: tokens.spacing.md }}>
+      <View style={{ padding: spacing.md }}>
         {/* Solde disponible */}
-        <SectionCard style={{ marginBottom: tokens.spacing.md }}>
-          <Title style={{ marginBottom: tokens.spacing.md }}>Solde disponible</Title>
+        <SectionCard style={{ marginBottom: spacing.md }}>
+          <Title style={{ marginBottom: spacing.md }}>Solde disponible</Title>
           <View style={{ alignItems: 'center' }}>
             <PriceDisplay amount={balance} size="large" />
-            <Text style={{ color: theme.colors.onSurfaceVariant, marginTop: tokens.spacing.sm }}>
+            <Text style={{ color: theme.colors.onSurfaceVariant, marginTop: spacing.sm }}>
               Montant maximum que vous pouvez retirer
             </Text>
           </View>
         </SectionCard>
 
         {/* Montant */}
-        <SectionCard style={{ marginBottom: tokens.spacing.md }}>
-          <Title style={{ marginBottom: tokens.spacing.md }}>Montant à retirer</Title>
+        <SectionCard style={{ marginBottom: spacing.md }}>
+          <Title style={{ marginBottom: spacing.md }}>Montant à retirer</Title>
           <Input
             label="Montant (FCFA)"
             placeholder="0"
             value={formData.amount?.toString() || ''}
             onChangeText={text => handleInputChange('amount', parseInt(text) || 0)}
             keyboardType="numeric"
-            error={!!(formData.amount && formData.amount > balance)}
-            errorMessage={formData.amount && formData.amount > balance ? 'Montant supérieur au solde' : undefined}
+            error={formData.amount && formData.amount > balance ? 'Montant supérieur au solde' : undefined}
             helperText={`Minimum: 1 000 FCFA`}
           />
         </SectionCard>
 
         {/* Méthode de paiement */}
-        <SectionCard style={{ marginBottom: tokens.spacing.md }}>
-          <Title style={{ marginBottom: tokens.spacing.md }}>Méthode de retrait</Title>
+        <SectionCard style={{ marginBottom: spacing.md }}>
+          <Title style={{ marginBottom: spacing.md }}>Méthode de retrait</Title>
           <RadioButton.Group onValueChange={value => handleInputChange('method', value)} value={formData.method || ''}>
             {PAYMENT_METHODS.map(method => (
-              <View key={method.id} style={{ marginBottom: tokens.spacing.sm }}>
+              <View key={method.id} style={{ marginBottom: spacing.sm }}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                   <RadioButton value={method.id} />
-                  <View style={{ flex: 1, marginLeft: tokens.spacing.sm }}>
+                  <View style={{ flex: 1, marginLeft: spacing.sm }}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                      <Text style={{ fontSize: 20, marginRight: tokens.spacing.sm }}>{method.icon}</Text>
+                      <Text style={{ fontSize: 20, marginRight: spacing.sm }}>{method.icon}</Text>
                       <Text style={{ fontWeight: '600' }}>{method.name}</Text>
                     </View>
                     <Text style={{ color: theme.colors.onSurfaceVariant }}>{method.description}</Text>
@@ -113,8 +112,8 @@ export const WithdrawalForm: React.FC<WithdrawalFormProps> = ({
         </SectionCard>
 
         {/* Détails du compte */}
-        <SectionCard style={{ marginBottom: tokens.spacing.md }}>
-          <Title style={{ marginBottom: tokens.spacing.md }}>Détails du compte</Title>
+        <SectionCard style={{ marginBottom: spacing.md }}>
+          <Title style={{ marginBottom: spacing.md }}>Détails du compte</Title>
           <Input
             label="Numéro de téléphone"
             placeholder="+221 77 123 45 67"
@@ -127,17 +126,17 @@ export const WithdrawalForm: React.FC<WithdrawalFormProps> = ({
 
         {/* Résumé */}
         {formData.amount && formData.method && (
-          <SectionCard style={{ marginBottom: tokens.spacing.md }}>
-            <Title style={{ marginBottom: tokens.spacing.md }}>Résumé du retrait</Title>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: tokens.spacing.sm }}>
+          <SectionCard style={{ marginBottom: spacing.md }}>
+            <Title style={{ marginBottom: spacing.md }}>Résumé du retrait</Title>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.sm }}>
               <Text>Montant à retirer</Text>
               <PriceDisplay amount={formData.amount} size="small" />
             </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: tokens.spacing.sm }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.sm }}>
               <Text>Méthode</Text>
               <Text>{PAYMENT_METHODS.find(m => m.id === formData.method)?.name}</Text>
             </View>
-            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: tokens.spacing.sm }}>
+            <View style={{ flexDirection: 'row', justifyContent: 'space-between', marginBottom: spacing.sm }}>
               <Text>Compte</Text>
               <Text>{formData.accountDetails}</Text>
             </View>
@@ -145,7 +144,7 @@ export const WithdrawalForm: React.FC<WithdrawalFormProps> = ({
               style={{
                 flexDirection: 'row',
                 justifyContent: 'space-between',
-                paddingTop: tokens.spacing.sm,
+                paddingTop: spacing.sm,
                 borderTopWidth: 1,
                 borderTopColor: theme.colors.outline,
               }}
@@ -162,20 +161,9 @@ export const WithdrawalForm: React.FC<WithdrawalFormProps> = ({
           onPress={handleSubmit}
           loading={loading}
           disabled={!isFormValid || !canWithdraw || loading}
-          style={{ marginTop: tokens.spacing.md }}
-        >
-          Demander le retrait
-        </Button>
-
-        <Text
-          style={{
-            textAlign: 'center',
-            marginTop: tokens.spacing.md,
-            color: theme.colors.onSurfaceVariant,
-          }}
-        >
-          Le retrait sera traité dans les 24-48h ouvrées
-        </Text>
+          fullWidth={true}
+          title="Demander le retrait"
+        />
       </View>
     </ScrollView>
   );

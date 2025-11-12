@@ -41,6 +41,7 @@ export function RoleCardFigma({
       stiffness: 300,
       damping: 20,
     });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected]);
 
   const handlePressIn = () => {

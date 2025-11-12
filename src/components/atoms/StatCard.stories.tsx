@@ -1,27 +1,27 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { View, Text } from 'react-native';
 import { StatCard } from './StatCard';
-import { PaperProvider } from 'react-native-paper';
-import { theme } from '../../theme';
+
+import { colors, spacing } from '../../theme';
 
 const meta: Meta<typeof StatCard> = {
   title: 'Atoms/StatCard',
   component: StatCard,
   decorators: [
     Story => (
-      <PaperProvider theme={theme}>
+      <View style={{ flex: 1, padding: spacing.lg, backgroundColor: colors.background }}>
         <View
           style={{
             flex: 1,
             justifyContent: 'center',
             alignItems: 'center',
             padding: 20,
-            backgroundColor: theme.colors.background,
+            backgroundColor: colors.background,
           }}
         >
           <Story />
         </View>
-      </PaperProvider>
+      </View>
     ),
   ],
   argTypes: {
@@ -66,8 +66,8 @@ export const StatContent: Story = {
   args: {
     children: (
       <View style={{ alignItems: 'center' }}>
-        <Text style={{ fontSize: 24, fontWeight: 'bold', color: theme.colors.primary }}>1,250</Text>
-        <Text style={{ fontSize: 14, color: theme.colors.onSurfaceVariant, textAlign: 'center' }}>Ventes totales</Text>
+        <Text style={{ fontSize: 24, fontWeight: 'bold', color: colors.primary }}>1,250</Text>
+        <Text style={{ fontSize: 14, color: colors.textSecondary, textAlign: 'center' }}>Ventes totales</Text>
       </View>
     ),
     variant: 'elevated',
@@ -80,22 +80,20 @@ export const MultipleStats: Story = {
     <View style={{ flexDirection: 'row', gap: 12 }}>
       <StatCard variant="elevated" flex={1}>
         <View style={{ alignItems: 'center' }}>
-          <Text style={{ fontSize: 20, fontWeight: 'bold', color: theme.colors.primary }}>45</Text>
-          <Text style={{ fontSize: 12, color: theme.colors.onSurfaceVariant, textAlign: 'center' }}>Produits</Text>
+          <Text style={{ fontSize: 20, fontWeight: 'bold', color: colors.primary }}>45</Text>
+          <Text style={{ fontSize: 12, color: colors.textSecondary, textAlign: 'center' }}>Produits</Text>
         </View>
       </StatCard>
       <StatCard variant="elevated" flex={1}>
         <View style={{ alignItems: 'center' }}>
-          <Text style={{ fontSize: 20, fontWeight: 'bold', color: (theme.colors as any).success || '#22C55E' }}>
-            1.2K
-          </Text>
-          <Text style={{ fontSize: 12, color: theme.colors.onSurfaceVariant, textAlign: 'center' }}>Vues</Text>
+          <Text style={{ fontSize: 20, fontWeight: 'bold', color: colors.success || '#22C55E' }}>1.2K</Text>
+          <Text style={{ fontSize: 12, color: colors.textSecondary, textAlign: 'center' }}>Vues</Text>
         </View>
       </StatCard>
       <StatCard variant="elevated" flex={1}>
         <View style={{ alignItems: 'center' }}>
-          <Text style={{ fontSize: 20, fontWeight: 'bold', color: theme.colors.secondary }}>4.8</Text>
-          <Text style={{ fontSize: 12, color: theme.colors.onSurfaceVariant, textAlign: 'center' }}>Note</Text>
+          <Text style={{ fontSize: 20, fontWeight: 'bold', color: colors.secondary }}>4.8</Text>
+          <Text style={{ fontSize: 12, color: colors.textSecondary, textAlign: 'center' }}>Note</Text>
         </View>
       </StatCard>
     </View>

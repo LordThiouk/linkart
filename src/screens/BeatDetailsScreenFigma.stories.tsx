@@ -1,19 +1,11 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { BeatDetailsScreenFigma } from './BeatDetailsScreenFigma';
-import { PaperProvider } from 'react-native-paper';
-import { theme } from '../theme';
 
 const meta: Meta<typeof BeatDetailsScreenFigma> = {
   title: 'Screens/BeatDetailsScreenFigma',
   component: BeatDetailsScreenFigma,
-  decorators: [
-    Story => (
-      <PaperProvider theme={theme}>
-        <Story />
-      </PaperProvider>
-    ),
-  ],
+  decorators: [Story => <Story />],
   parameters: {
     layout: 'fullscreen',
   },
@@ -30,7 +22,7 @@ const meta: Meta<typeof BeatDetailsScreenFigma> = {
 };
 
 export default meta;
-type Story = StoryObj<typeof BeatDetailsScreenFigma>;
+type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {

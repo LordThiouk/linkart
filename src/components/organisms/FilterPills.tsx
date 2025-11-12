@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
-import { Badge } from '../atoms/Badge';
+import Badge from '../atoms/Badge';
 
 export interface FilterPill {
   id: string;
@@ -42,14 +42,14 @@ export const FilterPills: React.FC<FilterPillsProps> = ({
     return (
       <View key={filter.id} style={styles.pillContainer}>
         <TouchableOpacity onPress={() => handleFilterPress(filter.id)}>
-          <Badge variant={isActive ? 'default' : 'default'} size="small" testID={`${testID}-pill-${filter.id}`}>
+          <Badge variant={isActive ? 'default' : 'default'} size="sm" testID={`${testID}-pill-${filter.id}`}>
             {filter.label}
           </Badge>
         </TouchableOpacity>
 
         {showRemoveButton && isActive && onFilterRemove && (
           <TouchableOpacity onPress={() => handleFilterRemove(filter.id)}>
-            <Badge variant="error" size="small" style={styles.removeButton} testID={`${testID}-remove-${filter.id}`}>
+            <Badge variant="destructive" size="sm" style={styles.removeButton} testID={`${testID}-remove-${filter.id}`}>
               ×
             </Badge>
           </TouchableOpacity>

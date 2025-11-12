@@ -1,18 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { FilterPills } from './FilterPills';
-import { PaperProvider } from 'react-native-paper';
-import { theme } from '../../theme';
 
 const meta: Meta<typeof FilterPills> = {
   title: 'Organisms/FilterPills',
   component: FilterPills,
-  decorators: [
-    Story => (
-      <PaperProvider theme={theme}>
-        <Story />
-      </PaperProvider>
-    ),
-  ],
+  decorators: [Story => <Story />],
   parameters: {
     layout: 'centered',
   },

@@ -1,137 +1,195 @@
+/**
+ * Button Component
+ * Version: 2.0 - Design System avec Tokens
+ *
+ * Composant Button réutilisable avec support de variants, sizes et animations
+ */
+
 import React from 'react';
-import { TouchableOpacity, ViewStyle, TextStyle } from 'react-native';
-import { Button as PaperButton, useTheme } from 'react-native-paper';
-import { tokens } from '../../theme';
+import { Pressable, Text, ActivityIndicator, StyleSheet } from 'react-native';
+import Animated, { useSharedValue, useAnimatedStyle, withTiming, withSequence } from 'react-native-reanimated';
+import { colors, spacing, radii, typography } from '../../theme';
+
+const AnimatedPressable = Animated.createAnimatedComponent(Pressable);
 
 export interface ButtonProps {
+  /** Texte du bouton */
   title?: string;
-  children?: React.ReactNode;
+  /** Fonction appelée au press */
   onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
-  size?: 'small' | 'medium' | 'large';
+  /** Style variant du bouton */
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive' | 'link';
+  /** Taille du bouton */
+  size?: 'sm' | 'default' | 'lg' | 'icon';
+  /** État désactivé */
   disabled?: boolean;
+  /** État de chargement */
   loading?: boolean;
-  icon?: string;
-  style?: ViewStyle;
-  textStyle?: TextStyle;
-  testID?: string;
+  /** Largeur pleine */
+  fullWidth?: boolean;
+  /** Enfants custom (remplace title) */
+  children?: React.ReactNode;
 }
 
-export const Button: React.FC<ButtonProps> = ({
+export default function Button({
   title,
-  children,
   onPress,
   variant = 'primary',
-  size = 'medium',
+  size = 'default',
   disabled = false,
   loading = false,
-  icon,
-  style,
-  textStyle,
-  testID,
-}) => {
-  const theme = useTheme();
+  fullWidth = false,
+  children,
+}: ButtonProps) {
+  const scale = useSharedValue(1);
 
-  const getVariantStyles = (): ViewStyle => {
-    switch (variant) {
-      case 'primary':
-        return {
-          backgroundColor: theme.colors.primary,
-        };
-      case 'secondary':
-        return {
-          backgroundColor: theme.colors.secondary,
-        };
-      case 'outline':
-        return {
-          borderColor: theme.colors.outline,
-          borderWidth: 1,
-          backgroundColor: 'transparent',
-        };
-      case 'ghost':
-        return {
-          backgroundColor: 'transparent',
-        };
-      default:
-        return {};
-    }
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  const handlePressIn = () => {
+    scale.value = withTiming(0.95, { duration: 100 });
   };
 
-  const getSizeStyles = (): ViewStyle => {
-    switch (size) {
-      case 'small':
-        return { paddingVertical: tokens.spacing.sm, paddingHorizontal: tokens.spacing.md };
-      case 'medium':
-        return { paddingVertical: tokens.spacing.md, paddingHorizontal: tokens.spacing.lg };
-      case 'large':
-        return { paddingVertical: tokens.spacing.lg, paddingHorizontal: tokens.spacing.xl };
-      default:
-        return {};
-    }
+  const handlePressOut = () => {
+    scale.value = withSequence(withTiming(1.02, { duration: 100 }), withTiming(1, { duration: 100 }));
   };
 
-  const getTextColor = (): string => {
-    switch (variant) {
-      case 'primary':
-        return theme.colors.onPrimary;
-      case 'secondary':
-        return theme.colors.onSecondary;
-      case 'outline':
-        return theme.colors.onSurface;
-      case 'ghost':
-        return theme.colors.primary;
-      default:
-        return theme.colors.onPrimary;
-    }
-  };
+  const isDisabled = disabled || loading;
 
   return (
-    <TouchableOpacity
+    <AnimatedPressable
       onPress={onPress}
-      disabled={disabled || loading}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
+      disabled={isDisabled}
       style={[
-        getVariantStyles(),
-        getSizeStyles(),
-        {
-          borderRadius: tokens.radii.lg,
-          alignItems: 'center',
-          justifyContent: 'center',
-          opacity: disabled ? 0.6 : 1,
-        },
-        style,
+        styles.base,
+        styles[variant],
+        styles[`size_${size}`],
+        fullWidth && styles.fullWidth,
+        isDisabled && styles.disabled,
+        animatedStyle,
       ]}
-      testID={testID}
     >
-      <PaperButton
-        mode={variant === 'primary' ? 'contained' : variant === 'outline' ? 'outlined' : 'text'}
-        onPress={onPress}
-        disabled={disabled || loading}
-        loading={loading}
-        icon={icon}
-        style={[
-          {
-            backgroundColor: variant === 'primary' ? theme.colors.primary : 'transparent',
-            borderColor: variant === 'outline' ? theme.colors.outline : 'transparent',
-          },
-          style,
-        ]}
-        labelStyle={[
-          {
-            color: getTextColor(),
-            fontSize: size === 'small' ? 14 : size === 'large' ? 18 : 16,
-            fontWeight: '600',
-          },
-          textStyle,
-        ]}
-      >
-        {title}
-      </PaperButton>
-    </TouchableOpacity>
+      {loading ? (
+        <ActivityIndicator
+          color={
+            variant === 'primary' || variant === 'destructive'
+              ? colors.white
+              : variant === 'link'
+                ? colors.primary
+                : colors.primary
+          }
+        />
+      ) : children ? (
+        children
+      ) : (
+        <Text style={[styles.text, styles[`text_${variant}`], styles[`text_size_${size}`]]}>{title}</Text>
+      )}
+    </AnimatedPressable>
   );
-};
+}
 
-export default Button;
-// Test comment
-// Test modification
-// Test pre-commit hook
-// Test pre-commit hook v2
+const styles = StyleSheet.create({
+  // Base styles
+  base: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: radii.xxl,
+  },
+
+  // Variants
+  primary: {
+    backgroundColor: colors.primary,
+  },
+  secondary: {
+    backgroundColor: colors.secondary,
+  },
+  outline: {
+    backgroundColor: colors.transparent,
+    borderWidth: 2,
+    borderColor: colors.border,
+  },
+  ghost: {
+    backgroundColor: colors.transparent,
+  },
+  destructive: {
+    backgroundColor: colors.error,
+  },
+  link: {
+    backgroundColor: colors.transparent,
+  },
+
+  // Sizes
+  size_sm: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+  },
+  size_default: {
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+  },
+  size_lg: {
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.lg,
+  },
+  size_icon: {
+    width: 40,
+    height: 40,
+    paddingHorizontal: 0,
+    paddingVertical: 0,
+    borderRadius: radii.lg,
+  },
+
+  // Full width
+  fullWidth: {
+    width: '100%',
+  },
+
+  // Text base
+  text: {
+    fontFamily: typography.fontFamily.poppins.semibold,
+  },
+
+  // Text variants
+  text_primary: {
+    color: colors.white,
+  },
+  text_secondary: {
+    color: colors.background, // #0A0A0A (noir) pour contraste sur orange
+  },
+  text_outline: {
+    color: colors.textPrimary,
+  },
+  text_ghost: {
+    color: colors.textPrimary,
+  },
+  text_destructive: {
+    color: colors.white,
+  },
+  text_link: {
+    color: colors.primary,
+    textDecorationLine: 'underline',
+  },
+
+  // Text sizes
+  text_size_sm: {
+    fontSize: typography.fontSize.label,
+  },
+  text_size_default: {
+    fontSize: typography.fontSize.body,
+  },
+  text_size_lg: {
+    fontSize: typography.fontSize.titleMd,
+  },
+  text_size_icon: {
+    fontSize: typography.fontSize.body, // Icon size, text rarement utilisé
+  },
+
+  // States
+  disabled: {
+    opacity: 0.5,
+  },
+});

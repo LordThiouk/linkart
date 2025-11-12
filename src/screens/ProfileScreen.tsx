@@ -3,7 +3,7 @@ import { View, ScrollView } from 'react-native';
 import { Button, Card, Title, Paragraph, Avatar, Chip, Divider, useTheme, Text } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '../contexts/AuthContext';
-import { tokens } from '../theme';
+import { spacing } from '../theme';
 
 const CapabilityBadge = ({ enabled }: { enabled: boolean }) => {
   const theme = useTheme();
@@ -21,7 +21,7 @@ const CapabilityBadge = ({ enabled }: { enabled: boolean }) => {
 
 const StatBox = ({ value, label, color }: { value: string; label: string; color: string }) => (
   <Card style={{ flex: 1 }}>
-    <Card.Content style={{ alignItems: 'center', padding: tokens.spacing.md }}>
+    <Card.Content style={{ alignItems: 'center', padding: spacing.md }}>
       <Text variant="headlineSmall" style={{ color }}>
         {value}
       </Text>
@@ -39,7 +39,7 @@ const ActionButton = ({
   onPress: () => void;
   variant?: 'contained' | 'outlined' | 'text';
 }) => (
-  <Button mode={variant} onPress={onPress} style={{ marginBottom: tokens.spacing.sm }}>
+  <Button mode={variant} onPress={onPress} style={{ marginBottom: spacing.sm }}>
     {title}
   </Button>
 );
@@ -61,15 +61,15 @@ export function ProfileScreen() {
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: theme.colors.background }}>
-      <ScrollView contentContainerStyle={{ padding: tokens.spacing.md }}>
+      <ScrollView contentContainerStyle={{ padding: spacing.md }}>
         {/* Profile Header */}
-        <Card style={{ marginBottom: tokens.spacing.md }}>
-          <Card.Content style={{ flexDirection: 'row', alignItems: 'center', padding: tokens.spacing.lg }}>
+        <Card style={{ marginBottom: spacing.md }}>
+          <Card.Content style={{ flexDirection: 'row', alignItems: 'center', padding: spacing.lg }}>
             <Avatar.Text size={80} label={user?.name?.charAt(0) || 'U'} />
-            <View style={{ marginLeft: tokens.spacing.md, flex: 1 }}>
+            <View style={{ marginLeft: spacing.md, flex: 1 }}>
               <Title>{user?.name || 'Utilisateur'}</Title>
               <Paragraph>{user?.email || user?.phone}</Paragraph>
-              <View style={{ flexDirection: 'row', gap: tokens.spacing.sm, marginTop: tokens.spacing.sm }}>
+              <View style={{ flexDirection: 'row', gap: spacing.sm, marginTop: spacing.sm }}>
                 <CapabilityBadge enabled={capabilities.can_buy} />
                 <CapabilityBadge enabled={capabilities.can_sell} />
                 <CapabilityBadge enabled={capabilities.can_withdraw} />
@@ -79,14 +79,14 @@ export function ProfileScreen() {
         </Card>
 
         {/* Stats */}
-        <View style={{ flexDirection: 'row', marginBottom: tokens.spacing.md, gap: tokens.spacing.md }}>
+        <View style={{ flexDirection: 'row', marginBottom: spacing.md, gap: spacing.md }}>
           {stats.map((stat, index) => (
             <StatBox key={index} {...stat} />
           ))}
         </View>
 
         {/* Wallet Balance */}
-        <Card style={{ marginBottom: tokens.spacing.md }}>
+        <Card style={{ marginBottom: spacing.md }}>
           <Card.Content>
             <Title>Portefeuille</Title>
             <View
@@ -94,7 +94,7 @@ export function ProfileScreen() {
                 flexDirection: 'row',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                marginVertical: tokens.spacing.md,
+                marginVertical: spacing.md,
               }}
             >
               <Text variant="bodyLarge">Solde disponible</Text>
@@ -109,10 +109,10 @@ export function ProfileScreen() {
         </Card>
 
         {/* Actions */}
-        <Card style={{ marginBottom: tokens.spacing.md }}>
+        <Card style={{ marginBottom: spacing.md }}>
           <Card.Content>
             <Title>Actions</Title>
-            <View style={{ marginTop: tokens.spacing.md }}>
+            <View style={{ marginTop: spacing.md }}>
               <ActionButton title="Mes produits" onPress={() => console.log('Mes produits')} />
               <ActionButton title="Mes ventes" onPress={() => console.log('Mes ventes')} />
               <ActionButton title="Paramètres" onPress={() => console.log('Paramètres')} />
@@ -122,10 +122,10 @@ export function ProfileScreen() {
         </Card>
 
         {/* Recent Activity */}
-        <Card style={{ marginBottom: tokens.spacing.md }}>
+        <Card style={{ marginBottom: spacing.md }}>
           <Card.Content>
             <Title>Activité récente</Title>
-            <View style={{ gap: tokens.spacing.md, marginTop: tokens.spacing.md }}>
+            <View style={{ gap: spacing.md, marginTop: spacing.md }}>
               <View>
                 <Text variant="titleMedium">Nouvelle vente</Text>
                 <Paragraph>Afrobeat Beat vendu</Paragraph>

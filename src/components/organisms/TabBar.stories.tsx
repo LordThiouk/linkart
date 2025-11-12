@@ -2,20 +2,15 @@ import type { Meta, StoryObj } from '@storybook/react-vite';
 import { View } from 'react-native';
 import { TabBar } from './TabBar';
 import { useState } from 'react';
-import { PaperProvider } from 'react-native-paper';
-import { theme } from '../../theme';
 
 const meta: Meta<typeof TabBar> = {
   title: 'Organisms/TabBar',
   component: TabBar,
   decorators: [
     Story => (
-      // On a juste besoin du PaperProvider pour le thème
-      <PaperProvider theme={theme}>
-        <View style={{ width: '100%', height: 80, justifyContent: 'flex-end' }}>
-          <Story />
-        </View>
-      </PaperProvider>
+      <View style={{ width: '100%', height: 80, justifyContent: 'flex-end' }}>
+        <Story />
+      </View>
     ),
   ],
   argTypes: {

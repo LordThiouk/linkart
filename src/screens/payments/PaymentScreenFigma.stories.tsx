@@ -1,8 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { PaymentScreenFigma } from './PaymentScreenFigma';
-import { PaperProvider } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { theme } from '../../theme';
 
 const meta: Meta<typeof PaymentScreenFigma> = {
   title: 'Screens/Payments/PaymentScreenFigma',
@@ -10,9 +8,7 @@ const meta: Meta<typeof PaymentScreenFigma> = {
   decorators: [
     Story => (
       <SafeAreaProvider>
-        <PaperProvider theme={theme}>
-          <Story />
-        </PaperProvider>
+        <Story />
       </SafeAreaProvider>
     ),
   ],

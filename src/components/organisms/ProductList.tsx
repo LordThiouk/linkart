@@ -4,7 +4,7 @@ import { useTheme } from 'react-native-paper';
 import { ProductPreview } from '../molecules';
 import { LoadingSpinner, Text } from '../atoms';
 import { Product } from '../../types';
-import { tokens } from '../../theme';
+import { spacing } from '../../theme';
 
 export interface ProductListProps {
   products: Product[];
@@ -84,8 +84,8 @@ export const ProductList: React.FC<ProductListProps> = ({
         ListFooterComponent={renderFooter}
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{
-          padding: tokens.spacing.md,
-          paddingBottom: tokens.spacing.xl,
+          padding: spacing.md,
+          paddingBottom: spacing.lg,
         }}
       />
     </View>

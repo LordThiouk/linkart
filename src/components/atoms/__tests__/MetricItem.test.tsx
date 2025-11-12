@@ -1,11 +1,9 @@
 import React from 'react';
 import { render } from '@testing-library/react-native';
-import { PaperProvider } from 'react-native-paper';
 import { MetricItem } from '../MetricItem';
-import { theme } from '../../../theme';
 
 const renderWithTheme = (component: React.ReactElement) => {
-  return render(<PaperProvider theme={theme}>{component}</PaperProvider>);
+  return render(component);
 };
 
 describe('MetricItem', () => {

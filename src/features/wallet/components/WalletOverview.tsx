@@ -15,7 +15,7 @@ import {
 } from '../../../components/atoms';
 import { PriceDisplay } from '../../../components/molecules';
 import { WalletData } from '../hooks/useWallet';
-import { tokens } from '../../../theme';
+import { spacing } from '../../../theme';
 
 export interface WalletOverviewProps {
   walletData: WalletData;
@@ -69,13 +69,13 @@ export const WalletOverview: React.FC<WalletOverviewProps> = ({
 
   return (
     <ScrollView style={[{ flex: 1 }, style]} testID={testID}>
-      <View style={{ padding: tokens.spacing.md }}>
+      <View style={{ padding: spacing.md }}>
         {/* Statistiques principales */}
-        <SectionCard style={{ marginBottom: tokens.spacing.md }}>
-          <Title style={{ marginBottom: tokens.spacing.md }}>Vue d'ensemble</Title>
+        <SectionCard style={{ marginBottom: spacing.md }}>
+          <Title style={{ marginBottom: spacing.md }}>Vue d'ensemble</Title>
           <StatsContainer>
             {stats.map((stat, index) => (
-              <StatCard key={index} style={{ flex: 1, marginBottom: tokens.spacing.sm }}>
+              <StatCard key={index} style={{ flex: 1, marginBottom: spacing.sm }}>
                 <StatContent>
                   <Icon source={stat.icon} size={24} color={stat.color} />
                   <StatValue style={{ color: stat.color }}>
@@ -89,28 +89,24 @@ export const WalletOverview: React.FC<WalletOverviewProps> = ({
         </SectionCard>
 
         {/* Actions rapides */}
-        <SectionCard style={{ marginBottom: tokens.spacing.md }}>
-          <Title style={{ marginBottom: tokens.spacing.md }}>Actions rapides</Title>
-          <View style={{ flexDirection: 'row', gap: tokens.spacing.md }}>
+        <SectionCard marginBottom={spacing.md}>
+          <Title style={{ marginBottom: spacing.md }}>Actions rapides</Title>
+          <View style={{ flexDirection: 'row', gap: spacing.md }}>
             <Button
               variant="primary"
+              title="Retirer"
               onPress={onWithdrawPress || (() => {})}
               disabled={walletData.balance <= 0}
-              style={{ flex: 1 }}
-              icon="bank-transfer-out"
-            >
-              Retirer
-            </Button>
-            <Button variant="outline" onPress={onTransactionPress || (() => {})} style={{ flex: 1 }} icon="history">
-              Historique
-            </Button>
+              fullWidth={true}
+            />
+            <Button variant="outline" title="Historique" onPress={onTransactionPress || (() => {})} fullWidth={true} />
           </View>
         </SectionCard>
 
         {/* Dernières transactions */}
         {walletData.transactions.length > 0 && (
-          <SectionCard style={{ marginBottom: tokens.spacing.md }}>
-            <Title style={{ marginBottom: tokens.spacing.md }}>Dernières transactions</Title>
+          <SectionCard style={{ marginBottom: spacing.md }}>
+            <Title style={{ marginBottom: spacing.md }}>Dernières transactions</Title>
             {walletData.transactions.slice(0, 3).map((transaction, index) => (
               <View
                 key={transaction.id}
@@ -118,7 +114,7 @@ export const WalletOverview: React.FC<WalletOverviewProps> = ({
                   flexDirection: 'row',
                   justifyContent: 'space-between',
                   alignItems: 'center',
-                  paddingVertical: tokens.spacing.sm,
+                  paddingVertical: spacing.sm,
                   borderBottomWidth: index < 2 ? 1 : 0,
                   borderBottomColor: theme.colors.outline,
                 }}
@@ -147,7 +143,7 @@ export const WalletOverview: React.FC<WalletOverviewProps> = ({
         {/* Retraits en attente */}
         {walletData.withdrawals.filter(w => w.status === 'pending').length > 0 && (
           <SectionCard>
-            <Title style={{ marginBottom: tokens.spacing.md }}>Retraits en attente</Title>
+            <Title style={{ marginBottom: spacing.md }}>Retraits en attente</Title>
             {walletData.withdrawals
               .filter(w => w.status === 'pending')
               .slice(0, 2)
@@ -158,7 +154,7 @@ export const WalletOverview: React.FC<WalletOverviewProps> = ({
                     flexDirection: 'row',
                     justifyContent: 'space-between',
                     alignItems: 'center',
-                    paddingVertical: tokens.spacing.sm,
+                    paddingVertical: spacing.sm,
                     borderBottomWidth: index < 1 ? 1 : 0,
                     borderBottomColor: theme.colors.outline,
                   }}

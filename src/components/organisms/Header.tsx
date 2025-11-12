@@ -2,7 +2,7 @@ import React from 'react';
 import { View, ViewStyle, TouchableOpacity } from 'react-native';
 import { Appbar, Avatar } from 'react-native-paper';
 import { useTheme } from 'react-native-paper';
-import { Badge } from '../atoms';
+import Badge from '../atoms/Badge';
 
 export interface HeaderProps {
   title?: string;
@@ -59,8 +59,8 @@ export const Header: React.FC<HeaderProps> = ({
           <Appbar.Action icon="bell" onPress={onNotificationPress} />
           {notificationCount > 0 && (
             <Badge
-              size="small"
-              variant="error"
+              size="sm"
+              variant="destructive"
               style={{
                 position: 'absolute',
                 top: 4,

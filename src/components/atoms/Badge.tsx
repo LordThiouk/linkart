@@ -1,119 +1,140 @@
-import React from 'react';
-import { View, ViewStyle, Text } from 'react-native';
-import { useTheme } from 'react-native-paper';
-import { tokens } from '../../theme';
+/**
+ * Badge Component
+ * Version: 2.0 - Design System avec Tokens
+ *
+ * Composant Badge pour tags, statuts et labels
+ */
 
-export interface BadgeProps {
+import React from 'react';
+import { View, Text, StyleSheet, ViewProps } from 'react-native';
+import { colors, spacing, radii, typography } from '../../theme';
+
+export interface BadgeProps extends ViewProps {
+  /** Contenu du badge */
   children: React.ReactNode;
-  variant?: 'default' | 'success' | 'warning' | 'error' | 'info';
-  size?: 'small' | 'medium' | 'large';
+  /** Variant du badge */
+  variant?: 'default' | 'secondary' | 'destructive' | 'outline' | 'success' | 'warning' | 'info';
+  /** Size du badge */
+  size?: 'sm' | 'default' | 'lg';
+  /** Badge visible */
   visible?: boolean;
-  style?: ViewStyle;
-  testID?: string;
 }
 
-export const Badge: React.FC<BadgeProps> = ({
+export default function Badge({
   children,
   variant = 'default',
-  size = 'medium',
+  size = 'default',
   visible = true,
   style,
-  testID,
-}) => {
-  const theme = useTheme();
-
+  ...props
+}: BadgeProps) {
   if (!visible) return null;
 
-  const getBackgroundColor = () => {
-    switch (variant) {
-      case 'success':
-        return '#22C55E';
-      case 'warning':
-        return '#F59E0B';
-      case 'error':
-        return theme.colors.errorContainer;
-      case 'info':
-        return theme.colors.primaryContainer;
-      default:
-        return theme.colors.secondaryContainer;
-    }
-  };
-
-  const getTextColor = () => {
-    switch (variant) {
-      case 'success':
-        return '#FFFFFF';
-      case 'warning':
-        return '#FFFFFF';
-      case 'error':
-        return theme.colors.onErrorContainer;
-      case 'info':
-        return theme.colors.onPrimaryContainer;
-      default:
-        return theme.colors.onSecondaryContainer;
-    }
-  };
-
-  const getSizeStyles = () => {
-    switch (size) {
-      case 'small':
-        return {
-          minWidth: 16,
-          height: 16,
-          borderRadius: tokens.radii.full,
-          paddingHorizontal: tokens.spacing.xs,
-        };
-      case 'large':
-        return {
-          minWidth: 32,
-          height: 32,
-          borderRadius: tokens.radii.full,
-          paddingHorizontal: tokens.spacing.sm,
-        };
-      default: // medium
-        return {
-          minWidth: 24,
-          height: 24,
-          borderRadius: tokens.radii.full,
-          paddingHorizontal: tokens.spacing.xs,
-        };
-    }
-  };
-
-  const getTextSize = () => {
-    switch (size) {
-      case 'small':
-        return 10;
-      case 'large':
-        return 14;
-      default:
-        return 12;
-    }
-  };
-
   return (
-    <View
-      style={[
-        {
-          backgroundColor: getBackgroundColor(),
-          alignItems: 'center',
-          justifyContent: 'center',
-          ...getSizeStyles(),
-        },
-        style,
-      ]}
-      testID={testID}
-    >
-      <Text
-        style={{
-          color: getTextColor(),
-          fontSize: getTextSize(),
-          fontWeight: '600',
-          textAlign: 'center',
-        }}
-      >
-        {children}
-      </Text>
+    <View style={[styles.base, styles[variant], styles[`size_${size}`], style]} {...props}>
+      <Text style={[styles.text, styles[`text_${variant}`], styles[`text_size_${size}`]]}>{children}</Text>
     </View>
   );
-};
+}
+
+Badge.displayName = 'Badge';
+
+const styles = StyleSheet.create({
+  // Base
+  base: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    alignSelf: 'flex-start',
+    borderRadius: radii.md,
+    borderWidth: 1,
+    overflow: 'hidden',
+  },
+
+  // Variants
+  default: {
+    backgroundColor: colors.primary,
+    borderColor: colors.transparent,
+  },
+  secondary: {
+    backgroundColor: colors.secondary,
+    borderColor: colors.transparent,
+  },
+  destructive: {
+    backgroundColor: colors.error,
+    borderColor: colors.transparent,
+  },
+  outline: {
+    backgroundColor: colors.transparent,
+    borderColor: colors.border,
+  },
+  success: {
+    backgroundColor: colors.success,
+    borderColor: colors.transparent,
+  },
+  warning: {
+    backgroundColor: colors.warning,
+    borderColor: colors.transparent,
+  },
+  info: {
+    backgroundColor: colors.cyan,
+    borderColor: colors.transparent,
+  },
+
+  // Sizes
+  size_sm: {
+    paddingHorizontal: spacing.xs,
+    paddingVertical: 2,
+    minHeight: 20,
+  },
+  size_default: {
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    minHeight: 24,
+  },
+  size_lg: {
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    minHeight: 28,
+  },
+
+  // Text base
+  text: {
+    fontFamily: typography.fontFamily.inter.medium,
+    textAlign: 'center',
+  },
+
+  // Text variants
+  text_default: {
+    color: colors.white,
+  },
+  text_secondary: {
+    color: colors.background, // Noir sur orange
+  },
+  text_destructive: {
+    color: colors.white,
+  },
+  text_outline: {
+    color: colors.textPrimary,
+  },
+  text_success: {
+    color: colors.white,
+  },
+  text_warning: {
+    color: colors.white,
+  },
+  text_info: {
+    color: colors.white,
+  },
+
+  // Text sizes
+  text_size_sm: {
+    fontSize: typography.fontSize.caption,
+  },
+  text_size_default: {
+    fontSize: typography.fontSize.label,
+  },
+  text_size_lg: {
+    fontSize: typography.fontSize.body,
+  },
+});

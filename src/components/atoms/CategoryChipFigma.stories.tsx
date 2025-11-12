@@ -1,17 +1,17 @@
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
+import { View } from 'react-native';
 import { CategoryChipFigma } from './CategoryChipFigma';
-import { PaperProvider } from 'react-native-paper';
 import { Music, TrendingUp, Radio, Heart } from 'lucide-react-native';
-import { theme } from '../../theme';
+import { colors, spacing } from '../../theme';
 
 const meta: Meta<typeof CategoryChipFigma> = {
   title: 'Atoms/CategoryChipFigma',
   component: CategoryChipFigma,
   decorators: [
     Story => (
-      <PaperProvider theme={theme}>
+      <View style={{ flex: 1, padding: spacing.lg, backgroundColor: colors.background }}>
         <Story />
-      </PaperProvider>
+      </View>
     ),
   ],
   parameters: {

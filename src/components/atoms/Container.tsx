@@ -1,7 +1,6 @@
 import React from 'react';
 import { View, ViewStyle } from 'react-native';
-import { useTheme } from 'react-native-paper';
-import { tokens } from '../../theme';
+import { spacing, colors } from '../../theme';
 
 interface ContainerProps {
   children: React.ReactNode;
@@ -20,22 +19,20 @@ export const Container: React.FC<ContainerProps> = ({
   flex = 1,
   testID,
 }) => {
-  const theme = useTheme();
-
   const getPaddingValue = (): number => {
     switch (padding) {
       case 'none':
         return 0;
       case 'small':
-        return tokens.spacing.sm;
+        return spacing.sm;
       case 'medium':
-        return tokens.spacing.md;
+        return spacing.md;
       case 'large':
-        return tokens.spacing.lg;
+        return spacing.lg;
       case 'xl':
-        return tokens.spacing.xl;
+        return spacing.xl;
       default:
-        return tokens.spacing.md;
+        return spacing.md;
     }
   };
 
@@ -44,7 +41,7 @@ export const Container: React.FC<ContainerProps> = ({
       style={[
         {
           flex,
-          backgroundColor: backgroundColor || theme.colors.background,
+          backgroundColor: backgroundColor || colors.background,
           padding: getPaddingValue(),
         },
         style,

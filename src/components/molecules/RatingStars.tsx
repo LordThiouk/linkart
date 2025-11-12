@@ -2,7 +2,7 @@ import React from 'react';
 import { View, ViewStyle, TouchableOpacity } from 'react-native';
 import { Icon } from 'react-native-paper';
 import { useTheme } from 'react-native-paper';
-import { tokens } from '../../theme';
+import { spacing } from '../../theme';
 
 export interface RatingStarsProps {
   rating: number;
@@ -44,7 +44,7 @@ export const RatingStars: React.FC<RatingStarsProps> = ({
       <StarComponent
         key={index}
         onPress={() => handleStarPress(index + 1)}
-        style={{ marginRight: tokens.spacing.xs }}
+        style={{ marginRight: spacing.xs }}
         testID={`star-${index + 1}`}
       >
         <Icon source={isFilled ? 'star' : 'star-outline'} size={size} color={isFilled ? starColor : starEmptyColor} />
