@@ -1,4 +1,4 @@
-# Rapport de Documentation - 2025-10-29
+# Rapport de Documentation - 2025-11-12
 
 ## 📊 Statistiques
 
@@ -15,6 +15,7 @@
 
 ## 📁 Fichiers Générés
 
+- `README.md`
 - `api.md`
 - `components.md`
 - `db-rls.md`
@@ -22,6 +23,5 @@
 - `db-tables.md`
 - `features.md`
 - `hooks.md`
-- `README.md`
 - `services.md`
 - `tests.md`

@@ -20,6 +20,7 @@ import { Pill } from '../components/atoms/Pill';
 import { ProductCardFigma } from '../components/atoms/ProductCardFigma';
 import { PlaylistCardFigma } from '../components/molecules/PlaylistCardFigma';
 import { ImageWithFallback } from '../components/atoms/ImageWithFallback';
+import { colors, spacing, typography, radii } from '@/theme';
 const BANNER_WIDTH = 340;
 
 interface HomeScreenFigmaProps {
@@ -187,18 +188,18 @@ export function HomeScreenFigma({ onSearch, onNotifications, onProductClick, onM
 
         <View style={styles.headerRight}>
           <TouchableOpacity onPress={onSearch} style={styles.headerButton} activeOpacity={0.8}>
-            <Search size={20} color="#D4D4D4" />
+            <Search size={20} color={colors.textSecondary} />
           </TouchableOpacity>
 
           {onMessages && (
             <TouchableOpacity onPress={onMessages} style={styles.headerButton} activeOpacity={0.8}>
-              <MessageCircle size={20} color="#D4D4D4" />
+              <MessageCircle size={20} color={colors.textSecondary} />
               <View style={styles.badge} />
             </TouchableOpacity>
           )}
 
           <TouchableOpacity onPress={onNotifications} style={styles.headerButton} activeOpacity={0.8}>
-            <Bell size={20} color="#D4D4D4" />
+            <Bell size={20} color={colors.textSecondary} />
             <View style={[styles.badge, styles.badgeOrange]} />
           </TouchableOpacity>
         </View>
@@ -235,7 +236,7 @@ export function HomeScreenFigma({ onSearch, onNotifications, onProductClick, onM
         {/* Featured Deal Banner */}
         <View style={[styles.banner, styles.banner1]}>
           <LinearGradient
-            colors={['#6366F1', '#8B5CF6', '#EC4899']}
+            colors={[colors.primary, colors.primaryDark, colors.accent]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.bannerGradient}
@@ -258,7 +259,7 @@ export function HomeScreenFigma({ onSearch, onNotifications, onProductClick, onM
         {/* New Arrivals Banner */}
         <View style={[styles.banner, styles.banner2]}>
           <LinearGradient
-            colors={['#06B6D4', '#0891B2', '#6366F1']}
+            colors={[colors.cyan, colors.primary, colors.primary]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.bannerGradient}
@@ -270,7 +271,7 @@ export function HomeScreenFigma({ onSearch, onNotifications, onProductClick, onM
               <Text style={styles.bannerTitle}>Kits Afrobeat 2024</Text>
               <Text style={styles.bannerSubtitle}>Les derniers drum kits des producteurs top</Text>
               <TouchableOpacity style={styles.bannerButton} activeOpacity={0.9}>
-                <Text style={[styles.bannerButtonText, { color: '#06B6D4' }]}>Découvrir</Text>
+                <Text style={[styles.bannerButtonText, { color: colors.cyan }]}>Découvrir</Text>
               </TouchableOpacity>
             </View>
             <View style={styles.bannerGlow1} />
@@ -280,7 +281,7 @@ export function HomeScreenFigma({ onSearch, onNotifications, onProductClick, onM
         {/* Boost Banner */}
         <View style={[styles.banner, styles.banner3]}>
           <LinearGradient
-            colors={['#EC4899', '#F59E0B', '#EAB308']}
+            colors={[colors.accent, colors.secondary, colors.warning]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.bannerGradient}
@@ -292,7 +293,7 @@ export function HomeScreenFigma({ onSearch, onNotifications, onProductClick, onM
               <Text style={styles.bannerTitle}>Boostez vos ventes</Text>
               <Text style={styles.bannerSubtitle}>+350% de visibilité garantie</Text>
               <TouchableOpacity style={styles.bannerButton} activeOpacity={0.9}>
-                <Text style={[styles.bannerButtonText, { color: '#EC4899' }]}>Essayer</Text>
+                <Text style={[styles.bannerButtonText, { color: colors.accent }]}>Essayer</Text>
               </TouchableOpacity>
             </View>
             <View style={styles.bannerGlow1} />
@@ -307,12 +308,12 @@ export function HomeScreenFigma({ onSearch, onNotifications, onProductClick, onM
       <View style={styles.sectionHeader}>
         <View style={styles.sectionHeaderLeft}>
           <LinearGradient
-            colors={['#06B6D4', '#8B5CF6']}
+            colors={[colors.cyan, colors.primaryDark]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.sectionIcon}
           >
-            <ListMusic size={20} color="#F5F5F5" />
+            <ListMusic size={20} color={colors.textPrimary} />
           </LinearGradient>
           <Text style={styles.sectionTitle}>Playlists sélectionnées</Text>
         </View>
@@ -366,12 +367,12 @@ export function HomeScreenFigma({ onSearch, onNotifications, onProductClick, onM
     <View style={styles.trendingSection}>
       <View style={styles.sectionHeaderLeft}>
         <LinearGradient
-          colors={['#F59E0B', '#EC4899']}
+          colors={[colors.secondary, colors.accent]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.sectionIcon}
         >
-          <TrendingUp size={20} color="#F5F5F5" />
+          <TrendingUp size={20} color={colors.textPrimary} />
         </LinearGradient>
         <Text style={styles.sectionTitle}>Tendances du moment</Text>
       </View>
@@ -404,12 +405,12 @@ export function HomeScreenFigma({ onSearch, onNotifications, onProductClick, onM
     <View style={styles.recentSection}>
       <View style={styles.sectionHeaderLeft}>
         <LinearGradient
-          colors={['#6366F1', '#8B5CF6']}
+          colors={[colors.primary, colors.primaryDark]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.sectionIcon}
         >
-          <Flame size={20} color="#F5F5F5" />
+          <Flame size={20} color={colors.textPrimary} />
         </LinearGradient>
         <Text style={styles.sectionTitle}>Nouveautés</Text>
       </View>
@@ -472,15 +473,15 @@ export function HomeScreenFigma({ onSearch, onNotifications, onProductClick, onM
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={['#6366F1', '#8B5CF6']}
+                colors={[colors.primary, colors.primaryDark]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.recentPlayGradient}
               >
                 {playingProduct === product.id && product.type === 'beat' ? (
-                  <Pause size={20} color="#F5F5F5" fill="#F5F5F5" />
+                  <Pause size={20} color={colors.textPrimary} fill={colors.textPrimary} />
                 ) : (
-                  <Play size={20} color="#F5F5F5" fill="#F5F5F5" />
+                  <Play size={20} color={colors.textPrimary} fill={colors.textPrimary} />
                 )}
               </LinearGradient>
             </TouchableOpacity>
@@ -512,93 +513,93 @@ export function HomeScreenFigma({ onSearch, onNotifications, onProductClick, onM
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 80, // pb-20 for bottom navigation
+    paddingBottom: spacing.xxl + spacing.xl, // pb-20 for bottom navigation (80px)
   },
   header: {
-    backgroundColor: 'rgba(10, 10, 10, 0.95)',
+    backgroundColor: 'rgba(10, 10, 10, 0.95)', // colors.background with opacity
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(64, 64, 64, 0.5)',
-    paddingTop: 48, // pt-12
-    paddingBottom: 16, // pb-4
+    borderBottomColor: 'rgba(64, 64, 64, 0.5)', // colors.border with opacity
+    paddingTop: spacing.xxl,
+    paddingBottom: spacing.md,
   },
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 24, // px-6
-    marginBottom: 24, // mb-6
+    paddingHorizontal: spacing.lg,
+    marginBottom: spacing.lg,
   },
   headerLeft: {
     flex: 1,
   },
   headerTitle: {
-    color: '#F5F5F5',
-    fontSize: 24,
-    fontFamily: 'Poppins_700Bold',
-    marginBottom: 4,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.headingLg,
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.xs,
   },
   headerSubtitle: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   headerRight: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12, // gap-3
+    gap: spacing.md,
   },
   headerButton: {
-    padding: 12, // p-3
-    borderRadius: 12, // rounded-xl
-    backgroundColor: '#111111',
+    padding: spacing.md,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
   },
   badge: {
     position: 'absolute',
-    top: 8,
-    right: 8,
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: '#06B6D4',
+    top: spacing.sm,
+    right: spacing.sm,
+    width: spacing.sm,
+    height: spacing.sm,
+    borderRadius: radii.sm / 2,
+    backgroundColor: colors.cyan,
   },
   badgeOrange: {
-    backgroundColor: '#EC4899',
+    backgroundColor: colors.accent,
   },
   categoriesContainer: {
-    paddingHorizontal: 24, // px-6
-    paddingVertical: 16, // py-4
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
   },
   categoriesScroll: {
-    gap: 8, // gap-2
-    paddingBottom: 8,
+    gap: spacing.sm,
+    paddingBottom: spacing.sm,
   },
   heroBannersContainer: {
-    paddingVertical: 16, // py-4
+    paddingVertical: spacing.md,
   },
   heroBannersScroll: {
-    paddingHorizontal: 24, // px-6
-    gap: 16, // gap-4
+    paddingHorizontal: spacing.lg,
+    gap: spacing.md,
   },
   banner: {
     width: BANNER_WIDTH,
-    height: 192, // h-48
-    borderRadius: 24, // rounded-2xl
+    height: 192, // h-48 (specific height, not a spacing token)
+    borderRadius: radii.xxl,
     overflow: 'hidden',
   },
   bannerGradient: {
     flex: 1,
-    padding: 24, // p-6
+    padding: spacing.lg,
     justifyContent: 'space-between',
   },
   banner1: {
@@ -615,145 +616,145 @@ const styles = StyleSheet.create({
   },
   bannerBadge: {
     alignSelf: 'flex-start',
-    paddingHorizontal: 12, // px-3
-    paddingVertical: 4, // py-1
-    borderRadius: 999,
-    backgroundColor: 'rgba(245, 245, 245, 0.2)',
-    marginBottom: 12, // mb-3
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: radii.full,
+    backgroundColor: 'rgba(245, 245, 245, 0.2)', // colors.textPrimary with opacity
+    marginBottom: spacing.md,
   },
   bannerBadgeText: {
-    color: '#F5F5F5',
-    fontSize: 10,
-    fontFamily: 'Inter_500Medium',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.medium,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   bannerTitle: {
-    color: '#F5F5F5',
-    fontSize: 20,
-    fontFamily: 'Poppins_600SemiBold',
-    marginBottom: 8,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd + 2, // 20px (between titleMd and headingLg)
+    fontFamily: typography.fontFamily.poppins.semibold,
+    marginBottom: spacing.sm,
   },
   bannerSubtitle: {
-    color: 'rgba(245, 245, 245, 0.8)',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: 'rgba(245, 245, 245, 0.8)', // colors.textPrimary with opacity
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   bannerButton: {
     alignSelf: 'flex-start',
-    paddingHorizontal: 16, // px-4
-    paddingVertical: 8, // py-2
-    borderRadius: 12, // rounded-xl
-    backgroundColor: '#F5F5F5',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: radii.md,
+    backgroundColor: colors.textPrimary,
   },
   bannerButtonText: {
-    color: '#6366F1',
-    fontSize: 14,
-    fontFamily: 'Inter_500Medium',
+    color: colors.primary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   bannerGlow1: {
     position: 'absolute',
     top: 0,
     right: 0,
-    width: 128, // w-32
+    width: 128, // w-32 (specific size)
     height: 128, // h-32
-    borderRadius: 64,
-    backgroundColor: 'rgba(245, 245, 245, 0.1)',
+    borderRadius: radii.full, // 64 = width/2 (circle)
+    backgroundColor: 'rgba(245, 245, 245, 0.1)', // colors.textPrimary with opacity
     opacity: 0.3,
   },
   bannerGlow2: {
     position: 'absolute',
     bottom: 0,
     left: '50%',
-    width: 96, // w-24
+    width: 96, // w-24 (specific size)
     height: 96, // h-24
-    borderRadius: 48,
-    backgroundColor: 'rgba(236, 72, 153, 0.2)',
+    borderRadius: radii.full, // 48 = width/2 (circle)
+    backgroundColor: 'rgba(236, 72, 153, 0.2)', // colors.accent with opacity
     opacity: 0.3,
   },
   playlistsSection: {
-    paddingVertical: 16, // py-4
+    paddingVertical: spacing.md,
   },
   sectionHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 24, // px-6
-    marginBottom: 16, // mb-4
+    paddingHorizontal: spacing.lg,
+    marginBottom: spacing.md,
   },
   sectionHeaderLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8, // gap-2
+    gap: spacing.sm,
   },
   sectionIcon: {
-    padding: 8, // p-2
-    borderRadius: 8, // rounded-lg
+    padding: spacing.sm,
+    borderRadius: radii.sm,
     alignItems: 'center',
     justifyContent: 'center',
   },
   sectionTitle: {
-    color: '#F5F5F5',
-    fontSize: 18,
-    fontFamily: 'Poppins_600SemiBold',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd,
+    fontFamily: typography.fontFamily.poppins.semibold,
   },
   sectionLink: {
-    color: '#6366F1',
-    fontSize: 14,
-    fontFamily: 'Inter_500Medium',
+    color: colors.primary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   playlistsScroll: {
-    paddingHorizontal: 24, // px-6
-    gap: 16, // gap-4
+    paddingHorizontal: spacing.lg,
+    gap: spacing.md,
   },
   playlistCard: {
-    width: 320, // w-80
+    width: 320, // w-80 (specific width)
   },
   featuredSection: {
-    paddingHorizontal: 24, // px-6
-    paddingVertical: 16, // py-4
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
   },
   featuredScroll: {
-    gap: 16, // gap-4
+    gap: spacing.md,
   },
   featuredCard: {
-    width: 288, // w-72
+    width: 288, // w-72 (specific width)
   },
   trendingSection: {
-    paddingHorizontal: 24, // px-6
-    paddingVertical: 16, // py-4
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
   },
   trendingGrid: {
-    gap: 16, // gap-4
+    gap: spacing.md,
   },
   trendingRow: {
-    gap: 16, // gap-4
+    gap: spacing.md,
   },
   trendingCard: {
     flex: 1,
     maxWidth: '48%',
   },
   recentSection: {
-    paddingHorizontal: 24, // px-6
-    paddingVertical: 16, // py-4
-    paddingBottom: 32, // pb-8
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    paddingBottom: spacing.xl,
   },
   recentList: {
-    gap: 12, // gap-3
+    gap: spacing.md,
   },
   recentItem: {
     flexDirection: 'row',
-    gap: 12, // gap-3
-    padding: 12, // p-3
-    borderRadius: 12, // rounded-xl
-    backgroundColor: '#111111',
+    gap: spacing.md,
+    padding: spacing.md,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   recentImage: {
-    width: 64, // w-16
+    width: 64, // w-16 (specific size)
     height: 64, // h-16
-    borderRadius: 8, // rounded-lg
+    borderRadius: radii.sm,
   },
   recentContent: {
     flex: 1,
@@ -762,77 +763,77 @@ const styles = StyleSheet.create({
   recentTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8, // gap-2
-    marginBottom: 4,
+    gap: spacing.sm,
+    marginBottom: spacing.xs,
   },
   recentTitle: {
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontFamily: 'Poppins_500Medium',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.poppins.medium,
     flex: 1,
   },
   typeBadge: {
-    paddingHorizontal: 8,
+    paddingHorizontal: spacing.sm,
     paddingVertical: 2,
-    borderRadius: 4,
+    borderRadius: radii.sm / 2,
   },
   typeBadgeBeat: {
-    backgroundColor: 'rgba(99, 102, 241, 0.2)',
+    backgroundColor: 'rgba(99, 102, 241, 0.2)', // colors.primary with opacity
   },
   typeBadgeKit: {
-    backgroundColor: 'rgba(236, 72, 153, 0.2)',
+    backgroundColor: 'rgba(236, 72, 153, 0.2)', // colors.accent with opacity
   },
   typeBadgeSample: {
-    backgroundColor: 'rgba(6, 182, 212, 0.2)',
+    backgroundColor: 'rgba(6, 182, 212, 0.2)', // colors.cyan with opacity
   },
   typeBadgeText: {
-    fontSize: 10,
-    fontFamily: 'Inter_500Medium',
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   typeBadgeTextBeat: {
-    color: '#6366F1',
+    color: colors.primary,
   },
   typeBadgeTextKit: {
-    color: '#EC4899',
+    color: colors.accent,
   },
   typeBadgeTextSample: {
-    color: '#06B6D4',
+    color: colors.cyan,
   },
   recentArtist: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   recentMeta: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    marginTop: 4,
+    gap: spacing.md,
+    marginTop: spacing.xs,
   },
   recentBPM: {
-    color: '#6366F1',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.primary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   recentSeparator: {
-    color: '#A3A3A3',
-    fontSize: 14,
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
   },
   recentPrice: {
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   recentPlayButton: {
-    width: 40,
+    width: 40, // specific size
     height: 40,
-    borderRadius: 20,
+    borderRadius: radii.full, // 20 = width/2 (circle)
     alignSelf: 'center',
   },
   recentPlayGradient: {
     width: '100%',
     height: '100%',
-    borderRadius: 20,
+    borderRadius: radii.full, // 20 = width/2 (circle)
     alignItems: 'center',
     justifyContent: 'center',
   },

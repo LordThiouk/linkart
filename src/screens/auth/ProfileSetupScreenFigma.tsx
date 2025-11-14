@@ -10,6 +10,7 @@ import { RoleCardFigma } from '../../components/atoms/RoleCardFigma';
 import { PrimaryButton } from '../../components/atoms/PrimaryButton';
 import { ImageWithFallback } from '../../components/atoms/ImageWithFallback';
 import { LinearGradient } from 'expo-linear-gradient';
+import { colors, spacing, typography, radii } from '@/theme';
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -166,18 +167,18 @@ export function ProfileSetupScreenFigma({ onComplete, onSkip }: ProfileSetupScre
                 <ImageWithFallback src={profileImage} alt="Profile" style={styles.profileImage} />
               ) : (
                 <View style={styles.placeholderImage}>
-                  <Upload size={32} color="#A3A3A3" />
+                  <Upload size={32} color={colors.textMuted} />
                 </View>
               )}
             </View>
             <View style={styles.uploadBadge}>
               <LinearGradient
-                colors={['#6366F1', '#8B5CF6']}
+                colors={[colors.primary, colors.primaryDark]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.uploadBadgeGradient}
               >
-                <Upload size={16} color="#F5F5F5" />
+                <Upload size={16} color={colors.textPrimary} />
               </LinearGradient>
             </View>
           </TouchableOpacity>
@@ -230,45 +231,45 @@ export function ProfileSetupScreenFigma({ onComplete, onSkip }: ProfileSetupScre
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
   },
   scrollContent: {
-    padding: 32,
-    gap: 32,
-    paddingBottom: 40,
+    padding: spacing.xl,
+    gap: spacing.xl,
+    paddingBottom: spacing.xl + spacing.sm, // 40px
   },
   header: {
     alignItems: 'center',
-    gap: 8,
+    gap: spacing.sm,
   },
   title: {
-    color: '#F5F5F5',
-    fontSize: 28,
-    fontWeight: '700',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.displayXl - 4, // 28px (between headingLg and displayXl)
+    fontFamily: typography.fontFamily.poppins.bold,
     textAlign: 'center',
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
   subtitle: {
-    color: '#A3A3A3',
-    fontSize: 16,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.inter.regular,
     textAlign: 'center',
   },
   imageSection: {
     alignItems: 'center',
-    gap: 16,
+    gap: spacing.md,
   },
   imageContainer: {
     position: 'relative',
   },
   imageWrapper: {
-    width: 96,
-    height: 96,
-    borderRadius: 48,
+    width: 96, // w-24 (specific size)
+    height: 96, // h-24
+    borderRadius: radii.full, // 48 = width/2 (circle)
     overflow: 'hidden',
-    backgroundColor: '#1A1A1A',
+    backgroundColor: colors.surfaceElevated,
     borderWidth: 2,
-    borderColor: '#404040',
+    borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -286,14 +287,14 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     right: 0,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: 32, // w-8 (specific size)
+    height: 32, // h-8
+    borderRadius: radii.full, // 16 = width/2 (circle)
     overflow: 'hidden',
-    shadowColor: '#6366F1',
-    shadowOffset: { width: 0, height: 4 },
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: spacing.xs },
     shadowOpacity: 0.3,
-    shadowRadius: 8,
+    shadowRadius: spacing.sm,
     elevation: 6,
   },
   uploadBadgeGradient: {
@@ -303,41 +304,41 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   imageLabel: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   inputSection: {
-    gap: 8,
+    gap: spacing.sm,
   },
   rolesSection: {
-    gap: 16,
+    gap: spacing.md,
   },
   rolesLabel: {
-    color: '#D4D4D4',
-    fontSize: 16,
-    fontWeight: '600',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.poppins.semibold,
   },
   rolesContainer: {
-    gap: 12,
+    gap: spacing.md,
   },
   roleCard: {
     marginBottom: 0,
   },
   buttonSection: {
-    gap: 16,
-    paddingTop: 16,
+    gap: spacing.md,
+    paddingTop: spacing.md,
   },
   continueButton: {
     marginBottom: 0,
   },
   skipButton: {
     alignItems: 'center',
-    paddingVertical: 12,
+    paddingVertical: spacing.md,
   },
   skipButtonText: {
-    color: '#A3A3A3',
-    fontSize: 16,
-    fontWeight: '500',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.inter.medium,
   },
 });

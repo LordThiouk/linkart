@@ -1,21 +1,71 @@
 # Documentation des Composants
 
-> Généré le: 2025-10-29
+> Généré le: 2025-11-12
 
 ## Atoms
 
-### Avatar
+### Accordion
+
+**Description:** AccordionItem - Item individuel de l'accordion
+
+---
+
+### Alert
+
+---
+
+### AlertDialog
 
 **Props:**
 
 ```typescript
-interface AvatarProps {
+interface AlertDialogProps {
 
-  uri?: string;
-  name?: string;
-  size?: number;
-  backgroundColor?: string;
-  textColor?: string;
+  /** État d'ouverture du dialog */
+  open?: boolean;
+  /** Fonction appelée au changement d'état */
+  onOpenChange?: (open: boolean) => void;
+  /** Contenu du dialog */
+  children: React.ReactNode;
+
+}
+```
+
+**Description:** AlertDialogContent - Conteneur principal du dialog
+
+---
+
+### Avatar
+
+**Description:** AvatarGroup - Groupe d'avatars empilés
+
+---
+
+### Badge
+
+---
+
+### BeatCardFigma
+
+**Props:**
+
+```typescript
+interface BeatCardFigmaProps {
+
+  id: string;
+  title: string;
+  artist?: string;
+  artistImage?: string;
+  coverImage: string;
+  price: number;
+  bpm: number;
+  genre: string;
+  likes: number;
+  isPlaying?: boolean;
+  isLiked?: boolean;
+  onPlay?: () => void;
+  onPress?: () => void;
+  onToggleLike?: () => void;
   style?: ViewStyle;
   testID?: string;
 
@@ -24,22 +74,45 @@ interface AvatarProps {
 
 ---
 
-### Badge
+### BoostCardFigma
 
 **Props:**
 
 ```typescript
-interface BadgeProps {
+interface BoostCardFigmaProps {
 
-  children: React.ReactNode;
-  variant?: 'default' | 'success' | 'warning' | 'error' | 'info';
-  size?: 'small' | 'medium' | 'large';
-  visible?: boolean;
+  duration: '24h' | '7j' | '30j';
+  price: number;
+  views: string;
+  isPopular?: boolean;
+  onSelect: () => void;
   style?: ViewStyle;
   testID?: string;
 
 }
 ```
+
+---
+
+### Breadcrumb
+
+**Props:**
+
+```typescript
+interface BreadcrumbItemProps {
+
+  /** Label */
+  label: string;
+  /** Callback */
+  onPress?: () => void;
+  /** Actif */
+  isActive?: boolean;
+  style?: TextProps['style'];
+
+}
+```
+
+**Description:** BreadcrumbItem - Item individuel
 
 ---
 
@@ -50,16 +123,56 @@ interface BadgeProps {
 ```typescript
 interface ButtonProps {
 
+  /** Texte du bouton */
   title?: string;
-  children?: React.ReactNode;
+  /** Fonction appelée au press */
   onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'outline' | 'ghost';
-  size?: 'small' | 'medium' | 'large';
+  /** Style variant du bouton */
+  variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive' | 'link';
+  /** Taille du bouton */
+  size?: 'sm' | 'default' | 'lg' | 'icon';
+  /** État désactivé */
   disabled?: boolean;
+  /** État de chargement */
   loading?: boolean;
-  icon?: string;
+  /** Largeur pleine */
+  fullWidth?: boolean;
+  /** Enfants custom (remplace title) */
+  children?: React.ReactNode;
+
+}
+```
+
+---
+
+### Calendar
+
+---
+
+### Card
+
+**Description:** CardHeader - En-tête de la card
+
+---
+
+### Carousel
+
+**Description:** Carousel - Composant principal
+
+---
+
+### CategoryChipFigma
+
+**Props:**
+
+```typescript
+interface CategoryChipFigmaProps {
+
+  label: string;
+  icon?: LucideIcon;
+  selected?: boolean;
+  onPress?: () => void;
   style?: ViewStyle;
-  textStyle?: TextStyle;
   testID?: string;
 
 }
@@ -77,6 +190,33 @@ interface CenteredContentProps {
   children: React.ReactNode;
   style?: ViewStyle;
   padding?: number;
+
+}
+```
+
+---
+
+### Checkbox
+
+**Props:**
+
+```typescript
+interface CheckboxProps {
+
+  /** État coché */
+  checked?: boolean;
+  /** Fonction appelée au changement */
+  onCheckedChange?: (checked: boolean) => void;
+  /** Label du checkbox */
+  label?: string;
+  /** État désactivé */
+  disabled?: boolean;
+  /** État invalide (erreur) */
+  invalid?: boolean;
+  /** Variant de couleur */
+  variant?: 'primary' | 'secondary' | 'success';
+  /** Size */
+  size?: 'sm' | 'default' | 'lg';
 
 }
 ```
@@ -102,18 +242,24 @@ interface ContainerProps {
 
 ---
 
-### Divider
+### Dialog
 
 **Props:**
 
 ```typescript
-interface DividerProps {
+interface DialogProps {
 
-  style?: ViewStyle;
-  testID?: string;
+  /** État d'ouverture du dialog */
+  open?: boolean;
+  /** Fonction appelée au changement d'état */
+  onOpenChange?: (open: boolean) => void;
+  /** Contenu du dialog */
+  children: React.ReactNode;
 
 }
 ```
+
+**Description:** DialogContent - Conteneur principal du dialog
 
 ---
 
@@ -153,35 +299,50 @@ interface IconProps {
 
 ---
 
+### ImageWithFallback
+
+---
+
 ### Input
+
+---
+
+### InputField
+
+---
+
+### InputOTP
 
 **Props:**
 
 ```typescript
-interface InputProps {
+interface InputOTPProps {
 
-  value: string;
-  onChangeText: (text: string) => void;
-  placeholder?: string;
+  /** Nombre de digits */
+  length?: number;
+  /** Valeur actuelle */
+  value?: string;
+  /** Fonction appelée au changement */
+  onValueChange?: (value: string) => void;
+  /** Fonction appelée quand tous les digits sont remplis */
+  onComplete?: (value: string) => void;
+  /** Label */
   label?: string;
-  error?: boolean;
-  errorMessage?: string;
-  helperText?: string;
+  /** État désactivé */
   disabled?: boolean;
-  secureTextEntry?: boolean;
-  multiline?: boolean;
-  numberOfLines?: number;
-  keyboardType?: 'default' | 'numeric' | 'email-address' | 'phone-pad';
-  autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
-  leftIcon?: string;
-  rightIcon?: string;
-  onRightIconPress?: () => void;
-  style?: ViewStyle;
-  textStyle?: TextStyle;
-  testID?: string;
+  /** État invalide (erreur) */
+  invalid?: boolean;
+  /** Message d'erreur */
+  error?: string;
+  /** Type de clavier */
+  keyboardType?: 'numeric' | 'default';
 
 }
 ```
+
+---
+
+### Label
 
 ---
 
@@ -220,6 +381,50 @@ interface MetricItemProps {
 
 ---
 
+### OTPField
+
+**Props:**
+
+```typescript
+interface OTPFieldProps {
+
+  length?: number;
+  value: string;
+  onChange: (value: string) => void;
+  error?: boolean;
+  style?: ViewStyle;
+  testID?: string;
+
+}
+```
+
+---
+
+### Pagination
+
+**Description:** Pagination - Composant principal
+
+---
+
+### Pill
+
+**Props:**
+
+```typescript
+interface PillProps {
+
+  label: string;
+  icon?: LucideIcon;
+  selected?: boolean;
+  onPress?: () => void;
+  style?: ViewStyle;
+  testID?: string;
+
+}
+```
+
+---
+
 ### PlayButton
 
 **Props:**
@@ -231,6 +436,54 @@ interface PlayButtonProps {
   size: 'sm' | 'md' | 'lg';
   onPress: () => void;
   disabled?: boolean;
+  testID?: string;
+
+}
+```
+
+---
+
+### Popover
+
+**Props:**
+
+```typescript
+interface PopoverProps {
+
+  /** Contenu du popover */
+  content: React.ReactNode;
+  /** Enfants (trigger) */
+  children: React.ReactNode;
+  /** Position du popover */
+  side?: 'top' | 'bottom' | 'left' | 'right';
+  /** Alignement du popover */
+  align?: 'start' | 'center' | 'end';
+  /** État d'ouverture contrôlé */
+  open?: boolean;
+  /** Callback changement d'état */
+  onOpenChange?: (open: boolean) => void;
+
+}
+```
+
+**Description:** PopoverContent - Conteneur de contenu stylisé
+
+---
+
+### PrimaryButton
+
+**Props:**
+
+```typescript
+interface PrimaryButtonProps {
+
+  children: React.ReactNode;
+  variant?: 'primary' | 'ghost';
+  fullWidth?: boolean;
+  disabled?: boolean;
+  loading?: boolean;
+  onPress?: () => void;
+  style?: ViewStyle;
   testID?: string;
 
 }
@@ -255,6 +508,39 @@ interface ProductCardProps {
   likeCount: number;
   onPress: (id: string) => void;
   onPlay?: (id: string) => void;
+  testID?: string;
+
+}
+```
+
+---
+
+### ProductCardFigma
+
+**Props:**
+
+```typescript
+interface ProductCardFigmaProps {
+
+  id: string;
+  title: string;
+  artist: string;
+  artistImage?: string;
+  coverImage: string;
+  price: number;
+  type: 'beat' | 'kit' | 'sample';
+  bpm?: number;
+  genre: string;
+  likes?: number;
+  downloads?: number;
+  rating?: number;
+  reviewCount?: number;
+  isPlaying?: boolean;
+  isFavorited?: boolean;
+  onPlay?: () => void;
+  onPress?: () => void;
+  onToggleFavorite?: () => void;
+  style?: ViewStyle;
   testID?: string;
 
 }
@@ -348,6 +634,39 @@ interface ProductTitleProps {
 
 ---
 
+### Progress
+
+---
+
+### RadioGroup
+
+**Props:**
+
+```typescript
+interface RadioGroupProps {
+
+  /** Options disponibles */
+  options: RadioOption[];
+  /** Valeur sélectionnée */
+  value?: string;
+  /** Fonction appelée au changement */
+  onValueChange?: (value: string) => void;
+  /** État désactivé global */
+  disabled?: boolean;
+  /** État invalide (erreur) */
+  invalid?: boolean;
+  /** Variant de couleur */
+  variant?: 'primary' | 'secondary' | 'success';
+  /** Size */
+  size?: 'sm' | 'default' | 'lg';
+  /** Layout direction */
+  orientation?: 'vertical' | 'horizontal';
+
+}
+```
+
+---
+
 ### RatingContainer
 
 **Props:**
@@ -357,6 +676,26 @@ interface RatingContainerProps {
 
   children: React.ReactNode;
   style?: ViewStyle;
+
+}
+```
+
+---
+
+### RoleCardFigma
+
+**Props:**
+
+```typescript
+interface RoleCardFigmaProps {
+
+  icon: LucideIcon;
+  title: string;
+  description: string;
+  selected: boolean;
+  onPress: () => void;
+  style?: ViewStyle;
+  testID?: string;
 
 }
 ```
@@ -400,6 +739,101 @@ interface SectionCardProps {
 ---
 
 ### SectionTitle
+
+---
+
+### Select
+
+**Props:**
+
+```typescript
+interface SelectProps {
+
+  /** Options disponibles */
+  options: SelectOption[];
+  /** Valeur sélectionnée */
+  value?: string;
+  /** Fonction appelée au changement */
+  onValueChange?: (value: string) => void;
+  /** Placeholder */
+  placeholder?: string;
+  /** Label du select */
+  label?: string;
+  /** État désactivé */
+  disabled?: boolean;
+  /** État invalide (erreur) */
+  invalid?: boolean;
+  /** Message d'erreur */
+  error?: string;
+  /** Variant de couleur */
+  variant?: 'default' | 'filled';
+  /** Size */
+  size?: 'sm' | 'default' | 'lg';
+
+}
+```
+
+---
+
+### Separator
+
+---
+
+### Sheet
+
+**Props:**
+
+```typescript
+interface SheetProps {
+
+  /** État d'ouverture du sheet */
+  open?: boolean;
+  /** Fonction appelée au changement d'état */
+  onOpenChange?: (open: boolean) => void;
+  /** Contenu du sheet */
+  children: React.ReactNode;
+  /** Position du sheet (mobile: bottom uniquement) */
+  side?: 'bottom';
+
+}
+```
+
+**Description:** SheetContent - Conteneur principal du sheet
+
+---
+
+### Skeleton
+
+---
+
+### Slider
+
+**Props:**
+
+```typescript
+interface SliderProps {
+
+  /** Valeur actuelle */
+  value?: number;
+  /** Valeur minimale */
+  min?: number;
+  /** Valeur maximale */
+  max?: number;
+  /** Step */
+  step?: number;
+  /** Fonction appelée au changement */
+  onValueChange?: (value: number) => void;
+  /** Label */
+  label?: string;
+  /** Afficher la valeur */
+  showValue?: boolean;
+  /** État désactivé */
+  disabled?: boolean;
+  /** Variant de couleur */
+  variant?: 'primary' | 'secondary' | 'success';
+
+}
+```
 
 ---
 
@@ -472,23 +906,6 @@ interface StatLabelProps {
 
 ---
 
-### StatsContainer
-
-**Props:**
-
-```typescript
-interface StatsContainerProps {
-
-  children: React.ReactNode;
-  style?: ViewStyle;
-  gap?: number;
-  marginBottom?: number;
-
-}
-```
-
----
-
 ### StatValue
 
 **Props:**
@@ -507,23 +924,84 @@ interface StatValueProps {
 
 ---
 
+### StatsContainer
+
+**Props:**
+
+```typescript
+interface StatsContainerProps {
+
+  children: React.ReactNode;
+  style?: ViewStyle;
+  gap?: number;
+  marginBottom?: number;
+
+}
+```
+
+---
+
+### Switch
+
+**Props:**
+
+```typescript
+interface SwitchProps {
+
+  /** État activé */
+  checked?: boolean;
+  /** Fonction appelée au changement */
+  onCheckedChange?: (checked: boolean) => void;
+  /** Label du switch */
+  label?: string;
+  /** État désactivé */
+  disabled?: boolean;
+  /** Variant de couleur */
+  variant?: 'primary' | 'secondary' | 'success';
+  /** Size */
+  size?: 'sm' | 'default' | 'lg';
+
+}
+```
+
+---
+
+### Table
+
+**Description:** Table - Composant principal
+
+---
+
 ### Text
+
+---
+
+### TextArea
 
 ---
 
 ### Toast
 
+**Description:** Toast - Composant principal
+
+---
+
+### Tooltip
+
 **Props:**
 
 ```typescript
-interface ToastProps {
+interface TooltipProps {
 
-  visible: boolean;
-  message: string;
-  action?: {
-    label: string;
-    onPress: () => void;
-  
+  /** Contenu du tooltip */
+  content: string;
+  /** Enfants (trigger) */
+  children: React.ReactNode;
+  /** Position du tooltip */
+  side?: 'top' | 'bottom' | 'left' | 'right';
+  /** Délai avant affichage (ms) */
+  delayDuration?: number;
+
 }
 ```
 
@@ -574,6 +1052,41 @@ interface AudioPlayerProps {
 
 ---
 
+### OnboardingCarouselFigma
+
+**Props:**
+
+```typescript
+interface OnboardingCarouselFigmaProps {
+
+  onComplete: () => void;
+  style?: ViewStyle;
+  testID?: string;
+
+}
+```
+
+---
+
+### OnboardingSlideFigma
+
+**Props:**
+
+```typescript
+interface OnboardingSlideFigmaProps {
+
+  title: string;
+  description: string;
+  gradient: [string, string] | [string, string, string];
+  icon: LucideIcon;
+  style?: ViewStyle;
+  testID?: string;
+
+}
+```
+
+---
+
 ### PlaylistCard
 
 **Props:**
@@ -592,6 +1105,29 @@ interface PlaylistCardProps {
   isPlaying?: boolean;
   onPress: (playlistId: string) => void;
   onPlay?: (playlistId: string) => void;
+  testID?: string;
+
+}
+```
+
+---
+
+### PlaylistCardFigma
+
+**Props:**
+
+```typescript
+interface PlaylistCardFigmaProps {
+
+  id: string;
+  title: string;
+  description: string;
+  coverImage: string;
+  type: 'beats' | 'kits' | 'samples';
+  itemCount: number;
+  totalPlays?: number;
+  onPress?: () => void;
+  style?: ViewStyle;
   testID?: string;
 
 }
@@ -664,6 +1200,25 @@ interface RatingStarsProps {
 
 ---
 
+### RatingStarsFigma
+
+**Props:**
+
+```typescript
+interface RatingStarsFigmaProps {
+
+  rating: number;
+  size?: 'sm' | 'md' | 'lg';
+  showNumber?: boolean;
+  reviewCount?: number;
+  style?: ViewStyle;
+  testID?: string;
+
+}
+```
+
+---
+
 ### SearchBar
 
 **Props:**
@@ -705,6 +1260,33 @@ interface ServiceCardProps {
 
 ---
 
+### ServiceCardFigma
+
+**Props:**
+
+```typescript
+interface ServiceCardFigmaProps {
+
+  id: string;
+  title: string;
+  provider: string;
+  providerImage: string;
+  coverImage: string;
+  price: number;
+  rating: number;
+  reviewCount: number;
+  deliveryTime: string;
+  category: string;
+  isPro?: boolean;
+  onPress?: () => void;
+  style?: ViewStyle;
+  testID?: string;
+
+}
+```
+
+---
+
 ### UserProfile
 
 **Props:**
@@ -730,7 +1312,43 @@ interface UserProfileProps {
 
 ---
 
+### WaveformVisualizer
+
+**Props:**
+
+```typescript
+interface WaveformVisualizerProps {
+
+  isPlaying?: boolean;
+  bars?: number;
+  height?: number;
+  compact?: boolean;
+  style?: ViewStyle;
+  testID?: string;
+
+}
+```
+
+---
+
 ## Organisms
+
+### BottomNavigationFigma
+
+**Props:**
+
+```typescript
+interface BottomNavigationFigmaProps {
+
+  activeTab: 'home' | 'marketplace' | 'upload' | 'wallet' | 'profile';
+  onTabChange: (tab: 'home' | 'marketplace' | 'upload' | 'wallet' | 'profile') => void;
+  style?: ViewStyle;
+  testID?: string;
+
+}
+```
+
+---
 
 ### CheckoutForm
 

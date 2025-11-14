@@ -7,6 +7,7 @@ import { WaveformVisualizer } from '../components/molecules/WaveformVisualizer';
 import { PrimaryButton } from '../components/atoms/PrimaryButton';
 import { RatingStarsFigma } from '../components/molecules/RatingStarsFigma';
 import { ProductCardFigma } from '../components/atoms/ProductCardFigma';
+import { colors, spacing, typography, radii } from '@/theme';
 
 interface BeatDetailsScreenFigmaProps {
   beatId: string;
@@ -126,7 +127,7 @@ export function BeatDetailsScreenFigma({
         <View style={styles.coverContainer}>
           <ImageWithFallback src={beatData.coverImage} alt={beatData.title} style={styles.coverImage} />
           <LinearGradient
-            colors={['rgba(10, 10, 10, 0.2)', 'rgba(10, 10, 10, 0.6)', '#0A0A0A']}
+            colors={['rgba(10, 10, 10, 0.2)', 'rgba(10, 10, 10, 0.6)', colors.background]}
             start={{ x: 0, y: 0 }}
             end={{ x: 0, y: 1 }}
             style={styles.coverGradient}
@@ -135,7 +136,7 @@ export function BeatDetailsScreenFigma({
           {/* Back button */}
           <TouchableOpacity onPress={onBack} style={styles.backButton} activeOpacity={0.9}>
             <View style={styles.backButtonInner}>
-              <ArrowLeft size={20} color="#F5F5F5" />
+              <ArrowLeft size={20} color={colors.textPrimary} />
             </View>
           </TouchableOpacity>
 
@@ -143,12 +144,16 @@ export function BeatDetailsScreenFigma({
           <View style={styles.actionsContainer}>
             <TouchableOpacity onPress={() => setIsLiked(!isLiked)} style={styles.actionButton} activeOpacity={0.9}>
               <View style={styles.actionButtonInner}>
-                <Heart size={20} color={isLiked ? '#EC4899' : '#F5F5F5'} fill={isLiked ? '#EC4899' : 'transparent'} />
+                <Heart
+                  size={20}
+                  color={isLiked ? colors.accent : colors.textPrimary}
+                  fill={isLiked ? colors.accent : 'transparent'}
+                />
               </View>
             </TouchableOpacity>
             <TouchableOpacity style={styles.actionButton} activeOpacity={0.9}>
               <View style={styles.actionButtonInner}>
-                <Share2 size={20} color="#F5F5F5" />
+                <Share2 size={20} color={colors.textPrimary} />
               </View>
             </TouchableOpacity>
           </View>
@@ -159,15 +164,15 @@ export function BeatDetailsScreenFigma({
           <View style={styles.titleRow}>
             <TouchableOpacity onPress={() => setIsPlaying(!isPlaying)} style={styles.playButton} activeOpacity={0.9}>
               <LinearGradient
-                colors={['#6366F1', '#8B5CF6']}
+                colors={[colors.primary, colors.primaryDark]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.playButtonGradient}
               >
                 {isPlaying ? (
-                  <Pause size={32} color="#F5F5F5" fill="#F5F5F5" />
+                  <Pause size={32} color={colors.textPrimary} fill={colors.textPrimary} />
                 ) : (
-                  <Play size={32} color="#F5F5F5" fill="#F5F5F5" />
+                  <Play size={32} color={colors.textPrimary} fill={colors.textPrimary} />
                 )}
               </LinearGradient>
             </TouchableOpacity>
@@ -248,12 +253,12 @@ export function BeatDetailsScreenFigma({
                     {selectedLicense === index && (
                       <View style={styles.licenseCheck}>
                         <LinearGradient
-                          colors={['#6366F1', '#8B5CF6']}
+                          colors={[colors.primary, colors.primaryDark]}
                           start={{ x: 0, y: 0 }}
                           end={{ x: 1, y: 1 }}
                           style={styles.checkGradient}
                         >
-                          <Check size={12} color="#F5F5F5" />
+                          <Check size={12} color={colors.textPrimary} />
                         </LinearGradient>
                       </View>
                     )}
@@ -297,10 +302,10 @@ export function BeatDetailsScreenFigma({
                 return (
                   <View key={stars} style={styles.ratingBarRow}>
                     <Text style={styles.ratingBarLabel}>{stars}</Text>
-                    <Star size={12} color="#F59E0B" fill="#F59E0B" />
+                    <Star size={12} color={colors.secondary} fill={colors.secondary} />
                     <View style={styles.ratingBarContainer}>
                       <LinearGradient
-                        colors={['#F59E0B', '#EC4899']}
+                        colors={[colors.secondary, colors.accent]}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 0 }}
                         style={[styles.ratingBarFill, { width: `${percentage}%` }]}
@@ -344,7 +349,7 @@ export function BeatDetailsScreenFigma({
           {hasPurchased ? (
             <TouchableOpacity style={styles.addReviewButton} activeOpacity={0.9}>
               <LinearGradient
-                colors={['#6366F1', '#8B5CF6']}
+                colors={[colors.primary, colors.primaryDark]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.addReviewGradient}
@@ -381,7 +386,7 @@ export function BeatDetailsScreenFigma({
       {/* Fixed Bottom CTA */}
       <View style={styles.bottomCTA}>
         <LinearGradient
-          colors={['rgba(10, 10, 10, 0)', 'rgba(10, 10, 10, 0.95)', '#0A0A0A']}
+          colors={['rgba(10, 10, 10, 0)', 'rgba(10, 10, 10, 0.95)', colors.background]}
           start={{ x: 0, y: 0 }}
           end={{ x: 0, y: 1 }}
           style={styles.bottomCTAGradient}
@@ -389,12 +394,12 @@ export function BeatDetailsScreenFigma({
           <View style={styles.bottomCTAContent}>
             <TouchableOpacity style={styles.downloadButton} activeOpacity={0.9}>
               <View style={styles.downloadButtonInner}>
-                <Download size={20} color="#D4D4D4" />
+                <Download size={20} color={colors.textSecondary} />
               </View>
             </TouchableOpacity>
             <PrimaryButton onPress={onBuyClick} style={styles.buyButton}>
               <View style={styles.buyButtonContent}>
-                <ShoppingCart size={20} color="#F5F5F5" />
+                <ShoppingCart size={20} color={colors.textPrimary} />
                 <Text style={styles.buyButtonText}>
                   Acheter - {beatData.licenses[selectedLicense].price.toLocaleString()} F
                 </Text>
@@ -410,16 +415,16 @@ export function BeatDetailsScreenFigma({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 120, // Space for bottom CTA
+    paddingBottom: 120, // Space for bottom CTA (specific value)
   },
   coverContainer: {
-    height: 256, // h-64
+    height: 256, // h-64 (specific height)
     position: 'relative',
   },
   coverImage: {
@@ -435,63 +440,63 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    top: 48, // top-12
-    left: 24, // left-6
+    top: spacing.xxl,
+    left: spacing.lg,
     zIndex: 10,
   },
   backButtonInner: {
-    padding: 12, // p-3
-    borderRadius: 12, // rounded-xl
-    backgroundColor: 'rgba(10, 10, 10, 0.8)',
+    padding: spacing.md,
+    borderRadius: radii.md,
+    backgroundColor: 'rgba(10, 10, 10, 0.8)', // colors.background with opacity
     borderWidth: 1,
-    borderColor: 'rgba(64, 64, 64, 0.5)',
+    borderColor: 'rgba(64, 64, 64, 0.5)', // colors.border with opacity
   },
   actionsContainer: {
     position: 'absolute',
-    top: 48, // top-12
-    right: 24, // right-6
+    top: spacing.xxl,
+    right: spacing.lg,
     flexDirection: 'row',
-    gap: 8, // gap-2
+    gap: spacing.sm,
     zIndex: 10,
   },
   actionButton: {
-    padding: 12, // p-3
-    borderRadius: 12, // rounded-xl
-    backgroundColor: 'rgba(10, 10, 10, 0.8)',
+    padding: spacing.md,
+    borderRadius: radii.md,
+    backgroundColor: 'rgba(10, 10, 10, 0.8)', // colors.background with opacity
     borderWidth: 1,
-    borderColor: 'rgba(64, 64, 64, 0.5)',
+    borderColor: 'rgba(64, 64, 64, 0.5)', // colors.border with opacity
   },
   actionButtonInner: {
     alignItems: 'center',
     justifyContent: 'center',
   },
   titleSection: {
-    paddingHorizontal: 24, // px-6
-    marginTop: -32, // -mt-8
+    paddingHorizontal: spacing.lg,
+    marginTop: -spacing.xl,
     position: 'relative',
     zIndex: 10,
   },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    gap: 16, // gap-4
-    marginBottom: 16, // mb-4
+    gap: spacing.md,
+    marginBottom: spacing.md,
   },
   playButton: {
-    width: 64, // w-16
+    width: 64, // w-16 (specific size)
     height: 64, // h-16
-    borderRadius: 32,
+    borderRadius: radii.full, // 32 = width/2 (circle)
     overflow: 'hidden',
-    shadowColor: '#6366F1',
-    shadowOffset: { width: 0, height: 8 },
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: spacing.sm },
     shadowOpacity: 0.5,
-    shadowRadius: 16,
+    shadowRadius: spacing.md,
     elevation: 12,
   },
   playButtonGradient: {
     width: '100%',
     height: '100%',
-    borderRadius: 32,
+    borderRadius: radii.full, // 32 = width/2 (circle)
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -499,131 +504,131 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   title: {
-    color: '#F5F5F5',
-    fontSize: 24,
-    fontFamily: 'Poppins_700Bold',
-    marginBottom: 4,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.headingLg,
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.xs,
   },
   artistRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8, // gap-2
+    gap: spacing.sm,
   },
   artistImage: {
-    width: 24, // w-6
+    width: 24, // w-6 (specific size)
     height: 24, // h-6
-    borderRadius: 12,
+    borderRadius: radii.md,
   },
   artist: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   waveformContainer: {
-    backgroundColor: '#111111',
-    borderRadius: 24, // rounded-2xl
-    padding: 16, // p-4
+    backgroundColor: colors.surface,
+    borderRadius: radii.xxl,
+    padding: spacing.md,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   waveformTime: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 12, // mt-3
+    marginTop: spacing.md,
   },
   timeText: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   statsContainer: {
     flexDirection: 'row',
-    paddingHorizontal: 24, // px-6
-    paddingVertical: 16, // py-4
-    gap: 12, // gap-3
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    gap: spacing.md,
   },
   statCard: {
     flex: 1,
     alignItems: 'center',
-    padding: 12, // p-3
-    borderRadius: 12, // rounded-xl
-    backgroundColor: '#111111',
+    padding: spacing.md,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   statValue: {
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontFamily: 'Poppins_600SemiBold',
-    marginBottom: 4,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.poppins.semibold,
+    marginBottom: spacing.xs,
   },
   statLabel: {
-    color: '#A3A3A3',
-    fontSize: 11,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   infoSection: {
-    paddingHorizontal: 24, // px-6
-    paddingVertical: 16, // py-4
-    gap: 16, // space-y-4
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    gap: spacing.md,
   },
   infoBlock: {
-    marginBottom: 16,
+    marginBottom: spacing.md,
   },
   infoTitle: {
-    color: '#F5F5F5',
-    fontSize: 18,
-    fontFamily: 'Poppins_600SemiBold',
-    marginBottom: 8,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd,
+    fontFamily: typography.fontFamily.poppins.semibold,
+    marginBottom: spacing.sm,
   },
   infoText: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
     lineHeight: 20,
   },
   tagsContainer: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8, // gap-2
+    gap: spacing.sm,
   },
   tag: {
-    paddingHorizontal: 12, // px-3
-    paddingVertical: 4, // py-1
-    borderRadius: 999,
-    backgroundColor: '#1A1A1A',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: radii.full,
+    backgroundColor: colors.surfaceElevated,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   tagText: {
-    color: '#D4D4D4',
-    fontSize: 12,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   licensesSection: {
-    paddingHorizontal: 24, // px-6
-    paddingVertical: 16, // py-4
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
   },
   sectionTitle: {
-    color: '#F5F5F5',
-    fontSize: 18,
-    fontFamily: 'Poppins_600SemiBold',
-    marginBottom: 16, // mb-4
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd,
+    fontFamily: typography.fontFamily.poppins.semibold,
+    marginBottom: spacing.md,
   },
   licensesContainer: {
-    gap: 12, // space-y-3
+    gap: spacing.md,
   },
   licenseCard: {
     width: '100%',
-    padding: 16, // p-4
-    borderRadius: 24, // rounded-2xl
+    padding: spacing.md,
+    borderRadius: radii.xxl,
     borderWidth: 2,
-    borderColor: '#404040',
-    backgroundColor: '#111111',
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
   },
   licenseCardSelected: {
-    borderColor: '#6366F1',
+    borderColor: colors.primary,
   },
   licenseContent: {
     flexDirection: 'row',
@@ -633,146 +638,146 @@ const styles = StyleSheet.create({
   licenseHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8, // gap-2
-    marginBottom: 8,
+    gap: spacing.sm,
+    marginBottom: spacing.sm,
     flex: 1,
   },
   licenseName: {
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontFamily: 'Poppins_600SemiBold',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.poppins.semibold,
   },
   licenseCheck: {
-    width: 20, // w-5
+    width: 20, // w-5 (specific size)
     height: 20, // h-5
-    borderRadius: 10,
+    borderRadius: radii.full, // 10 = width/2 (circle)
     overflow: 'hidden',
   },
   checkGradient: {
     width: '100%',
     height: '100%',
-    borderRadius: 10,
+    borderRadius: radii.full, // 10 = width/2 (circle)
     alignItems: 'center',
     justifyContent: 'center',
   },
   licenseFeatures: {
     flex: 1,
-    gap: 4, // space-y-1
+    gap: spacing.xs,
   },
   licenseFeature: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8, // gap-2
+    gap: spacing.sm,
   },
   featureDot: {
-    width: 4, // w-1
+    width: 4, // w-1 (specific size)
     height: 4, // h-1
-    borderRadius: 2,
-    backgroundColor: '#6366F1',
+    borderRadius: radii.full, // 2 = width/2 (circle)
+    backgroundColor: colors.primary,
   },
   featureText: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   licensePrice: {
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontFamily: 'Poppins_600SemiBold',
-    marginLeft: 16, // ml-4
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.poppins.semibold,
+    marginLeft: spacing.md,
   },
   reviewsSection: {
-    paddingHorizontal: 24, // px-6
-    paddingVertical: 16, // py-4
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
   },
   reviewsHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 16, // mb-4
+    marginBottom: spacing.md,
   },
   seeAllLink: {
-    color: '#6366F1',
-    fontSize: 14,
-    fontFamily: 'Inter_500Medium',
+    color: colors.primary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   overallRating: {
-    padding: 16, // p-4
-    borderRadius: 24, // rounded-2xl
-    backgroundColor: '#111111',
+    padding: spacing.md,
+    borderRadius: radii.xxl,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
-    marginBottom: 16, // mb-4
+    borderColor: colors.border,
+    marginBottom: spacing.md,
     flexDirection: 'row',
-    gap: 16, // gap-4
+    gap: spacing.md,
   },
   ratingLeft: {
     alignItems: 'center',
   },
   ratingNumber: {
-    color: '#F5F5F5',
-    fontSize: 36, // text-4xl
-    fontFamily: 'Poppins_700Bold',
-    marginBottom: 4,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.displayXl + 4, // 36px (larger than displayXl)
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.xs,
   },
   reviewCountText: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
-    marginTop: 4,
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
+    marginTop: spacing.xs,
   },
   ratingBars: {
     flex: 1,
-    gap: 8, // space-y-2
+    gap: spacing.sm,
   },
   ratingBarRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8, // gap-2
+    gap: spacing.sm,
   },
   ratingBarLabel: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
-    width: 12, // w-3
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
+    width: 12, // w-3 (specific size)
   },
   ratingBarContainer: {
     flex: 1,
-    height: 8, // h-2
-    backgroundColor: '#1A1A1A',
-    borderRadius: 4,
+    height: 8, // h-2 (specific size)
+    backgroundColor: colors.surfaceElevated,
+    borderRadius: radii.sm / 2,
     overflow: 'hidden',
   },
   ratingBarFill: {
     height: '100%',
-    borderRadius: 4,
+    borderRadius: radii.sm / 2,
   },
   ratingBarCount: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
-    width: 32, // w-8
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
+    width: 32, // w-8 (specific size)
     textAlign: 'right',
   },
   reviewsList: {
-    gap: 12, // space-y-3
+    gap: spacing.md,
   },
   reviewCard: {
-    padding: 16, // p-4
-    borderRadius: 24, // rounded-2xl
-    backgroundColor: '#111111',
+    padding: spacing.md,
+    borderRadius: radii.xxl,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   reviewHeader: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 12, // gap-3
+    gap: spacing.md,
   },
   reviewAvatar: {
-    width: 40, // w-10
+    width: 40, // w-10 (specific size)
     height: 40, // h-10
-    borderRadius: 20,
+    borderRadius: radii.full, // 20 = width/2 (circle)
   },
   reviewContent: {
     flex: 1,
@@ -781,75 +786,75 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 4,
+    marginBottom: spacing.xs,
   },
   reviewUser: {
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontFamily: 'Poppins_500Medium',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.poppins.medium,
   },
   reviewDate: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   reviewComment: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
-    marginTop: 8,
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
+    marginTop: spacing.sm,
     lineHeight: 20,
   },
   reviewActions: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16, // gap-4
-    marginTop: 12, // mt-3
+    gap: spacing.md,
+    marginTop: spacing.md,
   },
   reviewAction: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   addReviewButton: {
-    marginTop: 16, // mt-4
-    borderRadius: 24, // rounded-2xl
+    marginTop: spacing.md,
+    borderRadius: radii.xxl,
     overflow: 'hidden',
   },
   addReviewGradient: {
-    paddingVertical: 12, // py-3
+    paddingVertical: spacing.md,
     alignItems: 'center',
     justifyContent: 'center',
   },
   addReviewText: {
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontFamily: 'Inter_500Medium',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   lockedReview: {
-    marginTop: 16, // mt-4
-    padding: 16, // p-4
-    borderRadius: 24, // rounded-2xl
-    backgroundColor: '#111111',
+    marginTop: spacing.md,
+    padding: spacing.md,
+    borderRadius: radii.xxl,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   lockedReviewText: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
     textAlign: 'center',
   },
   similarSection: {
-    paddingHorizontal: 24, // px-6
-    paddingVertical: 16, // py-4
-    paddingBottom: 24, // pb-6
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    paddingBottom: spacing.lg,
   },
   similarGrid: {
-    gap: 16, // gap-4
+    gap: spacing.md,
   },
   similarRow: {
-    gap: 16, // gap-4
+    gap: spacing.md,
   },
   similarCard: {
     flex: 1,
@@ -857,11 +862,11 @@ const styles = StyleSheet.create({
   },
   bottomCTA: {
     position: 'absolute',
-    bottom: 80, // bottom-20
+    bottom: spacing.xxl + spacing.xl, // bottom-20 (80px)
     left: 0,
     right: 0,
-    paddingHorizontal: 24, // px-6
-    paddingVertical: 16, // py-4
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
     pointerEvents: 'box-none',
   },
   bottomCTAGradient: {
@@ -872,18 +877,18 @@ const styles = StyleSheet.create({
     bottom: 0,
   },
   bottomCTAContent: {
-    maxWidth: 375,
+    maxWidth: 375, // specific width
     alignSelf: 'center',
     flexDirection: 'row',
-    gap: 12, // gap-3
+    gap: spacing.md,
     pointerEvents: 'auto',
   },
   downloadButton: {
-    padding: 16, // p-4
-    borderRadius: 24, // rounded-2xl
-    backgroundColor: '#111111',
+    padding: spacing.md,
+    borderRadius: radii.xxl,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   downloadButtonInner: {
     alignItems: 'center',
@@ -896,11 +901,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8, // gap-2
+    gap: spacing.sm,
   },
   buyButtonText: {
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontFamily: 'Inter_500Medium',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.inter.medium,
   },
 });

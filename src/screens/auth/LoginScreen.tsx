@@ -6,6 +6,7 @@ import Animated, { useAnimatedStyle, useSharedValue, withTiming, Easing } from '
 import { Music, Mail, Phone } from 'lucide-react-native';
 import { InputField } from '../../components/atoms/InputField';
 import { PrimaryButton } from '../../components/atoms/PrimaryButton';
+import { colors, spacing, typography, radii } from '@/theme';
 
 interface LoginScreenProps {
   onSubmit: (contact: string) => void;
@@ -83,12 +84,12 @@ export function LoginScreen({ onSubmit, onBack }: LoginScreenProps) {
         >
           <Animated.View style={[styles.logoContainer, logoAnimatedStyle]}>
             <LinearGradient
-              colors={['#6366F1', '#8B5CF6']}
+              colors={[colors.primary, colors.primaryDark]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.logo}
             >
-              <Music size={32} color="#F5F5F5" />
+              <Music size={32} color={colors.textPrimary} />
             </LinearGradient>
           </Animated.View>
 
@@ -107,17 +108,17 @@ export function LoginScreen({ onSubmit, onBack }: LoginScreenProps) {
                 >
                   {contactType === 'phone' ? (
                     <LinearGradient
-                      colors={['#6366F1', '#8B5CF6']}
+                      colors={[colors.primary, colors.primaryDark]}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}
                       style={styles.typeButtonGradient}
                     >
-                      <Phone size={16} color="#F5F5F5" />
+                      <Phone size={16} color={colors.textPrimary} />
                       <Text style={styles.typeButtonTextActive}>Téléphone</Text>
                     </LinearGradient>
                   ) : (
                     <>
-                      <Phone size={16} color="#A3A3A3" />
+                      <Phone size={16} color={colors.textMuted} />
                       <Text style={styles.typeButtonText}>Téléphone</Text>
                     </>
                   )}
@@ -130,17 +131,17 @@ export function LoginScreen({ onSubmit, onBack }: LoginScreenProps) {
                 >
                   {contactType === 'email' ? (
                     <LinearGradient
-                      colors={['#6366F1', '#8B5CF6']}
+                      colors={[colors.primary, colors.primaryDark]}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}
                       style={styles.typeButtonGradient}
                     >
-                      <Mail size={16} color="#F5F5F5" />
+                      <Mail size={16} color={colors.textPrimary} />
                       <Text style={styles.typeButtonTextActive}>Email</Text>
                     </LinearGradient>
                   ) : (
                     <>
-                      <Mail size={16} color="#A3A3A3" />
+                      <Mail size={16} color={colors.textMuted} />
                       <Text style={styles.typeButtonText}>Email</Text>
                     </>
                   )}
@@ -174,31 +175,31 @@ export function LoginScreen({ onSubmit, onBack }: LoginScreenProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
   },
   keyboardView: {
     flex: 1,
   },
   scrollContent: {
     flexGrow: 1,
-    padding: 32, // p-8
+    padding: spacing.xl,
   },
   logoContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 48, // mb-12
-    marginTop: 32, // mt-8
+    marginBottom: spacing.xxl,
+    marginTop: spacing.xl,
   },
   logo: {
-    width: 64, // w-16
+    width: 64, // w-16 (specific size)
     height: 64, // h-16
-    borderRadius: 32,
+    borderRadius: radii.full, // 32 = width/2 (circle)
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#6366F1',
-    shadowOffset: { width: 0, height: 8 },
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: spacing.sm },
     shadowOpacity: 0.3,
-    shadowRadius: 12,
+    shadowRadius: spacing.md,
     elevation: 12,
   },
   content: {
@@ -206,42 +207,42 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginBottom: 32, // mb-8
+    marginBottom: spacing.xl,
   },
   title: {
-    color: '#F5F5F5',
-    fontSize: 28,
-    fontFamily: 'Poppins_700Bold',
-    marginBottom: 8,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.displayXl - 4, // 28px (between headingLg and displayXl)
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.sm,
     textAlign: 'center',
   },
   subtitle: {
-    color: '#A3A3A3',
-    fontSize: 16,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.inter.regular,
     textAlign: 'center',
   },
   formContainer: {
-    backgroundColor: '#111111',
-    borderRadius: 24, // rounded-2xl
-    padding: 24, // p-6
-    marginBottom: 24, // mb-6
+    backgroundColor: colors.surface,
+    borderRadius: radii.xxl,
+    padding: spacing.lg,
+    marginBottom: spacing.lg,
   },
   typeSelector: {
     flexDirection: 'row',
-    gap: 8, // gap-2
-    marginBottom: 24, // mb-6
+    gap: spacing.sm,
+    marginBottom: spacing.lg,
   },
   typeButton: {
     flex: 1,
-    paddingVertical: 12, // py-3
-    paddingHorizontal: 16, // px-4
-    borderRadius: 12, // rounded-xl
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.md,
+    borderRadius: radii.md,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8, // gap-2
-    backgroundColor: '#1A1A1A',
+    gap: spacing.sm,
+    backgroundColor: colors.surfaceElevated,
     overflow: 'hidden',
   },
   typeButtonActive: {
@@ -256,25 +257,25 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
+    gap: spacing.sm,
   },
   typeButtonText: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_500Medium',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   typeButtonTextActive: {
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontFamily: 'Inter_500Medium',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   inputContainer: {
-    marginBottom: 24, // space-y-6
+    marginBottom: spacing.lg,
   },
   input: {
-    marginBottom: 24,
+    marginBottom: spacing.lg,
   },
   submitButton: {
-    marginTop: 24,
+    marginTop: spacing.lg,
   },
 });
