@@ -5,9 +5,10 @@
 > **Objectif**: Migrer tous les screens Figma vers React Native avec **Design System v2.0
 > centralisé**
 >
-> **✅ État Actuel** : **22/26 screens migrés**, **8/26 conformes Design System v2.0** (Phase 1
+> **✅ État Actuel** : **22/26 screens migrés**, **12/26 conformes Design System v2.0** (Phase 1
 > complète ✅ : HomeScreen, MarketplaceScreen, BeatDetailsScreen, CheckoutScreen, PaymentScreen,
-> LoginScreen, OTPVerificationScreen, ProfileSetupScreen)
+> LoginScreen, OTPVerificationScreen, ProfileSetupScreen | Phase 2 : ServiceDetailsScreen ✅,
+> UploadScreen ✅, ProfileScreen ✅, WalletScreen ✅)
 
 ---
 
@@ -27,28 +28,29 @@
 | 6   | `HomeScreen.tsx`            | `HomeScreenFigma.tsx`            | ✅ Migré       | ✅ Conforme DS v2.0 | ✅ Terminé             |
 | 7   | `MarketplaceScreen.tsx`     | `MarketplaceScreenFigma.tsx`     | ✅ Migré       | ✅ Conforme DS v2.0 | ✅ Terminé             |
 | 8   | `BeatDetailsScreen.tsx`     | `BeatDetailsScreenFigma.tsx`     | ✅ Migré       | ✅ Conforme DS v2.0 | ✅ Terminé             |
-| 9   | `ServiceDetailsScreen.tsx`  | `ServiceDetailsScreenFigma.tsx`  | ✅ Migré       | ❌ Non conforme     | ⏳ Migrer vers DS v2.0 |
+| 9   | `ServiceDetailsScreen.tsx`  | `ServiceDetailsScreenFigma.tsx`  | ✅ Migré       | ✅ Conforme DS v2.0 | ✅ Terminé             |
 | 10  | `SearchFiltersScreen.tsx`   | `SearchFiltersScreenFigma.tsx`   | ✅ Migré       | ❌ Non conforme     | ⏳ Migrer vers DS v2.0 |
 | 11  | `CheckoutScreen.tsx`        | `CheckoutScreenFigma.tsx`        | ✅ Migré       | ✅ Conforme DS v2.0 | ✅ Terminé             |
 | 12  | `PaymentScreen.tsx`         | `PaymentScreenFigma.tsx`         | ✅ Migré       | ✅ Conforme DS v2.0 | ✅ Terminé             |
 | 13  | `PaymentSuccessScreen.tsx`  | `PaymentSuccessScreenFigma.tsx`  | ✅ Migré       | ❌ Non conforme     | ⏳ Migrer vers DS v2.0 |
 | 14  | `MyPurchasesScreen.tsx`     | `MyPurchasesScreenFigma.tsx`     | ✅ Migré       | ❌ Non conforme     | ⏳ Migrer vers DS v2.0 |
-| 15  | `UploadScreen.tsx`          | `UploadScreenFigma.tsx`          | ✅ Migré       | ❌ Non conforme     | ⏳ Migrer vers DS v2.0 |
+| 15  | `UploadScreen.tsx`          | `UploadScreenFigma.tsx`          | ✅ Migré       | ✅ Conforme DS v2.0 | ✅ Terminé             |
 | 16  | `BoostScreen.tsx`           | `BoostScreenFigma.tsx`           | ✅ Migré       | ❌ Non conforme     | ⏳ Migrer vers DS v2.0 |
 | 17  | `BookingFormScreen.tsx`     | `BookingFormScreenFigma.tsx`     | ✅ Migré       | ❌ Non conforme     | ⏳ Migrer vers DS v2.0 |
 | 18  | `BookingsScreen.tsx`        | `BookingsScreenFigma.tsx`        | ✅ Migré       | ❌ Non conforme     | ⏳ Migrer vers DS v2.0 |
 | 19  | `InboxScreen.tsx`           | `InboxScreenFigma.tsx`           | ✅ Migré       | ❌ Non conforme     | ⏳ Migrer vers DS v2.0 |
 | 20  | `ChatScreen.tsx`            | `ChatScreenFigma.tsx`            | ✅ Migré       | ❌ Non conforme     | ⏳ Migrer vers DS v2.0 |
-| 21  | `ProfileScreen.tsx`         | `ProfileScreenFigma.tsx`         | ✅ Migré       | ❌ Non conforme     | ⏳ Migrer vers DS v2.0 |
-| 22  | `WalletScreen.tsx`          | `WalletScreenFigma.tsx`          | ✅ Migré       | ❌ Non conforme     | ⏳ Migrer vers DS v2.0 |
+| 21  | `ProfileScreen.tsx`         | `ProfileScreenFigma.tsx`         | ✅ Migré       | ✅ Conforme DS v2.0 | ✅ Terminé             |
+| 22  | `WalletScreen.tsx`          | `WalletScreenFigma.tsx`          | ✅ Migré       | ✅ Conforme DS v2.0 | ✅ Terminé             |
 | 23  | `FavoritesScreen.tsx`       | `FavoritesScreenFigma.tsx`       | ✅ Migré       | ❌ Non conforme     | ⏳ Migrer vers DS v2.0 |
 | 24  | `NotificationsScreen.tsx`   | `NotificationsScreenFigma.tsx`   | ✅ Migré       | ❌ Non conforme     | ⏳ Migrer vers DS v2.0 |
 | 25  | `LicenseContractScreen.tsx` | `LicenseContractScreenFigma.tsx` | ✅ Migré       | ❌ Non conforme     | ⏳ Migrer vers DS v2.0 |
 | 26  | `DownloadViewerScreen.tsx`  | `DownloadViewerScreenFigma.tsx`  | ✅ Migré       | ❌ Non conforme     | ⏳ Migrer vers DS v2.0 |
 
-**Total** : 26 screens Figma, 22 migrés, **8 conformes Design System v2.0** (HomeScreen,
+**Total** : 26 screens Figma, 22 migrés, **12 conformes Design System v2.0** (Phase 1 : HomeScreen,
 MarketplaceScreen, BeatDetailsScreen, CheckoutScreen, PaymentScreen, LoginScreen,
-OTPVerificationScreen, ProfileSetupScreen)
+OTPVerificationScreen, ProfileSetupScreen | Phase 2 : ServiceDetailsScreen ✅, UploadScreen ✅,
+ProfileScreen ✅, WalletScreen ✅)
 
 ---
 
@@ -95,22 +97,22 @@ Screens les plus utilisés et critiques pour le MVP :
 
 ---
 
-### 🟡 Phase 2 : Screens Importants (Priorité 2) - **8 screens**
+### 🟡 Phase 2 : Screens Importants (Priorité 2) - **8 screens** - **4/8 complétés** (50%)
 
 Screens importants pour l'expérience utilisateur :
 
-| Screen                          | Complexité | Durée    | Priorité     |
-| ------------------------------- | ---------- | -------- | ------------ |
-| `ServiceDetailsScreenFigma.tsx` | Moyenne    | 0.5 jour | 🟡 Important |
-| `UploadScreenFigma.tsx`         | Élevée     | 1 jour   | 🟡 Important |
-| `ProfileScreenFigma.tsx`        | Moyenne    | 0.5 jour | 🟡 Important |
-| `WalletScreenFigma.tsx`         | Moyenne    | 0.5 jour | 🟡 Important |
-| `FavoritesScreenFigma.tsx`      | Simple     | 0.5 jour | 🟡 Important |
-| `SearchFiltersScreenFigma.tsx`  | Moyenne    | 0.5 jour | 🟡 Important |
-| `BookingFormScreenFigma.tsx`    | Moyenne    | 0.5 jour | 🟡 Important |
-| `BookingsScreenFigma.tsx`       | Simple     | 0.5 jour | 🟡 Important |
+| Screen                          | Complexité | Durée    | Priorité     | État          |
+| ------------------------------- | ---------- | -------- | ------------ | ------------- |
+| `ServiceDetailsScreenFigma.tsx` | Moyenne    | 0.5 jour | 🟡 Important | ✅ Terminé    |
+| `UploadScreenFigma.tsx`         | Élevée     | 1 jour   | 🟡 Important | ✅ Terminé    |
+| `ProfileScreenFigma.tsx`        | Moyenne    | 0.5 jour | 🟡 Important | ✅ Terminé    |
+| `WalletScreenFigma.tsx`         | Moyenne    | 0.5 jour | 🟡 Important | ✅ Terminé    |
+| `FavoritesScreenFigma.tsx`      | Simple     | 0.5 jour | 🟡 Important | ⏳ En attente |
+| `SearchFiltersScreenFigma.tsx`  | Moyenne    | 0.5 jour | 🟡 Important | ⏳ En attente |
+| `BookingFormScreenFigma.tsx`    | Moyenne    | 0.5 jour | 🟡 Important | ⏳ En attente |
+| `BookingsScreenFigma.tsx`       | Simple     | 0.5 jour | 🟡 Important | ⏳ En attente |
 
-**Durée totale** : 4.5 jours
+**Durée totale** : 4.5 jours — **Progression : 4/8 screens (50%)**
 
 ---
 
@@ -288,13 +290,14 @@ Pour chaque screen migré :
 
 ## 🚀 Prochaines Étapes Immédiates
 
-### Aujourd'hui - Phase 1.1 : HomeScreen
+### Phase 2 - En cours : FavoritesScreenFigma.tsx
 
-1. Lire `figma/components/HomeScreen.tsx`
-2. Lire `src/screens/HomeScreenFigma.tsx`
+1. Lire `figma/components/FavoritesScreen.tsx`
+2. Lire `src/screens/FavoritesScreenFigma.tsx`
 3. Identifier toutes les valeurs hardcodées
 4. Remplacer par Design Tokens
 5. Tester visuellement
 6. Commit
 
-**👉 Dis "ACT" pour commencer la migration HomeScreen !** 🎯
+**Progression Phase 2 : 4/8 screens complétés (50%)** ✅ ServiceDetailsScreen, UploadScreen,
+ProfileScreen et WalletScreen conformes Design System v2.0

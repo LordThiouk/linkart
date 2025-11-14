@@ -74,6 +74,27 @@ export const FadeInUp = {
   delay: (ms: number) => FadeInUp,
 };
 
+// Mock animations de sortie
+export const FadeOut = {
+  duration: (ms: number) => FadeOut,
+  delay: (ms: number) => FadeOut,
+};
+
+export const FadeOutDown = {
+  duration: (ms: number) => FadeOutDown,
+  delay: (ms: number) => FadeOutDown,
+};
+
+export const FadeOutLeft = {
+  duration: (ms: number) => FadeOutLeft,
+  delay: (ms: number) => FadeOutLeft,
+};
+
+export const FadeOutUp = {
+  duration: (ms: number) => FadeOutUp,
+  delay: (ms: number) => FadeOutUp,
+};
+
 // Mock useDerivedValue
 export const useDerivedValue = (callback: () => any) => {
   return { value: callback() };

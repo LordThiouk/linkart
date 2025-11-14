@@ -1,6 +1,6 @@
 # Documentation des Politiques RLS
 
-> Généré le: 2025-11-12
+> Généré le: 2025-11-14
 
 ## Table: `users`
 
