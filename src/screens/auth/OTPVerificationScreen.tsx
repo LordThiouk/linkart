@@ -21,16 +21,23 @@ export function OTPVerificationScreen({ contact, onVerify, onBack }: OTPVerifica
   const [resendTimer, setResendTimer] = useState(30);
   const [canResend, setCanResend] = useState(false);
 
-  const backX = useSharedValue(-20);
-  const backOpacity = useSharedValue(0);
-  const logoY = useSharedValue(-20);
-  const logoOpacity = useSharedValue(0);
-  const contentY = useSharedValue(20);
-  const contentOpacity = useSharedValue(0);
-  const formY = useSharedValue(20);
-  const formOpacity = useSharedValue(0);
+  // Détecter si on est dans Storybook (navigateur)
+  const isStorybook = typeof window !== 'undefined' && window.location?.pathname?.includes('/iframe.html');
+
+  // Initialiser les valeurs différemment selon l'environnement
+  const backX = useSharedValue(isStorybook ? 0 : -20);
+  const backOpacity = useSharedValue(isStorybook ? 1 : 0);
+  const logoY = useSharedValue(isStorybook ? 0 : -20);
+  const logoOpacity = useSharedValue(isStorybook ? 1 : 0);
+  const contentY = useSharedValue(isStorybook ? 0 : 20);
+  const contentOpacity = useSharedValue(isStorybook ? 1 : 0);
+  const formY = useSharedValue(isStorybook ? 0 : 20);
+  const formOpacity = useSharedValue(isStorybook ? 1 : 0);
 
   useEffect(() => {
+    // Dans Storybook, les animations sont déjà à leur état final
+    if (isStorybook) return;
+
     backX.value = withTiming(0, { duration: 600, easing: Easing.out(Easing.ease) });
     backOpacity.value = withTiming(1, { duration: 600 });
     logoY.value = withTiming(0, { duration: 600, easing: Easing.out(Easing.ease) });
@@ -43,7 +50,7 @@ export function OTPVerificationScreen({ contact, onVerify, onBack }: OTPVerifica
       formY.value = withTiming(0, { duration: 600, easing: Easing.out(Easing.ease) });
       formOpacity.value = withTiming(1, { duration: 600 });
     }, 200);
-  }, []);
+  }, [isStorybook]);
 
   useEffect(() => {
     if (resendTimer > 0) {

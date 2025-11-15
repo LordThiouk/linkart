@@ -18,14 +18,21 @@ export function LoginScreen({ onSubmit, onBack }: LoginScreenProps) {
   const [contactType, setContactType] = useState<'phone' | 'email'>('phone');
   const [error, setError] = useState('');
 
-  const logoY = useSharedValue(-20);
-  const logoOpacity = useSharedValue(0);
-  const contentY = useSharedValue(20);
-  const contentOpacity = useSharedValue(0);
-  const formY = useSharedValue(20);
-  const formOpacity = useSharedValue(0);
+  // Détecter si on est dans Storybook (navigateur)
+  const isStorybook = typeof window !== 'undefined' && window.location?.pathname?.includes('/iframe.html');
+
+  // Initialiser les valeurs différemment selon l'environnement
+  const logoY = useSharedValue(isStorybook ? 0 : -20);
+  const logoOpacity = useSharedValue(isStorybook ? 1 : 0);
+  const contentY = useSharedValue(isStorybook ? 0 : 20);
+  const contentOpacity = useSharedValue(isStorybook ? 1 : 0);
+  const formY = useSharedValue(isStorybook ? 0 : 20);
+  const formOpacity = useSharedValue(isStorybook ? 1 : 0);
 
   React.useEffect(() => {
+    // Dans Storybook, les animations sont déjà à leur état final
+    if (isStorybook) return;
+
     logoY.value = withTiming(0, { duration: 600, easing: Easing.out(Easing.ease) });
     logoOpacity.value = withTiming(1, { duration: 600 });
     setTimeout(() => {
@@ -36,7 +43,7 @@ export function LoginScreen({ onSubmit, onBack }: LoginScreenProps) {
       formY.value = withTiming(0, { duration: 600, easing: Easing.out(Easing.ease) });
       formOpacity.value = withTiming(1, { duration: 600 });
     }, 200);
-  }, []);
+  }, [isStorybook]);
 
   const logoAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: logoY.value }],

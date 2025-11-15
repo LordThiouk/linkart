@@ -6,6 +6,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowLeft, Zap, Info, Check } from 'lucide-react-native';
 import { BoostCardFigma } from '../../components/atoms/BoostCardFigma';
 import { PrimaryButton } from '../../components/atoms/PrimaryButton';
+import { colors, spacing, typography, radii } from '@/theme';
+import { hexToRgba } from '@/theme/helpers';
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -66,7 +68,7 @@ export function BoostScreenFigma({ onBack, itemType, itemName }: BoostScreenFigm
           <View style={styles.headerTop}>
             {onBack && (
               <TouchableOpacity onPress={onBack} style={styles.backButton} activeOpacity={0.8}>
-                <ArrowLeft size={20} color="#D4D4D4" />
+                <ArrowLeft size={20} color={colors.textSecondary} />
               </TouchableOpacity>
             )}
             <View style={styles.headerText}>
@@ -84,20 +86,22 @@ export function BoostScreenFigma({ onBack, itemType, itemName }: BoostScreenFigm
         {/* Hero Section */}
         <AnimatedView entering={FadeIn} style={styles.heroSection}>
           <LinearGradient
-            colors={['rgba(99, 102, 241, 0.2)', 'rgba(139, 92, 246, 0.2)', 'rgba(236, 72, 153, 0.2)']}
+            colors={[hexToRgba(colors.primary, 0.2), hexToRgba(colors.primaryDark, 0.2), hexToRgba(colors.accent, 0.2)]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.heroCard}
           >
-            <LinearGradient
-              colors={['#6366F1', '#8B5CF6']}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.heroIcon}
-            >
-              <Zap size={32} color="#F5F5F5" fill="#F5F5F5" />
-            </LinearGradient>
-            <Text style={styles.heroTitle}>Augmentez votre visibilité</Text>
+            <View style={styles.heroHeader}>
+              <LinearGradient
+                colors={[colors.primary, colors.primaryDark]}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={styles.heroIcon}
+              >
+                <Zap size={24} color={colors.textPrimary} fill={colors.textPrimary} />
+              </LinearGradient>
+              <Text style={styles.heroTitle}>Augmentez votre visibilité</Text>
+            </View>
             <Text style={styles.heroSubtitle}>
               Apparaissez en tête des résultats de recherche et attirez plus de clients
             </Text>
@@ -107,12 +111,12 @@ export function BoostScreenFigma({ onBack, itemType, itemName }: BoostScreenFigm
               {benefits.map((benefit, index) => (
                 <View key={index} style={styles.benefitItem}>
                   <LinearGradient
-                    colors={['#06B6D4', '#8B5CF6']}
+                    colors={[colors.cyan, colors.primaryDark]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
                     style={styles.benefitIcon}
                   >
-                    <Check size={12} color="#F5F5F5" />
+                    <Check size={12} color={colors.textPrimary} />
                   </LinearGradient>
                   <Text style={styles.benefitText}>{benefit}</Text>
                 </View>
@@ -124,7 +128,7 @@ export function BoostScreenFigma({ onBack, itemType, itemName }: BoostScreenFigm
         {/* Info Banner */}
         <AnimatedView entering={FadeIn.delay(100)} style={styles.infoBanner}>
           <View style={styles.infoBannerContent}>
-            <Info size={20} color="#06B6D4" />
+            <Info size={20} color={colors.cyan} />
             <View style={styles.infoBannerText}>
               <Text style={styles.infoBannerTitle}>💡 Astuce</Text>
               <Text style={styles.infoBannerMessage}>
@@ -149,12 +153,12 @@ export function BoostScreenFigma({ onBack, itemType, itemName }: BoostScreenFigm
                   {selectedPlan === plan.duration && (
                     <AnimatedView entering={FadeIn} style={styles.selectedBadge}>
                       <LinearGradient
-                        colors={['#06B6D4', '#8B5CF6']}
+                        colors={[colors.cyan, colors.primaryDark]}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 1 }}
                         style={styles.selectedBadgeGradient}
                       >
-                        <Check size={20} color="#F5F5F5" />
+                        <Check size={20} color={colors.textPrimary} />
                       </LinearGradient>
                     </AnimatedView>
                   )}
@@ -183,7 +187,7 @@ export function BoostScreenFigma({ onBack, itemType, itemName }: BoostScreenFigm
       {selectedPlan && (
         <AnimatedView entering={FadeIn} style={styles.bottomCTA}>
           <LinearGradient
-            colors={['transparent', '#0A0A0A', '#0A0A0A']}
+            colors={[colors.transparent, colors.background, colors.background]}
             start={{ x: 0, y: 0 }}
             end={{ x: 0, y: 1 }}
             style={styles.bottomCTAGradient}
@@ -191,7 +195,7 @@ export function BoostScreenFigma({ onBack, itemType, itemName }: BoostScreenFigm
             <View style={styles.bottomCTAContent}>
               <PrimaryButton onPress={handlePurchaseBoost} fullWidth>
                 <View style={styles.ctaButtonContent}>
-                  <Zap size={20} color="#F5F5F5" fill="#F5F5F5" />
+                  <Zap size={20} color={colors.textPrimary} fill={colors.textPrimary} />
                   <Text style={styles.ctaButtonText}>
                     Acheter le boost {selectedPlan} -{' '}
                     {boostPlans.find(p => p.duration === selectedPlan)?.price.toLocaleString()} F
@@ -209,140 +213,145 @@ export function BoostScreenFigma({ onBack, itemType, itemName }: BoostScreenFigm
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
   },
   header: {
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(64, 64, 64, 0.5)',
-    paddingTop: 48,
-    paddingBottom: 16,
-    paddingHorizontal: 24,
+    borderBottomColor: hexToRgba(colors.border, 0.5),
+    paddingTop: spacing.xxl + spacing.lg, // 48px
+    paddingBottom: spacing.md,
+    paddingHorizontal: spacing.lg,
   },
   headerContent: {
-    gap: 16,
+    gap: spacing.md,
   },
   headerTop: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
+    gap: spacing.md,
   },
   backButton: {
-    padding: 8,
-    borderRadius: 12,
-    backgroundColor: '#111111',
+    padding: spacing.sm,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   headerText: {
     flex: 1,
-    gap: 4,
+    gap: spacing.xs,
   },
   headerTitle: {
-    color: '#F5F5F5',
-    fontSize: 28,
-    fontWeight: '700',
-    marginBottom: 4,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.headingLg + 4, // 28px
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.xs,
   },
   headerSubtitle: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   scrollContent: {
-    paddingBottom: 120,
+    paddingBottom: 120, // Fixed value for bottom CTA space
   },
   heroSection: {
-    padding: 24,
+    padding: spacing.lg,
   },
   heroCard: {
-    padding: 24,
-    borderRadius: 16,
+    padding: spacing.lg,
+    borderRadius: radii.lg,
     borderWidth: 1,
-    borderColor: 'rgba(99, 102, 241, 0.3)',
-    gap: 16,
+    borderColor: hexToRgba(colors.primary, 0.3),
+    gap: spacing.md,
     overflow: 'hidden',
   },
+  heroHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.md - spacing.xs, // 12px
+    marginBottom: spacing.md,
+  },
   heroIcon: {
-    width: 64,
-    height: 64,
-    borderRadius: 16,
+    width: spacing.xxl + spacing.xs, // 40px
+    height: spacing.xxl + spacing.xs, // 40px
+    borderRadius: radii.md,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
   },
   heroTitle: {
-    color: '#F5F5F5',
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: 8,
+    flex: 1,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.headingLg, // 24px
+    fontFamily: typography.fontFamily.poppins.bold,
   },
   heroSubtitle: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontWeight: '400',
-    marginBottom: 16,
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
+    marginBottom: spacing.md,
   },
   benefitsContainer: {
-    gap: 12,
+    gap: spacing.md - spacing.xs, // 12px
   },
   benefitItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: spacing.md - spacing.xs, // 12px
   },
   benefitIcon: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: spacing.xl - spacing.xs, // 20px
+    height: spacing.xl - spacing.xs, // 20px
+    borderRadius: spacing.xl / 2, // 10px (half of width/height for perfect circle)
     alignItems: 'center',
     justifyContent: 'center',
   },
   benefitText: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   infoBanner: {
-    paddingHorizontal: 24,
-    paddingVertical: 8,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
   },
   infoBannerContent: {
     flexDirection: 'row',
-    gap: 12,
-    padding: 16,
-    borderRadius: 12,
-    backgroundColor: 'rgba(6, 182, 212, 0.1)',
+    gap: spacing.md - spacing.xs, // 12px
+    padding: spacing.md,
+    borderRadius: radii.md,
+    backgroundColor: hexToRgba(colors.cyan, 0.1),
     borderWidth: 1,
-    borderColor: 'rgba(6, 182, 212, 0.3)',
+    borderColor: hexToRgba(colors.cyan, 0.3),
   },
   infoBannerText: {
     flex: 1,
-    gap: 4,
+    gap: spacing.xs,
   },
   infoBannerTitle: {
-    color: '#06B6D4',
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 4,
+    color: colors.cyan,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
+    marginBottom: spacing.xs,
   },
   infoBannerMessage: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   plansSection: {
-    padding: 24,
-    gap: 16,
+    padding: spacing.lg,
+    gap: spacing.md,
   },
   sectionTitle: {
-    color: '#F5F5F5',
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 16,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.headingLg - 4, // 20px
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.md,
   },
   plansContainer: {
-    gap: 16,
+    gap: spacing.md,
   },
   planWrapper: {
     position: 'relative',
@@ -352,11 +361,11 @@ const styles = StyleSheet.create({
   },
   selectedBadge: {
     position: 'absolute',
-    top: 16,
-    right: 16,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    top: spacing.md,
+    right: spacing.md,
+    width: spacing.xl,
+    height: spacing.xl,
+    borderRadius: spacing.xl / 2, // 16px (half of width/height for perfect circle)
     overflow: 'hidden',
     zIndex: 1,
   },
@@ -367,37 +376,37 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   statsSection: {
-    padding: 24,
-    paddingTop: 16,
-    gap: 16,
+    padding: spacing.lg,
+    paddingTop: spacing.md,
+    gap: spacing.md,
   },
   statsContainer: {
     flexDirection: 'row',
-    gap: 12,
+    gap: spacing.md - spacing.xs, // 12px
   },
   statCard: {
     flex: 1,
-    padding: 16,
-    borderRadius: 12,
-    backgroundColor: '#111111',
+    padding: spacing.md,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
     alignItems: 'center',
   },
   statIcon: {
-    fontSize: 24,
-    marginBottom: 8,
+    fontSize: spacing.lg,
+    marginBottom: spacing.sm,
   },
   statValue: {
-    color: '#06B6D4',
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 4,
+    color: colors.cyan,
+    fontSize: typography.fontSize.body + 2, // 18px
+    fontFamily: typography.fontFamily.inter.medium,
+    marginBottom: spacing.xs,
   },
   statLabel: {
-    color: '#A3A3A3',
-    fontSize: 12,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   bottomCTA: {
     position: 'absolute',
@@ -405,15 +414,15 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(64, 64, 64, 0.5)',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    paddingBottom: 32,
+    borderTopColor: hexToRgba(colors.border, 0.5),
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    paddingBottom: spacing.xl,
   },
   bottomCTAGradient: {
-    paddingHorizontal: 24,
-    paddingTop: 16,
-    paddingBottom: 32,
+    paddingHorizontal: spacing.lg,
+    paddingTop: spacing.md,
+    paddingBottom: spacing.xl,
   },
   bottomCTAContent: {
     maxWidth: 375,
@@ -424,11 +433,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
+    gap: spacing.sm,
   },
   ctaButtonText: {
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontWeight: '600',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.inter.medium,
   },
 });

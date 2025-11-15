@@ -5,7 +5,13 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 const meta: Meta<typeof DownloadViewerScreenFigma> = {
   title: 'Screens/Downloads/DownloadViewerScreenFigma',
   component: DownloadViewerScreenFigma,
-  decorators: [Story => <SafeAreaProvider></SafeAreaProvider>],
+  decorators: [
+    Story => (
+      <SafeAreaProvider>
+        <Story />
+      </SafeAreaProvider>
+    ),
+  ],
   parameters: {
     layout: 'fullscreen',
   },

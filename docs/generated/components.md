@@ -1,6 +1,6 @@
 # Documentation des Composants
 
-> Généré le: 2025-11-14
+> Généré le: 2025-11-15
 
 ## Atoms
 

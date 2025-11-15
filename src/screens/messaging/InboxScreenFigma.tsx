@@ -5,6 +5,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ChevronLeft, Search, MoreVertical, Send, Paperclip, Mic } from 'lucide-react-native';
 import { ImageWithFallback } from '../../components/atoms/ImageWithFallback';
+import { colors, spacing, typography, radii } from '@/theme';
+import { hexToRgba } from '@/theme/helpers';
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
@@ -105,12 +107,12 @@ export function InboxScreenFigma({ onBack, conversationId }: InboxScreenFigmaPro
               <View style={styles.headerTop}>
                 {onBack && (
                   <TouchableOpacity onPress={onBack} style={styles.backButton} activeOpacity={0.8}>
-                    <ChevronLeft size={20} color="#D4D4D4" />
+                    <ChevronLeft size={20} color={colors.textSecondary} />
                   </TouchableOpacity>
                 )}
                 <Text style={styles.headerTitle}>Messages</Text>
                 <TouchableOpacity style={styles.searchButton} activeOpacity={0.8}>
-                  <Search size={20} color="#D4D4D4" />
+                  <Search size={20} color={colors.textSecondary} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -149,7 +151,7 @@ export function InboxScreenFigma({ onBack, conversationId }: InboxScreenFigmaPro
                         </Text>
                         {conv.unread > 0 && (
                           <LinearGradient
-                            colors={['#6366F1', '#8B5CF6']}
+                            colors={[colors.primary, colors.primaryDark]}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 0 }}
                             style={styles.unreadBadge}
@@ -177,7 +179,7 @@ export function InboxScreenFigma({ onBack, conversationId }: InboxScreenFigmaPro
                     style={styles.backButton}
                     activeOpacity={0.8}
                   >
-                    <ChevronLeft size={20} color="#D4D4D4" />
+                    <ChevronLeft size={20} color={colors.textSecondary} />
                   </TouchableOpacity>
                   <View style={styles.conversationHeaderAvatarContainer}>
                     <ImageWithFallback
@@ -195,7 +197,7 @@ export function InboxScreenFigma({ onBack, conversationId }: InboxScreenFigmaPro
                   </View>
                 </View>
                 <TouchableOpacity style={styles.moreButton} activeOpacity={0.8}>
-                  <MoreVertical size={20} color="#D4D4D4" />
+                  <MoreVertical size={20} color={colors.textSecondary} />
                 </TouchableOpacity>
               </View>
             </View>
@@ -224,7 +226,7 @@ export function InboxScreenFigma({ onBack, conversationId }: InboxScreenFigmaPro
                   <View style={styles.messageContent}>
                     {msg.isOwn ? (
                       <LinearGradient
-                        colors={['#6366F1', '#8B5CF6']}
+                        colors={[colors.primary, colors.primaryDark]}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 0 }}
                         style={styles.messageBubbleOwn}
@@ -249,13 +251,13 @@ export function InboxScreenFigma({ onBack, conversationId }: InboxScreenFigmaPro
           <View style={styles.inputContainer}>
             <View style={styles.inputWrapper}>
               <TouchableOpacity style={styles.attachButton} activeOpacity={0.8}>
-                <Paperclip size={20} color="#D4D4D4" />
+                <Paperclip size={20} color={colors.textSecondary} />
               </TouchableOpacity>
               <TextInput
                 value={message}
                 onChangeText={setMessage}
                 placeholder="Écrivez un message..."
-                placeholderTextColor="#A3A3A3"
+                placeholderTextColor={colors.textMuted}
                 style={styles.input}
                 multiline
                 maxLength={500}
@@ -264,17 +266,17 @@ export function InboxScreenFigma({ onBack, conversationId }: InboxScreenFigmaPro
               {message.trim() ? (
                 <TouchableOpacity onPress={handleSend} style={styles.sendButton} activeOpacity={0.8}>
                   <LinearGradient
-                    colors={['#6366F1', '#8B5CF6']}
+                    colors={[colors.primary, colors.primaryDark]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
                     style={styles.sendButtonGradient}
                   >
-                    <Send size={20} color="#F5F5F5" />
+                    <Send size={20} color={colors.textPrimary} />
                   </LinearGradient>
                 </TouchableOpacity>
               ) : (
                 <TouchableOpacity style={styles.micButton} activeOpacity={0.8}>
-                  <Mic size={20} color="#D4D4D4" />
+                  <Mic size={20} color={colors.textSecondary} />
                 </TouchableOpacity>
               )}
             </View>
@@ -288,65 +290,65 @@ export function InboxScreenFigma({ onBack, conversationId }: InboxScreenFigmaPro
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
   },
   header: {
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(64, 64, 64, 0.5)',
-    paddingTop: 48,
-    paddingBottom: 16,
-    paddingHorizontal: 24,
+    borderBottomColor: hexToRgba(colors.border, 0.5),
+    paddingTop: spacing.xxl + spacing.lg, // 48px
+    paddingBottom: spacing.md,
+    paddingHorizontal: spacing.lg,
   },
   headerContent: {
-    gap: 16,
+    gap: spacing.md,
   },
   headerTop: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 16,
+    marginBottom: spacing.md,
   },
   backButton: {
-    padding: 12,
-    borderRadius: 12,
-    backgroundColor: '#111111',
+    padding: spacing.md - spacing.xs, // 12px
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   headerTitle: {
-    color: '#F5F5F5',
-    fontSize: 28,
-    fontWeight: '700',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.headingLg + 4, // 28px
+    fontFamily: typography.fontFamily.poppins.bold,
     flex: 1,
     textAlign: 'center',
   },
   searchButton: {
-    padding: 12,
-    borderRadius: 12,
-    backgroundColor: '#111111',
+    padding: spacing.md - spacing.xs, // 12px
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   conversationsContent: {
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    paddingBottom: 96,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    paddingBottom: spacing.xxl * 4, // 96px
   },
   conversationsList: {
-    gap: 8,
+    gap: spacing.sm,
   },
   conversationCard: {
-    padding: 16,
-    borderRadius: 16,
-    backgroundColor: '#111111',
+    padding: spacing.md,
+    borderRadius: radii.lg,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   conversationContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: spacing.md - spacing.xs, // 12px
   },
   conversationAvatarContainer: {
     position: 'relative',
@@ -354,39 +356,39 @@ const styles = StyleSheet.create({
   conversationAvatar: {
     width: 56,
     height: 56,
-    borderRadius: 12,
+    borderRadius: radii.md,
   },
   onlineIndicator: {
     position: 'absolute',
     bottom: 0,
     right: 0,
-    width: 12,
-    height: 12,
-    backgroundColor: '#22C55E',
-    borderRadius: 6,
+    width: spacing.md - spacing.xs, // 12px
+    height: spacing.md - spacing.xs, // 12px
+    backgroundColor: colors.success,
+    borderRadius: spacing.md / 2, // 6px (half of width/height for perfect circle)
     borderWidth: 2,
-    borderColor: '#111111',
+    borderColor: colors.surface,
   },
   conversationInfo: {
     flex: 1,
-    gap: 8,
+    gap: spacing.sm,
   },
   conversationHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 4,
+    marginBottom: spacing.xs,
   },
   conversationName: {
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontWeight: '600',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.inter.medium,
     flex: 1,
   },
   conversationTime: {
-    color: '#A3A3A3',
-    fontSize: 12,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   conversationFooter: {
     flexDirection: 'row',
@@ -394,23 +396,23 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   conversationLastMessage: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
     flex: 1,
   },
   unreadBadge: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: spacing.xl - spacing.xs, // 20px
+    height: spacing.xl - spacing.xs, // 20px
+    borderRadius: spacing.xl / 2, // 10px (half of width/height for perfect circle)
     alignItems: 'center',
     justifyContent: 'center',
-    marginLeft: 8,
+    marginLeft: spacing.sm,
   },
   unreadBadgeText: {
-    color: '#F5F5F5',
+    color: colors.textPrimary,
     fontSize: 10,
-    fontWeight: '600',
+    fontFamily: typography.fontFamily.inter.medium,
   },
   conversationHeaderTop: {
     flexDirection: 'row',
@@ -420,7 +422,7 @@ const styles = StyleSheet.create({
   conversationHeaderLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
+    gap: spacing.md - spacing.xs, // 12px
     flex: 1,
   },
   conversationHeaderAvatarContainer: {
@@ -429,7 +431,7 @@ const styles = StyleSheet.create({
   conversationHeaderAvatar: {
     width: 40,
     height: 40,
-    borderRadius: 12,
+    borderRadius: radii.md,
   },
   conversationHeaderOnlineIndicator: {
     position: 'absolute',
@@ -437,43 +439,43 @@ const styles = StyleSheet.create({
     right: 0,
     width: 10,
     height: 10,
-    backgroundColor: '#22C55E',
+    backgroundColor: colors.success,
     borderRadius: 5,
     borderWidth: 2,
-    borderColor: '#0A0A0A',
+    borderColor: colors.background,
   },
   conversationHeaderInfo: {
     flex: 1,
     gap: 2,
   },
   conversationHeaderName: {
-    color: '#F5F5F5',
-    fontSize: 18,
-    fontWeight: '700',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd, // 18px
+    fontFamily: typography.fontFamily.poppins.bold,
   },
   conversationHeaderStatus: {
-    color: '#A3A3A3',
-    fontSize: 12,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   moreButton: {
-    padding: 8,
-    borderRadius: 12,
-    backgroundColor: '#111111',
+    padding: spacing.sm,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   messagesContent: {
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    paddingBottom: 96,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    paddingBottom: spacing.xxl * 4, // 96px
   },
   messagesList: {
-    gap: 16,
+    gap: spacing.md,
   },
   messageWrapper: {
     maxWidth: '75%',
-    gap: 8,
+    gap: spacing.sm,
   },
   messageWrapperOwn: {
     alignSelf: 'flex-end',
@@ -484,90 +486,90 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   messageAvatar: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
+    width: spacing.xl,
+    height: spacing.xl,
+    borderRadius: radii.sm,
   },
   messageContent: {
-    gap: 4,
+    gap: spacing.xs,
   },
   messageBubbleOwn: {
-    padding: 16,
-    borderRadius: 16,
+    padding: spacing.md,
+    borderRadius: radii.lg,
     overflow: 'hidden',
   },
   messageBubbleOther: {
-    padding: 16,
-    borderRadius: 16,
-    backgroundColor: '#111111',
+    padding: spacing.md,
+    borderRadius: radii.lg,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   messageTextOwn: {
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   messageTextOther: {
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   messageTime: {
-    fontSize: 12,
-    fontWeight: '400',
-    paddingHorizontal: 4,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.regular,
+    paddingHorizontal: spacing.xs,
   },
   messageTimeOwn: {
-    color: '#A3A3A3',
+    color: colors.textMuted,
     textAlign: 'right',
   },
   messageTimeOther: {
-    color: '#A3A3A3',
+    color: colors.textMuted,
     textAlign: 'left',
-    marginLeft: 8,
+    marginLeft: spacing.sm,
   },
   inputContainer: {
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(64, 64, 64, 0.5)',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    paddingBottom: 32,
+    borderTopColor: hexToRgba(colors.border, 0.5),
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    paddingBottom: spacing.xl,
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    gap: 8,
+    gap: spacing.sm,
   },
   attachButton: {
-    padding: 12,
-    borderRadius: 12,
-    backgroundColor: '#111111',
+    padding: spacing.md - spacing.xs, // 12px
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
-    marginBottom: 4,
+    borderColor: colors.border,
+    marginBottom: spacing.xs,
   },
   input: {
     flex: 1,
     minHeight: 44,
     maxHeight: 120,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 16,
-    backgroundColor: '#111111',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md - spacing.xs, // 12px
+    borderRadius: radii.lg,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontWeight: '400',
+    borderColor: colors.border,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   sendButton: {
     width: 44,
     height: 44,
-    borderRadius: 12,
+    borderRadius: radii.md,
     overflow: 'hidden',
-    marginBottom: 4,
+    marginBottom: spacing.xs,
   },
   sendButtonGradient: {
     width: '100%',
@@ -576,11 +578,11 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   micButton: {
-    padding: 12,
-    borderRadius: 12,
-    backgroundColor: '#111111',
+    padding: spacing.md - spacing.xs, // 12px
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
-    marginBottom: 4,
+    borderColor: colors.border,
+    marginBottom: spacing.xs,
   },
 });

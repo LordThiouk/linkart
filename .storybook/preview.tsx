@@ -14,7 +14,12 @@ import { withInteractiveState } from './decorators/withInteractiveState';
 export const decorators: Decorator[] = [
   withInteractiveState, // ← Ajouté en premier pour gérer le state
   Story => (
-    <SafeAreaProvider>
+    <SafeAreaProvider
+      initialMetrics={{
+        frame: { x: 0, y: 0, width: 375, height: 812 },
+        insets: { top: 44, left: 0, bottom: 34, right: 0 },
+      }}
+    >
       <NavigationContainer>
         <Story />
       </NavigationContainer>

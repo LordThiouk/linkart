@@ -4,6 +4,8 @@ import Animated, { FadeIn } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowLeft, Download, Share2, FileText, Check, Shield } from 'lucide-react-native';
+import { colors, spacing, typography, radii } from '@/theme';
+import { hexToRgba } from '@/theme/helpers';
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -60,7 +62,7 @@ export function LicenseContractScreenFigma({ onBack, purchaseId }: LicenseContra
           <View style={styles.headerTop}>
             {onBack && (
               <TouchableOpacity onPress={onBack} style={styles.backButton} activeOpacity={0.8}>
-                <ArrowLeft size={20} color="#D4D4D4" />
+                <ArrowLeft size={20} color={colors.textSecondary} />
               </TouchableOpacity>
             )}
             <View style={styles.headerText}>
@@ -73,17 +75,17 @@ export function LicenseContractScreenFigma({ onBack, purchaseId }: LicenseContra
           <View style={styles.actions}>
             <TouchableOpacity onPress={handleDownloadPDF} style={styles.downloadButton} activeOpacity={0.8}>
               <LinearGradient
-                colors={['#6366F1', '#8B5CF6']}
+                colors={[colors.primary, colors.primaryDark]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.downloadButtonGradient}
               >
-                <Download size={16} color="#F5F5F5" />
+                <Download size={16} color={colors.textPrimary} />
                 <Text style={styles.downloadButtonText}>Télécharger PDF</Text>
               </LinearGradient>
             </TouchableOpacity>
             <TouchableOpacity onPress={handleShare} style={styles.shareButton} activeOpacity={0.8}>
-              <Share2 size={16} color="#D4D4D4" />
+              <Share2 size={16} color={colors.textSecondary} />
             </TouchableOpacity>
           </View>
         </View>
@@ -94,18 +96,18 @@ export function LicenseContractScreenFigma({ onBack, purchaseId }: LicenseContra
         {/* Verification Badge */}
         <AnimatedView entering={FadeIn} style={styles.verificationSection}>
           <LinearGradient
-            colors={['rgba(6, 182, 212, 0.2)', 'rgba(139, 92, 246, 0.2)']}
+            colors={[hexToRgba(colors.cyan, 0.2), hexToRgba(colors.primaryDark, 0.2)]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.verificationCard}
           >
             <LinearGradient
-              colors={['#06B6D4', '#8B5CF6']}
+              colors={[colors.cyan, colors.primaryDark]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.verificationIcon}
             >
-              <Shield size={24} color="#F5F5F5" />
+              <Shield size={24} color={colors.textPrimary} />
             </LinearGradient>
             <View style={styles.verificationText}>
               <Text style={styles.verificationTitle}>✓ Contrat Vérifié</Text>
@@ -119,7 +121,7 @@ export function LicenseContractScreenFigma({ onBack, purchaseId }: LicenseContra
           {/* Product Info */}
           <View style={styles.detailCard}>
             <View style={styles.detailCardHeader}>
-              <FileText size={20} color="#6366F1" />
+              <FileText size={20} color={colors.primary} />
               <Text style={styles.detailCardTitle}>Produit</Text>
             </View>
             <View style={styles.detailCardContent}>
@@ -134,7 +136,7 @@ export function LicenseContractScreenFigma({ onBack, purchaseId }: LicenseContra
               <View style={styles.detailRow}>
                 <Text style={styles.detailLabel}>Licence</Text>
                 <LinearGradient
-                  colors={['#6366F1', '#8B5CF6']}
+                  colors={[colors.primary, colors.primaryDark]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.licenseBadge}
@@ -199,12 +201,12 @@ export function LicenseContractScreenFigma({ onBack, purchaseId }: LicenseContra
               {contractData.terms.map((term, index) => (
                 <View key={index} style={styles.termItem}>
                   <LinearGradient
-                    colors={['#06B6D4', '#8B5CF6']}
+                    colors={[colors.cyan, colors.primaryDark]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
                     style={styles.termIcon}
                   >
-                    <Check size={12} color="#F5F5F5" />
+                    <Check size={12} color={colors.textPrimary} />
                   </LinearGradient>
                   <Text style={styles.termText}>{term}</Text>
                 </View>
@@ -224,18 +226,18 @@ export function LicenseContractScreenFigma({ onBack, purchaseId }: LicenseContra
           {/* Digital Signature */}
           <AnimatedView entering={FadeIn.delay(200)} style={styles.signatureSection}>
             <LinearGradient
-              colors={['rgba(99, 102, 241, 0.1)', 'rgba(139, 92, 246, 0.1)']}
+              colors={[hexToRgba(colors.primary, 0.1), hexToRgba(colors.primaryDark, 0.1)]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.signatureCard}
             >
               <LinearGradient
-                colors={['#6366F1', '#8B5CF6']}
+                colors={[colors.primary, colors.primaryDark]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.signatureIcon}
               >
-                <Check size={32} color="#F5F5F5" />
+                <Check size={32} color={colors.textPrimary} />
               </LinearGradient>
               <Text style={styles.signatureTitle}>Signature Numérique Vérifiée</Text>
               <Text style={styles.signatureDate}>{new Date(contractData.purchaseDate).toLocaleString('fr-FR')}</Text>
@@ -250,142 +252,142 @@ export function LicenseContractScreenFigma({ onBack, purchaseId }: LicenseContra
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
   },
   header: {
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(64, 64, 64, 0.5)',
-    paddingTop: 48,
-    paddingBottom: 16,
-    paddingHorizontal: 24,
+    borderBottomColor: hexToRgba(colors.border, 0.5),
+    paddingTop: spacing.xxl + spacing.lg, // 48px
+    paddingBottom: spacing.md,
+    paddingHorizontal: spacing.lg,
   },
   headerContent: {
-    gap: 16,
+    gap: spacing.md,
   },
   headerTop: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
-    marginBottom: 16,
+    gap: spacing.md,
+    marginBottom: spacing.md,
   },
   backButton: {
-    padding: 8,
-    borderRadius: 12,
-    backgroundColor: '#111111',
+    padding: spacing.sm,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   headerText: {
     flex: 1,
-    gap: 4,
+    gap: spacing.xs,
   },
   headerTitle: {
-    color: '#F5F5F5',
-    fontSize: 28,
-    fontWeight: '700',
-    marginBottom: 4,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.headingLg + 4, // 28px
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.xs,
   },
   headerSubtitle: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   actions: {
     flexDirection: 'row',
-    gap: 8,
+    gap: spacing.sm,
   },
   downloadButton: {
     flex: 1,
-    borderRadius: 12,
+    borderRadius: radii.md,
     overflow: 'hidden',
   },
   downloadButtonGradient: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    gap: spacing.sm,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
   },
   downloadButtonText: {
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontWeight: '600',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   shareButton: {
-    padding: 8,
-    borderRadius: 12,
-    backgroundColor: '#111111',
+    padding: spacing.sm,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
   scrollContent: {
-    paddingBottom: 80,
+    paddingBottom: spacing.xxl + spacing.xl, // 80px
   },
   verificationSection: {
-    padding: 24,
-    paddingBottom: 16,
+    padding: spacing.lg,
+    paddingBottom: spacing.md,
   },
   verificationCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    padding: 16,
-    borderRadius: 16,
+    gap: spacing.md - spacing.xs, // 12px
+    padding: spacing.md,
+    borderRadius: radii.lg,
     borderWidth: 1,
-    borderColor: 'rgba(6, 182, 212, 0.3)',
+    borderColor: hexToRgba(colors.cyan, 0.3),
   },
   verificationIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: spacing.xxl * 2, // 48px
+    height: spacing.xxl * 2, // 48px
+    borderRadius: spacing.xxl, // 24px (half of width/height for perfect circle)
     alignItems: 'center',
     justifyContent: 'center',
   },
   verificationText: {
     flex: 1,
-    gap: 4,
+    gap: spacing.xs,
   },
   verificationTitle: {
-    color: '#06B6D4',
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 4,
+    color: colors.cyan,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.xs,
   },
   verificationSubtitle: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   detailsSection: {
-    padding: 24,
-    paddingTop: 16,
-    gap: 24,
+    padding: spacing.lg,
+    paddingTop: spacing.md,
+    gap: spacing.lg,
   },
   detailCard: {
-    padding: 16,
-    borderRadius: 16,
-    backgroundColor: '#111111',
+    padding: spacing.md,
+    borderRadius: radii.lg,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
-    gap: 12,
+    borderColor: colors.border,
+    gap: spacing.md - spacing.xs, // 12px
   },
   detailCardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 12,
+    gap: spacing.sm,
+    marginBottom: spacing.md - spacing.xs, // 12px
   },
   detailCardTitle: {
-    color: '#F5F5F5',
-    fontSize: 18,
-    fontWeight: '700',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.headingLg, // 18px
+    fontFamily: typography.fontFamily.poppins.bold,
   },
   detailCardContent: {
-    gap: 12,
+    gap: spacing.md - spacing.xs, // 12px
   },
   detailRow: {
     flexDirection: 'row',
@@ -393,125 +395,125 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   detailLabel: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   detailValue: {
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   detailValuePrice: {
-    color: '#6366F1',
-    fontSize: 14,
-    fontWeight: '600',
+    color: colors.primary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   licenseBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radii.sm,
   },
   licenseBadgeText: {
-    color: '#F5F5F5',
-    fontSize: 12,
-    fontWeight: '600',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   partySection: {
-    marginBottom: 16,
-    paddingBottom: 16,
+    marginBottom: spacing.md,
+    paddingBottom: spacing.md,
     borderBottomWidth: 1,
-    borderBottomColor: '#404040',
+    borderBottomColor: colors.border,
   },
   partyTitle: {
-    color: '#6366F1',
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 8,
+    color: colors.primary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
+    marginBottom: spacing.sm,
   },
   partyTitleSeller: {
-    color: '#EC4899',
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 8,
+    color: colors.accent,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
+    marginBottom: spacing.sm,
   },
   partyInfo: {
-    gap: 4,
+    gap: spacing.xs,
   },
   partyName: {
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontWeight: '600',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   partyDetail: {
-    color: '#A3A3A3',
-    fontSize: 12,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   termsList: {
-    gap: 12,
+    gap: spacing.md - spacing.xs, // 12px
   },
   termItem: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 12,
+    gap: spacing.md - spacing.xs, // 12px
   },
   termIcon: {
-    width: 20,
-    height: 20,
-    borderRadius: 10,
+    width: spacing.xl - spacing.xs, // 20px
+    height: spacing.xl - spacing.xs, // 20px
+    borderRadius: spacing.xl / 2, // 10px (half of width/height for perfect circle)
     alignItems: 'center',
     justifyContent: 'center',
     marginTop: 2,
   },
   termText: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
     flex: 1,
   },
   legalNotice: {
-    padding: 16,
-    borderRadius: 12,
-    backgroundColor: '#1A1A1A',
+    padding: spacing.md,
+    borderRadius: radii.md,
+    backgroundColor: colors.surfaceElevated,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   legalNoticeText: {
-    color: '#A3A3A3',
-    fontSize: 12,
-    fontWeight: '400',
-    lineHeight: 18,
+    color: colors.textMuted,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.regular,
+    lineHeight: typography.fontSize.caption * 1.5, // 18px
   },
   signatureSection: {
-    padding: 24,
-    paddingTop: 16,
+    padding: spacing.lg,
+    paddingTop: spacing.md,
   },
   signatureCard: {
-    padding: 24,
-    borderRadius: 16,
+    padding: spacing.lg,
+    borderRadius: radii.lg,
     borderWidth: 1,
-    borderColor: 'rgba(99, 102, 241, 0.3)',
+    borderColor: hexToRgba(colors.primary, 0.3),
     alignItems: 'center',
-    gap: 12,
+    gap: spacing.md - spacing.xs, // 12px
   },
   signatureIcon: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: spacing.xxl * 2 + spacing.xl, // 64px
+    height: spacing.xxl * 2 + spacing.xl, // 64px
+    borderRadius: spacing.xxl + spacing.xl, // 32px (half of width/height for perfect circle)
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 12,
+    marginBottom: spacing.md - spacing.xs, // 12px
   },
   signatureTitle: {
-    color: '#6366F1',
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 4,
+    color: colors.primary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.xs,
   },
   signatureDate: {
-    color: '#A3A3A3',
-    fontSize: 12,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.regular,
   },
 });

@@ -1,6 +1,6 @@
 # Documentation des Fonctions (RPC)
 
-> Généré le: 2025-11-14
+> Généré le: 2025-11-15
 
 ## Fonction: `update_updated_at_column`
 

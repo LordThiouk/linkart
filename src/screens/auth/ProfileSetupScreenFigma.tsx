@@ -53,18 +53,25 @@ export function ProfileSetupScreenFigma({ onComplete, onSkip }: ProfileSetupScre
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [profileImage, setProfileImage] = useState<string | null>(null);
 
-  const headerY = useSharedValue(-20);
-  const headerOpacity = useSharedValue(0);
-  const imageY = useSharedValue(20);
-  const imageOpacity = useSharedValue(0);
-  const inputY = useSharedValue(20);
-  const inputOpacity = useSharedValue(0);
-  const rolesY = useSharedValue(20);
-  const rolesOpacity = useSharedValue(0);
-  const buttonY = useSharedValue(20);
-  const buttonOpacity = useSharedValue(0);
+  // Détecter si on est dans Storybook (navigateur)
+  const isStorybook = typeof window !== 'undefined' && window.location?.pathname?.includes('/iframe.html');
+
+  // Initialiser les valeurs différemment selon l'environnement
+  const headerY = useSharedValue(isStorybook ? 0 : -20);
+  const headerOpacity = useSharedValue(isStorybook ? 1 : 0);
+  const imageY = useSharedValue(isStorybook ? 0 : 20);
+  const imageOpacity = useSharedValue(isStorybook ? 1 : 0);
+  const inputY = useSharedValue(isStorybook ? 0 : 20);
+  const inputOpacity = useSharedValue(isStorybook ? 1 : 0);
+  const rolesY = useSharedValue(isStorybook ? 0 : 20);
+  const rolesOpacity = useSharedValue(isStorybook ? 1 : 0);
+  const buttonY = useSharedValue(isStorybook ? 0 : 20);
+  const buttonOpacity = useSharedValue(isStorybook ? 1 : 0);
 
   useEffect(() => {
+    // Dans Storybook, les animations sont déjà à leur état final
+    if (isStorybook) return;
+
     // Header animation
     headerY.value = withTiming(0, { duration: 500 });
     headerOpacity.value = withTiming(1, { duration: 500 });
@@ -84,8 +91,7 @@ export function ProfileSetupScreenFigma({ onComplete, onSkip }: ProfileSetupScre
     // Button animation
     buttonY.value = withDelay(700, withTiming(0, { duration: 500 }));
     buttonOpacity.value = withDelay(700, withTiming(1, { duration: 500 }));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isStorybook]);
 
   const headerAnimatedStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: headerY.value }],
