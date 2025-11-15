@@ -5,6 +5,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowLeft, Download, FileText, Music2, Package, Filter, Calendar } from 'lucide-react-native';
 import { ImageWithFallback } from '../../components/atoms/ImageWithFallback';
+import { colors, spacing, typography, radii } from '@/theme';
+import { hexToRgba } from '@/theme/helpers';
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -88,7 +90,7 @@ export function MyPurchasesScreenFigma({ onBack, onDownload, onViewContract }: M
           <View style={styles.headerTop}>
             {onBack && (
               <TouchableOpacity onPress={onBack} style={styles.backButton} activeOpacity={0.8}>
-                <ArrowLeft size={20} color="#D4D4D4" />
+                <ArrowLeft size={20} color={colors.textSecondary} />
               </TouchableOpacity>
             )}
             <View style={styles.headerText}>
@@ -133,17 +135,17 @@ export function MyPurchasesScreenFigma({ onBack, onDownload, onViewContract }: M
                 >
                   {isSelected ? (
                     <LinearGradient
-                      colors={['#6366F1', '#8B5CF6']}
+                      colors={[colors.primary, colors.primaryDark]}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 0 }}
                       style={styles.filterButtonGradient}
                     >
-                      <Icon size={16} color="#F5F5F5" />
+                      <Icon size={16} color={colors.textPrimary} />
                       <Text style={styles.filterButtonTextSelected}>{filter.label}</Text>
                     </LinearGradient>
                   ) : (
                     <View style={styles.filterButtonContent}>
-                      <Icon size={16} color="#A3A3A3" />
+                      <Icon size={16} color={colors.textMuted} />
                       <Text style={styles.filterButtonText}>{filter.label}</Text>
                     </View>
                   )}
@@ -158,7 +160,7 @@ export function MyPurchasesScreenFigma({ onBack, onDownload, onViewContract }: M
           {filteredPurchases.length === 0 ? (
             <View style={styles.emptyState}>
               <View style={styles.emptyIcon}>
-                <Package size={40} color="#404040" />
+                <Package size={40} color={colors.border} />
               </View>
               <Text style={styles.emptyTitle}>Aucun achat</Text>
               <Text style={styles.emptySubtitle}>Vos achats apparaîtront ici</Text>
@@ -193,7 +195,9 @@ export function MyPurchasesScreenFigma({ onBack, onDownload, onViewContract }: M
                           {purchase.license === 'Exclusive' || purchase.license === 'Premium' ? (
                             <LinearGradient
                               colors={
-                                purchase.license === 'Exclusive' ? ['#EC4899', '#F59E0B'] : ['#6366F1', '#8B5CF6']
+                                purchase.license === 'Exclusive'
+                                  ? [colors.accent, colors.secondary]
+                                  : [colors.primary, colors.primaryDark]
                               }
                               start={{ x: 0, y: 0 }}
                               end={{ x: 1, y: 0 }}
@@ -208,7 +212,7 @@ export function MyPurchasesScreenFigma({ onBack, onDownload, onViewContract }: M
                       </View>
 
                       <View style={styles.purchaseMeta}>
-                        <Calendar size={12} color="#A3A3A3" />
+                        <Calendar size={12} color={colors.textMuted} />
                         <Text style={styles.purchaseDate}>
                           {new Date(purchase.purchaseDate).toLocaleDateString('fr-FR')}
                         </Text>
@@ -224,12 +228,12 @@ export function MyPurchasesScreenFigma({ onBack, onDownload, onViewContract }: M
                           activeOpacity={0.8}
                         >
                           <LinearGradient
-                            colors={['#6366F1', '#8B5CF6']}
+                            colors={[colors.primary, colors.primaryDark]}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 0 }}
                             style={styles.downloadButtonGradient}
                           >
-                            <Download size={16} color="#F5F5F5" />
+                            <Download size={16} color={colors.textPrimary} />
                             <Text style={styles.downloadButtonText}>
                               {purchase.downloaded ? 'Retélécharger' : 'Télécharger'}
                             </Text>
@@ -240,7 +244,7 @@ export function MyPurchasesScreenFigma({ onBack, onDownload, onViewContract }: M
                           style={styles.contractButton}
                           activeOpacity={0.8}
                         >
-                          <FileText size={16} color="#D4D4D4" />
+                          <FileText size={16} color={colors.textSecondary} />
                           <Text style={styles.contractButtonText}>Contrat</Text>
                         </TouchableOpacity>
                       </View>
@@ -266,100 +270,100 @@ export function MyPurchasesScreenFigma({ onBack, onDownload, onViewContract }: M
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
   },
   header: {
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(64, 64, 64, 0.5)',
-    paddingTop: 48,
-    paddingBottom: 16,
-    paddingHorizontal: 24,
+    borderBottomColor: hexToRgba(colors.border, 0.5),
+    paddingTop: spacing.xxl + spacing.lg, // 48px
+    paddingBottom: spacing.md,
+    paddingHorizontal: spacing.lg,
   },
   headerContent: {
-    gap: 16,
+    gap: spacing.md,
   },
   headerTop: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
-    marginBottom: 16,
+    gap: spacing.md,
+    marginBottom: spacing.md,
   },
   backButton: {
-    padding: 8,
-    borderRadius: 12,
-    backgroundColor: '#111111',
+    padding: spacing.sm,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   headerText: {
     flex: 1,
-    gap: 4,
+    gap: spacing.xs,
   },
   headerTitle: {
-    color: '#F5F5F5',
-    fontSize: 28,
-    fontWeight: '700',
-    marginBottom: 4,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.headingLg + 4, // 28px
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.xs,
   },
   headerSubtitle: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   scrollContent: {
-    paddingBottom: 80,
+    paddingBottom: spacing.xxl + spacing.xl, // 80px
   },
   statsSection: {
-    padding: 24,
-    paddingBottom: 16,
+    padding: spacing.lg,
+    paddingBottom: spacing.md,
   },
   statsContainer: {
     flexDirection: 'row',
-    gap: 12,
+    gap: spacing.md - spacing.xs, // 12px
   },
   statCard: {
     flex: 1,
-    padding: 16,
-    borderRadius: 12,
-    backgroundColor: '#111111',
+    padding: spacing.md,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
     alignItems: 'center',
   },
   statIcon: {
-    fontSize: 24,
-    marginBottom: 8,
+    fontSize: spacing.lg,
+    marginBottom: spacing.sm,
   },
   statValue: {
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 4,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.xs,
   },
   statLabel: {
-    color: '#A3A3A3',
-    fontSize: 12,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   filtersSection: {
-    paddingHorizontal: 24,
-    paddingVertical: 16,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
   },
   filtersContainer: {
     flexDirection: 'row',
-    gap: 8,
+    gap: spacing.sm,
   },
   filterButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 12,
-    backgroundColor: '#111111',
+    gap: spacing.sm,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   filterButtonSelected: {
     borderWidth: 0,
@@ -368,78 +372,78 @@ const styles = StyleSheet.create({
   filterButtonGradient: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    gap: spacing.sm,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
   },
   filterButtonContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: spacing.sm,
   },
   filterButtonText: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   filterButtonTextSelected: {
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontWeight: '600',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   purchasesSection: {
-    padding: 24,
-    paddingTop: 16,
+    padding: spacing.lg,
+    paddingTop: spacing.md,
   },
   purchasesList: {
-    gap: 16,
+    gap: spacing.md,
   },
   purchaseCard: {
-    padding: 16,
-    borderRadius: 16,
-    backgroundColor: '#111111',
+    padding: spacing.md,
+    borderRadius: radii.lg,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   purchaseContent: {
     flexDirection: 'row',
-    gap: 16,
+    gap: spacing.md,
   },
   purchaseCover: {
     width: 80,
     height: 80,
-    borderRadius: 12,
+    borderRadius: radii.md,
   },
   purchaseInfo: {
     flex: 1,
-    gap: 12,
+    gap: spacing.md - spacing.xs, // 12px
   },
   purchaseHeader: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
   purchaseTitleContainer: {
     flex: 1,
-    gap: 4,
-    marginRight: 8,
+    gap: spacing.xs,
+    marginRight: spacing.sm,
   },
   purchaseTitle: {
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 4,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.xs,
   },
   purchaseArtist: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   licenseBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radii.sm,
     overflow: 'hidden',
   },
   licenseBadgeExclusive: {
@@ -449,121 +453,121 @@ const styles = StyleSheet.create({
     // Gradient handled by LinearGradient
   },
   licenseBadgeBasic: {
-    backgroundColor: '#1A1A1A',
+    backgroundColor: colors.surfaceElevated,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   licenseBadgeGradient: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
   },
   licenseBadgeText: {
-    color: '#F5F5F5',
-    fontSize: 12,
-    fontWeight: '600',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   licenseBadgeTextBasic: {
-    color: '#A3A3A3',
-    fontSize: 12,
-    fontWeight: '600',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   purchaseMeta: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 12,
+    gap: spacing.sm,
+    marginBottom: spacing.md - spacing.xs, // 12px
   },
   purchaseDate: {
-    color: '#A3A3A3',
-    fontSize: 12,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   purchaseMetaSeparator: {
-    color: '#404040',
-    fontSize: 12,
+    color: colors.border,
+    fontSize: typography.fontSize.caption,
   },
   purchasePrice: {
-    color: '#6366F1',
-    fontSize: 12,
-    fontWeight: '600',
+    color: colors.primary,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   purchaseActions: {
     flexDirection: 'row',
-    gap: 8,
+    gap: spacing.sm,
   },
   downloadButton: {
     flex: 1,
-    borderRadius: 12,
+    borderRadius: radii.md,
     overflow: 'hidden',
   },
   downloadButtonGradient: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
+    gap: spacing.sm,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md - spacing.xs, // 12px
   },
   downloadButtonText: {
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontWeight: '600',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   contractButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 12,
-    backgroundColor: '#1A1A1A',
+    gap: spacing.sm,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md - spacing.xs, // 12px
+    borderRadius: radii.md,
+    backgroundColor: colors.surfaceElevated,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   contractButtonText: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   reviewBanner: {
-    padding: 8,
-    borderRadius: 8,
-    backgroundColor: 'rgba(245, 158, 11, 0.1)',
+    padding: spacing.sm,
+    borderRadius: radii.sm,
+    backgroundColor: hexToRgba(colors.secondary, 0.1),
     borderWidth: 1,
-    borderColor: 'rgba(245, 158, 11, 0.3)',
-    marginTop: 8,
+    borderColor: hexToRgba(colors.secondary, 0.3),
+    marginTop: spacing.sm,
   },
   reviewBannerText: {
-    color: '#F59E0B',
-    fontSize: 12,
-    fontWeight: '400',
+    color: colors.secondary,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.regular,
     textAlign: 'center',
   },
   emptyState: {
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 48,
-    paddingHorizontal: 24,
+    paddingVertical: spacing.xxl * 2, // 48px
+    paddingHorizontal: spacing.lg,
   },
   emptyIcon: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#111111',
+    backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
+    marginBottom: spacing.md,
   },
   emptyTitle: {
-    color: '#F5F5F5',
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 8,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.headingLg - 4, // 20px
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.sm,
   },
   emptySubtitle: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
 });

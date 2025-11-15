@@ -12,6 +12,26 @@ import { typography } from './typography';
 import { shadows } from './shadows';
 
 /**
+ * Convertit une couleur hex en rgba
+ * @param hex - Couleur hex (ex: '#6366F1' ou '6366F1')
+ * @param alpha - Opacité (0-1)
+ * @returns Chaîne rgba (ex: 'rgba(99, 102, 241, 0.5)')
+ */
+export const hexToRgba = (hex: string, alpha: number = 1): string => {
+  if (!hex || typeof hex !== 'string') {
+    return `rgba(0, 0, 0, ${alpha})`;
+  }
+  const cleanHex = hex.replace('#', '');
+  if (cleanHex.length !== 6) {
+    return `rgba(0, 0, 0, ${alpha})`;
+  }
+  const r = parseInt(cleanHex.substring(0, 2), 16);
+  const g = parseInt(cleanHex.substring(2, 4), 16);
+  const b = parseInt(cleanHex.substring(4, 6), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+};
+
+/**
  * Crée des styles pour les boutons selon variant et size
  */
 export const createButtonStyle = (

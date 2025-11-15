@@ -14,7 +14,7 @@ export function InputField({ label, error, containerStyle, inputStyle, testID, .
 
   return (
     <View style={[styles.container, containerStyle]}>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label ? <Text style={styles.label}>{label}</Text> : null}
       <TextInput
         {...props}
         style={[styles.input, isFocused && styles.inputFocused, error && styles.inputError, inputStyle]}
@@ -23,7 +23,7 @@ export function InputField({ label, error, containerStyle, inputStyle, testID, .
         onBlur={() => setIsFocused(false)}
         testID={testID}
       />
-      {error && <Text style={styles.errorText}>{error}</Text>}
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
     </View>
   );
 }
@@ -31,7 +31,6 @@ export function InputField({ label, error, containerStyle, inputStyle, testID, .
 const styles = StyleSheet.create({
   container: {
     width: '100%',
-    gap: 8, // space-y-2
   },
   label: {
     color: '#D4D4D4',
@@ -50,6 +49,7 @@ const styles = StyleSheet.create({
     color: '#F5F5F5',
     fontSize: 16,
     fontFamily: 'Inter_400Regular',
+    marginTop: 8, // space between label and input
   },
   inputFocused: {
     borderColor: '#6366F1',

@@ -4,6 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import Animated, { FadeInDown } from 'react-native-reanimated';
 import { ArrowLeft, Heart } from 'lucide-react-native';
 import { ProductCardFigma } from '../components/atoms/ProductCardFigma';
+import { colors, spacing, typography, radii } from '@/theme';
 
 interface Product {
   id: string;
@@ -135,12 +136,12 @@ export function FavoritesScreenFigma({ onBack, onProductClick, accessToken }: Fa
         <View style={styles.headerContent}>
           <TouchableOpacity onPress={onBack} style={styles.backButton} activeOpacity={0.9}>
             <View style={styles.backButtonInner}>
-              <ArrowLeft size={20} color="#D4D4D4" />
+              <ArrowLeft size={20} color={colors.textSecondary} />
             </View>
           </TouchableOpacity>
           <View style={styles.headerTitleContainer}>
             <View style={styles.headerTitleRow}>
-              <Heart size={24} color="#EC4899" fill="#EC4899" />
+              <Heart size={24} color={colors.accent} fill={colors.accent} />
               <Text style={styles.headerTitle}>Mes Favoris</Text>
             </View>
             <Text style={styles.headerSubtitle}>
@@ -158,12 +159,12 @@ export function FavoritesScreenFigma({ onBack, onProductClick, accessToken }: Fa
       >
         {loading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#6366F1" />
+            <ActivityIndicator size="large" color={colors.primary} />
           </View>
         ) : favorites.length === 0 ? (
           <View style={styles.emptyState}>
             <View style={styles.emptyIcon}>
-              <Heart size={40} color="#404040" />
+              <Heart size={40} color={colors.border} />
             </View>
             <Text style={styles.emptyTitle}>Aucun favori</Text>
             <Text style={styles.emptySubtitle}>Ajoutez des beats à vos favoris en appuyant sur le cœur</Text>
@@ -198,28 +199,28 @@ export function FavoritesScreenFigma({ onBack, onProductClick, accessToken }: Fa
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
   },
   header: {
-    backgroundColor: 'rgba(10, 10, 10, 0.95)',
+    backgroundColor: `rgba(${parseInt(colors.background.slice(1, 3), 16)}, ${parseInt(colors.background.slice(3, 5), 16)}, ${parseInt(colors.background.slice(5, 7), 16)}, 0.95)`,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(64, 64, 64, 0.5)',
-    paddingTop: 48, // pt-12
-    paddingBottom: 16, // pb-4
+    borderBottomColor: `rgba(${parseInt(colors.border.slice(1, 3), 16)}, ${parseInt(colors.border.slice(3, 5), 16)}, ${parseInt(colors.border.slice(5, 7), 16)}, 0.5)`,
+    paddingTop: spacing.xxl, // pt-12
+    paddingBottom: spacing.md, // pb-4
   },
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16, // gap-4
-    paddingHorizontal: 24, // px-6
-    marginBottom: 16, // mb-4
+    gap: spacing.md, // gap-4
+    paddingHorizontal: spacing.lg, // px-6
+    marginBottom: spacing.md, // mb-4
   },
   backButton: {
-    padding: 8, // p-2
-    borderRadius: 12, // rounded-xl
-    backgroundColor: '#111111',
+    padding: spacing.sm, // p-2
+    borderRadius: radii.md, // rounded-xl
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   backButtonInner: {
     alignItems: 'center',
@@ -231,70 +232,70 @@ const styles = StyleSheet.create({
   headerTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8, // gap-2
-    marginBottom: 4,
+    gap: spacing.sm, // gap-2
+    marginBottom: spacing.xs,
   },
   headerTitle: {
-    color: '#F5F5F5',
-    fontSize: 24,
-    fontFamily: 'Poppins_700Bold',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.headingLg,
+    fontFamily: typography.fontFamily.poppins.bold,
   },
   headerSubtitle: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
-    marginTop: 4,
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
+    marginTop: spacing.xs,
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 24, // px-6
-    paddingVertical: 16, // py-4
-    paddingBottom: 80, // pb-20
+    paddingHorizontal: spacing.lg, // px-6
+    paddingVertical: spacing.md, // py-4
+    paddingBottom: spacing.xxl + spacing.xl, // pb-20
   },
   loadingContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 256, // h-64
+    minHeight: spacing.xxl * 4 + spacing.xl * 2, // h-64
   },
   emptyState: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 256, // h-64
-    paddingHorizontal: 24, // px-6
+    minHeight: spacing.xxl * 4 + spacing.xl * 2, // h-64
+    paddingHorizontal: spacing.lg, // px-6
   },
   emptyIcon: {
-    width: 80, // w-20
-    height: 80, // h-20
-    borderRadius: 40,
-    backgroundColor: '#111111',
+    width: spacing.xl * 2.5, // w-20
+    height: spacing.xl * 2.5, // h-20
+    borderRadius: radii.full,
+    backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16, // mb-4
+    marginBottom: spacing.md, // mb-4
   },
   emptyTitle: {
-    color: '#F5F5F5',
-    fontSize: 18,
-    fontFamily: 'Poppins_600SemiBold',
-    marginBottom: 8,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd,
+    fontFamily: typography.fontFamily.poppins.semibold,
+    marginBottom: spacing.sm,
   },
   emptySubtitle: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
     textAlign: 'center',
   },
   favoritesGrid: {
     flex: 1,
   },
   favoritesList: {
-    gap: 16, // gap-4
+    gap: spacing.md, // gap-4
   },
   favoritesRow: {
-    gap: 16, // gap-4
+    gap: spacing.md, // gap-4
   },
   favoriteCard: {
     flex: 1,

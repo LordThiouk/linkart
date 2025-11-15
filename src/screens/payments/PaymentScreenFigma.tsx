@@ -6,6 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowLeft, Smartphone, CreditCard, CheckCircle, Shield } from 'lucide-react-native';
 import { PrimaryButton } from '../../components/atoms/PrimaryButton';
 import { InputField } from '../../components/atoms/InputField';
+import { colors, spacing, typography, radii } from '@/theme';
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
@@ -76,7 +77,7 @@ export function PaymentScreenFigma({
       name: 'Wave',
       description: 'Paiement mobile rapide et sécurisé',
       icon: Smartphone,
-      colors: ['#00D9FF', '#0099FF'],
+      colors: ['#00D9FF', '#0099FF'] as [ColorValue, ColorValue], // Wave brand colors (specific)
       available: true,
     },
     {
@@ -84,7 +85,7 @@ export function PaymentScreenFigma({
       name: 'Orange Money',
       description: 'Paiement via Orange Money',
       icon: CreditCard,
-      colors: ['#FF7900', '#FFB84D'],
+      colors: ['#FF7900', '#FFB84D'] as [ColorValue, ColorValue], // Orange Money brand colors (specific)
       available: true,
     },
   ];
@@ -102,12 +103,12 @@ export function PaymentScreenFigma({
                 style={[styles.backButton, processing && styles.backButtonDisabled]}
                 activeOpacity={0.8}
               >
-                <ArrowLeft size={20} color="#D4D4D4" />
+                <ArrowLeft size={20} color={colors.textSecondary} />
               </TouchableOpacity>
             )}
             <View style={styles.headerText}>
               <View style={styles.headerTitleRow}>
-                <Shield size={24} color="#10B981" />
+                <Shield size={24} color={colors.success} />
                 <Text style={styles.headerTitle}>Paiement sécurisé</Text>
               </View>
             </View>
@@ -165,13 +166,13 @@ export function PaymentScreenFigma({
                     >
                       <View style={styles.methodCardContent}>
                         <View style={styles.methodIconContainer}>
-                          <Icon size={24} color="#F5F5F5" />
+                          <Icon size={24} color={colors.textPrimary} />
                         </View>
                         <View style={styles.methodInfo}>
                           <Text style={styles.methodNameSelected}>{method.name}</Text>
                           <Text style={styles.methodDescriptionSelected}>{method.description}</Text>
                         </View>
-                        <CheckCircle size={24} color="#F5F5F5" />
+                        <CheckCircle size={24} color={colors.textPrimary} />
                       </View>
                     </LinearGradient>
                   ) : (
@@ -182,7 +183,7 @@ export function PaymentScreenFigma({
                         end={{ x: 1, y: 0 }}
                         style={styles.methodIconContainer}
                       >
-                        <Icon size={24} color="#F5F5F5" />
+                        <Icon size={24} color={colors.textPrimary} />
                       </LinearGradient>
                       <View style={styles.methodInfo}>
                         <Text style={styles.methodName}>{method.name}</Text>
@@ -215,7 +216,7 @@ export function PaymentScreenFigma({
         {/* Security Info */}
         <AnimatedView entering={FadeIn.delay(300)} style={styles.securitySection}>
           <View style={styles.securityCard}>
-            <Shield size={20} color="#10B981" />
+            <Shield size={20} color={colors.success} />
             <View style={styles.securityText}>
               <Text style={styles.securityTitle}>
                 <Text style={styles.securityTitleBold}>Paiement 100% sécurisé</Text>
@@ -234,7 +235,7 @@ export function PaymentScreenFigma({
         <PrimaryButton onPress={handlePayment} disabled={!selectedMethod || !phoneNumber || processing} fullWidth>
           {processing ? (
             <View style={styles.processingContent}>
-              <ActivityIndicator size="small" color="#F5F5F5" />
+              <ActivityIndicator size="small" color={colors.textPrimary} />
               <Text style={styles.processingText}>Traitement en cours...</Text>
             </View>
           ) : (
@@ -249,30 +250,30 @@ export function PaymentScreenFigma({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
   },
   header: {
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(64, 64, 64, 0.5)',
-    paddingTop: 48,
-    paddingBottom: 16,
-    paddingHorizontal: 24,
+    borderBottomColor: 'rgba(64, 64, 64, 0.5)', // colors.border with opacity
+    paddingTop: spacing.xxl,
+    paddingBottom: spacing.md,
+    paddingHorizontal: spacing.lg,
   },
   headerContent: {
-    gap: 16,
+    gap: spacing.md,
   },
   headerTop: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
+    gap: spacing.md,
   },
   backButton: {
-    padding: 8,
-    borderRadius: 12,
-    backgroundColor: '#111111',
+    padding: spacing.sm,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   backButtonDisabled: {
     opacity: 0.5,
@@ -283,36 +284,36 @@ const styles = StyleSheet.create({
   headerTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: spacing.sm,
   },
   headerTitle: {
-    color: '#F5F5F5',
-    fontSize: 28,
-    fontWeight: '700',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.displayXl - 4, // 28px (between headingLg and displayXl)
+    fontFamily: typography.fontFamily.poppins.bold,
   },
   scrollContent: {
-    padding: 24,
-    paddingBottom: 80,
-    gap: 24,
+    padding: spacing.lg,
+    paddingBottom: spacing.xxl + spacing.xl, // 80px
+    gap: spacing.lg,
   },
   orderSection: {
-    gap: 12,
+    gap: spacing.md,
   },
   orderCard: {
-    padding: 16,
-    borderRadius: 16,
-    backgroundColor: '#111111',
+    padding: spacing.md,
+    borderRadius: radii.lg,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   orderTitle: {
-    color: '#F5F5F5',
-    fontSize: 18,
-    fontWeight: '700',
-    marginBottom: 12,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd,
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.md,
   },
   orderContent: {
-    gap: 12,
+    gap: spacing.md,
   },
   orderRow: {
     flexDirection: 'row',
@@ -320,20 +321,20 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   orderLabel: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   orderValue: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   orderDivider: {
     height: 1,
-    backgroundColor: '#404040',
-    marginTop: 8,
-    marginBottom: 8,
+    backgroundColor: colors.border,
+    marginTop: spacing.sm,
+    marginBottom: spacing.sm,
   },
   orderTotalRow: {
     flexDirection: 'row',
@@ -341,33 +342,33 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   orderTotalLabel: {
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontWeight: '600',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.poppins.semibold,
   },
   orderTotalValue: {
-    color: '#F5F5F5',
-    fontSize: 20,
-    fontWeight: '700',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd + 2, // 20px
+    fontFamily: typography.fontFamily.poppins.bold,
   },
   methodsSection: {
-    gap: 12,
+    gap: spacing.md,
   },
   sectionTitle: {
-    color: '#F5F5F5',
-    fontSize: 18,
-    fontWeight: '700',
-    marginBottom: 12,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd,
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.md,
   },
   methodsList: {
-    gap: 12,
+    gap: spacing.md,
   },
   methodCard: {
-    padding: 16,
-    borderRadius: 16,
+    padding: spacing.md,
+    borderRadius: radii.lg,
     borderWidth: 2,
-    borderColor: '#404040',
-    backgroundColor: '#111111',
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
     overflow: 'hidden',
   },
   methodCardSelected: {
@@ -377,109 +378,109 @@ const styles = StyleSheet.create({
     opacity: 0.5,
   },
   methodCardGradient: {
-    padding: 16,
+    padding: spacing.md,
   },
   methodCardContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
+    gap: spacing.md,
   },
   methodIconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
+    width: 48, // w-12 (specific size)
+    height: 48, // h-12
+    borderRadius: radii.md,
     alignItems: 'center',
     justifyContent: 'center',
   },
   methodInfo: {
     flex: 1,
-    gap: 4,
+    gap: spacing.xs,
   },
   methodName: {
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 4,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.xs,
   },
   methodDescription: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   methodNameSelected: {
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontWeight: '700',
-    marginBottom: 4,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.xs,
   },
   methodDescriptionSelected: {
-    color: 'rgba(245, 245, 245, 0.8)',
-    fontSize: 14,
-    fontWeight: '400',
+    color: 'rgba(245, 245, 245, 0.8)', // colors.textPrimary with opacity
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   phoneSection: {
-    gap: 12,
+    gap: spacing.md,
   },
   phoneInput: {
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
   phoneHint: {
-    color: '#737373',
-    fontSize: 12,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   securitySection: {
-    gap: 12,
+    gap: spacing.md,
   },
   securityCard: {
     flexDirection: 'row',
-    gap: 12,
-    padding: 16,
-    borderRadius: 16,
-    backgroundColor: 'rgba(16, 185, 129, 0.1)',
+    gap: spacing.md,
+    padding: spacing.md,
+    borderRadius: radii.lg,
+    backgroundColor: 'rgba(16, 185, 129, 0.1)', // colors.success with opacity
     borderWidth: 1,
-    borderColor: 'rgba(16, 185, 129, 0.3)',
+    borderColor: 'rgba(16, 185, 129, 0.3)', // colors.success with opacity
   },
   securityText: {
     flex: 1,
-    gap: 4,
+    gap: spacing.xs,
   },
   securityTitle: {
-    color: '#10B981',
-    fontSize: 14,
-    fontWeight: '400',
-    marginBottom: 4,
+    color: colors.success,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
+    marginBottom: spacing.xs,
   },
   securityTitleBold: {
-    fontWeight: '700',
+    fontFamily: typography.fontFamily.poppins.bold,
   },
   securityDescription: {
-    color: '#10B981',
-    fontSize: 12,
-    fontWeight: '400',
+    color: colors.success,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.regular,
     lineHeight: 18,
   },
   bottomCTA: {
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(64, 64, 64, 0.5)',
-    padding: 24,
-    paddingBottom: 32,
+    borderTopColor: 'rgba(64, 64, 64, 0.5)', // colors.border with opacity
+    padding: spacing.lg,
+    paddingBottom: spacing.xl,
   },
   processingContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
+    gap: spacing.sm,
   },
   processingText: {
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontWeight: '600',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.poppins.semibold,
   },
   payButtonText: {
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontWeight: '600',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.poppins.semibold,
   },
 });

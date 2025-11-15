@@ -5,7 +5,6 @@ import { OTPVerificationScreen } from './OTPVerificationScreen';
 const meta: Meta<typeof OTPVerificationScreen> = {
   title: 'Screens/Auth/OTPVerificationScreen',
   component: OTPVerificationScreen,
-  decorators: [Story => <Story />],
   parameters: {
     layout: 'fullscreen',
   },

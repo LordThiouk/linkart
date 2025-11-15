@@ -5,6 +5,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowLeft, Heart, ShoppingCart, MessageCircle, UserPlus, Sparkles, CheckCheck } from 'lucide-react-native';
 import { ImageWithFallback } from '../../components/atoms/ImageWithFallback';
+import { colors, spacing, typography, radii } from '@/theme';
+import { hexToRgba } from '@/theme/helpers';
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -136,30 +138,30 @@ export function NotificationsScreenFigma({ onBack }: NotificationsScreenFigmaPro
   const getIcon = (type: Notification['type']) => {
     switch (type) {
       case 'like':
-        return <Heart size={20} color="#EC4899" />;
+        return <Heart size={20} color={colors.accent} />;
       case 'purchase':
-        return <ShoppingCart size={20} color="#F59E0B" />;
+        return <ShoppingCart size={20} color={colors.secondary} />;
       case 'comment':
-        return <MessageCircle size={20} color="#06B6D4" />;
+        return <MessageCircle size={20} color={colors.cyan} />;
       case 'follow':
-        return <UserPlus size={20} color="#6366F1" />;
+        return <UserPlus size={20} color={colors.primary} />;
       case 'system':
-        return <Sparkles size={20} color="#8B5CF6" />;
+        return <Sparkles size={20} color={colors.primaryDark} />;
     }
   };
 
   const getIconBg = (type: Notification['type']) => {
     switch (type) {
       case 'like':
-        return ['rgba(236, 72, 153, 0.2)', 'rgba(236, 72, 153, 0.1)'];
+        return [hexToRgba(colors.accent, 0.2), hexToRgba(colors.accent, 0.1)];
       case 'purchase':
-        return ['rgba(245, 158, 11, 0.2)', 'rgba(245, 158, 11, 0.1)'];
+        return [hexToRgba(colors.secondary, 0.2), hexToRgba(colors.secondary, 0.1)];
       case 'comment':
-        return ['rgba(6, 182, 212, 0.2)', 'rgba(6, 182, 212, 0.1)'];
+        return [hexToRgba(colors.cyan, 0.2), hexToRgba(colors.cyan, 0.1)];
       case 'follow':
-        return ['rgba(99, 102, 241, 0.2)', 'rgba(99, 102, 241, 0.1)'];
+        return [hexToRgba(colors.primary, 0.2), hexToRgba(colors.primary, 0.1)];
       case 'system':
-        return ['rgba(139, 92, 246, 0.2)', 'rgba(139, 92, 246, 0.1)'];
+        return [hexToRgba(colors.primaryDark, 0.2), hexToRgba(colors.primaryDark, 0.1)];
     }
   };
 
@@ -172,7 +174,7 @@ export function NotificationsScreenFigma({ onBack }: NotificationsScreenFigmaPro
             <View style={styles.headerLeft}>
               {onBack && (
                 <TouchableOpacity onPress={onBack} style={styles.backButton} activeOpacity={0.8}>
-                  <ArrowLeft size={24} color="#D4D4D4" />
+                  <ArrowLeft size={24} color={colors.textSecondary} />
                 </TouchableOpacity>
               )}
               <View style={styles.headerText}>
@@ -186,7 +188,7 @@ export function NotificationsScreenFigma({ onBack }: NotificationsScreenFigmaPro
             </View>
             {unreadCount > 0 && (
               <TouchableOpacity onPress={markAllAsRead} style={styles.markAllButton} activeOpacity={0.8}>
-                <CheckCheck size={20} color="#6366F1" />
+                <CheckCheck size={20} color={colors.primary} />
                 <Text style={styles.markAllText}>Tout lire</Text>
               </TouchableOpacity>
             )}
@@ -201,7 +203,7 @@ export function NotificationsScreenFigma({ onBack }: NotificationsScreenFigmaPro
             >
               {filter === 'all' ? (
                 <LinearGradient
-                  colors={['#6366F1', '#8B5CF6']}
+                  colors={[colors.primary, colors.primaryDark]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.filterButtonGradient}
@@ -219,7 +221,7 @@ export function NotificationsScreenFigma({ onBack }: NotificationsScreenFigmaPro
             >
               {filter === 'unread' ? (
                 <LinearGradient
-                  colors={['#6366F1', '#8B5CF6']}
+                  colors={[colors.primary, colors.primaryDark]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.filterButtonGradient}
@@ -251,7 +253,7 @@ export function NotificationsScreenFigma({ onBack }: NotificationsScreenFigmaPro
         {filteredNotifications.length === 0 ? (
           <View style={styles.emptyState}>
             <View style={styles.emptyIcon}>
-              <CheckCheck size={40} color="#A3A3A3" />
+              <CheckCheck size={40} color={colors.textMuted} />
             </View>
             <Text style={styles.emptyTitle}>Tout est lu !</Text>
             <Text style={styles.emptySubtitle}>
@@ -307,7 +309,7 @@ export function NotificationsScreenFigma({ onBack }: NotificationsScreenFigmaPro
                       </Text>
                       {!notification.read && (
                         <LinearGradient
-                          colors={['#6366F1', '#8B5CF6']}
+                          colors={[colors.primary, colors.primaryDark]}
                           start={{ x: 0, y: 0 }}
                           end={{ x: 1, y: 1 }}
                           style={styles.unreadDot}
@@ -342,75 +344,75 @@ export function NotificationsScreenFigma({ onBack }: NotificationsScreenFigmaPro
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
   },
   header: {
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(64, 64, 64, 0.5)',
-    paddingTop: 48,
-    paddingBottom: 16,
-    paddingHorizontal: 24,
+    borderBottomColor: hexToRgba(colors.border, 0.5),
+    paddingTop: spacing.xxl + spacing.lg, // 48px
+    paddingBottom: spacing.md,
+    paddingHorizontal: spacing.lg,
   },
   headerContent: {
-    gap: 16,
+    gap: spacing.md,
   },
   headerTop: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 16,
+    marginBottom: spacing.md,
   },
   headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
+    gap: spacing.md,
     flex: 1,
   },
   backButton: {
-    padding: 8,
-    borderRadius: 12,
-    backgroundColor: '#111111',
+    padding: spacing.sm,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   headerText: {
     flex: 1,
-    gap: 4,
+    gap: spacing.xs,
   },
   headerTitle: {
-    color: '#F5F5F5',
-    fontSize: 28,
-    fontWeight: '700',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.headingLg + 4, // 28px
+    fontFamily: typography.fontFamily.poppins.bold,
   },
   headerSubtitle: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   markAllButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    padding: 8,
-    borderRadius: 12,
+    gap: spacing.sm,
+    padding: spacing.sm,
+    borderRadius: radii.md,
   },
   markAllText: {
-    color: '#6366F1',
-    fontSize: 14,
-    fontWeight: '600',
+    color: colors.primary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   filters: {
     flexDirection: 'row',
-    gap: 8,
+    gap: spacing.sm,
   },
   filterButton: {
-    paddingHorizontal: 16,
-    paddingVertical: 8,
-    borderRadius: 12,
-    backgroundColor: '#111111',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
     overflow: 'hidden',
   },
   filterButtonSelected: {
@@ -420,65 +422,65 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 8,
+    gap: spacing.sm,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
   },
   filterButtonContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: spacing.sm,
   },
   filterButtonText: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   filterButtonTextSelected: {
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontWeight: '600',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   unreadBadge: {
-    paddingHorizontal: 8,
+    paddingHorizontal: spacing.sm,
     paddingVertical: 2,
-    borderRadius: 12,
-    backgroundColor: '#EC4899',
+    borderRadius: radii.md,
+    backgroundColor: colors.accent,
   },
   unreadBadgeUnselected: {
-    paddingHorizontal: 8,
+    paddingHorizontal: spacing.sm,
     paddingVertical: 2,
-    borderRadius: 12,
-    backgroundColor: '#EC4899',
+    borderRadius: radii.md,
+    backgroundColor: colors.accent,
   },
   unreadBadgeText: {
-    color: '#F5F5F5',
+    color: colors.textPrimary,
     fontSize: 11,
-    fontWeight: '600',
+    fontFamily: typography.fontFamily.inter.medium,
   },
   scrollContent: {
-    paddingBottom: 80,
+    paddingBottom: spacing.xxl + spacing.xl, // 80px
   },
   notificationsList: {
-    padding: 16,
-    gap: 8,
+    padding: spacing.md,
+    gap: spacing.sm,
   },
   notificationCard: {
-    padding: 16,
-    borderRadius: 16,
+    padding: spacing.md,
+    borderRadius: radii.lg,
     borderWidth: 1,
   },
   notificationCardRead: {
-    backgroundColor: '#111111',
-    borderColor: '#404040',
+    backgroundColor: colors.surface,
+    borderColor: colors.border,
   },
   notificationCardUnread: {
-    backgroundColor: '#1A1A1A',
-    borderColor: 'rgba(99, 102, 241, 0.3)',
+    backgroundColor: colors.surfaceElevated,
+    borderColor: hexToRgba(colors.primary, 0.3),
   },
   notificationContent: {
     flexDirection: 'row',
-    gap: 12,
+    gap: spacing.md - spacing.xs, // 12px
   },
   notificationAvatarContainer: {
     position: 'relative',
@@ -492,13 +494,13 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: -2,
     right: -2,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    width: spacing.lg,
+    height: spacing.lg,
+    borderRadius: spacing.lg / 2, // 12px (half of width/height for perfect circle)
     alignItems: 'center',
     justifyContent: 'center',
     borderWidth: 2,
-    borderColor: '#0A0A0A',
+    borderColor: colors.background,
   },
   notificationIconContainer: {
     width: 48,
@@ -509,88 +511,88 @@ const styles = StyleSheet.create({
   },
   notificationInfo: {
     flex: 1,
-    gap: 8,
+    gap: spacing.sm,
   },
   notificationHeader: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    gap: 8,
-    marginBottom: 4,
+    gap: spacing.sm,
+    marginBottom: spacing.xs,
   },
   notificationMessage: {
     flex: 1,
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   notificationUserName: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontWeight: '600',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   notificationMessageText: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   unreadDot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    marginTop: 4,
+    width: spacing.sm,
+    height: spacing.sm,
+    borderRadius: spacing.sm / 2, // 4px (half of width/height for perfect circle)
+    marginTop: spacing.xs,
   },
   notificationBeatTitle: {
-    color: '#6366F1',
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 4,
+    color: colors.primary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
+    marginBottom: spacing.xs,
   },
   notificationFooter: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: spacing.sm,
   },
   notificationTime: {
-    color: '#A3A3A3',
-    fontSize: 12,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   notificationSeparator: {
-    color: '#404040',
-    fontSize: 12,
+    color: colors.border,
+    fontSize: typography.fontSize.caption,
   },
   notificationAmount: {
-    color: '#F59E0B',
-    fontSize: 12,
-    fontWeight: '600',
+    color: colors.secondary,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   emptyState: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 64,
-    paddingHorizontal: 24,
+    paddingVertical: spacing.xxl * 2 + spacing.xl, // 64px
+    paddingHorizontal: spacing.lg,
   },
   emptyIcon: {
     width: 80,
     height: 80,
     borderRadius: 40,
-    backgroundColor: '#111111',
+    backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
+    marginBottom: spacing.md,
   },
   emptyTitle: {
-    color: '#F5F5F5',
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 8,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.headingLg - 4, // 20px
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.sm,
   },
   emptySubtitle: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
     textAlign: 'center',
     maxWidth: 300,
   },

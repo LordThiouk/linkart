@@ -12,6 +12,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { CheckCircle, Download, FileText, Home, Package } from 'lucide-react-native';
 import { PrimaryButton } from '../../components/atoms/PrimaryButton';
+import { colors, spacing, typography, radii } from '@/theme';
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -34,12 +35,16 @@ export function PaymentSuccessScreenFigma({
   licenseType,
   amount,
 }: PaymentSuccessScreenFigmaProps) {
+  // Détecter si on est dans Storybook (navigateur)
+  const isStorybook = typeof window !== 'undefined' && window.location?.pathname?.includes('/iframe.html');
+
   const pulse1 = useSharedValue(1);
   const pulse2 = useSharedValue(1);
-  const opacity1 = useSharedValue(0.6);
-  const opacity2 = useSharedValue(0.6);
+  const opacity1 = useSharedValue(isStorybook ? 0.3 : 0.6);
+  const opacity2 = useSharedValue(isStorybook ? 0.3 : 0.6);
 
   useEffect(() => {
+    // Dans Storybook, on peut garder les animations de pulse mais avec des valeurs initiales différentes
     pulse1.value = withRepeat(withTiming(1.5, { duration: 2000 }), -1, false);
     opacity1.value = withRepeat(withTiming(0, { duration: 2000 }), -1, false);
     pulse2.value = withRepeat(withTiming(1.5, { duration: 2000 }), -1, false);
@@ -63,12 +68,12 @@ export function PaymentSuccessScreenFigma({
         <AnimatedView entering={FadeIn.delay(200)} style={styles.iconContainer}>
           <View style={styles.iconWrapper}>
             <LinearGradient
-              colors={['#10B981', '#059669']}
+              colors={[colors.success, '#059669']}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.iconGradient}
             >
-              <CheckCircle size={64} color="#F5F5F5" />
+              <CheckCircle size={64} color={colors.textPrimary} />
             </LinearGradient>
             {/* Pulse rings */}
             <AnimatedView style={[styles.pulseRing, pulseStyle1]} />
@@ -94,7 +99,7 @@ export function PaymentSuccessScreenFigma({
               <View style={styles.detailRow}>
                 <Text style={styles.detailLabel}>Licence</Text>
                 <LinearGradient
-                  colors={['#6366F1', '#8B5CF6']}
+                  colors={[colors.primary, colors.primaryDark]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.licenseBadge}
@@ -123,12 +128,12 @@ export function PaymentSuccessScreenFigma({
           <View style={styles.stepsList}>
             <View style={styles.stepCard}>
               <LinearGradient
-                colors={['#6366F1', '#8B5CF6']}
+                colors={[colors.primary, colors.primaryDark]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.stepIcon}
               >
-                <FileText size={16} color="#F5F5F5" />
+                <FileText size={16} color={colors.textPrimary} />
               </LinearGradient>
               <View style={styles.stepContent}>
                 <Text style={styles.stepTitle}>Contrat de licence disponible</Text>
@@ -138,12 +143,12 @@ export function PaymentSuccessScreenFigma({
 
             <View style={styles.stepCard}>
               <LinearGradient
-                colors={['#10B981', '#059669']}
+                colors={[colors.success, '#059669']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.stepIcon}
               >
-                <Download size={16} color="#F5F5F5" />
+                <Download size={16} color={colors.textPrimary} />
               </LinearGradient>
               <View style={styles.stepContent}>
                 <Text style={styles.stepTitle}>Fichiers prêts au téléchargement</Text>
@@ -157,18 +162,18 @@ export function PaymentSuccessScreenFigma({
         <AnimatedView entering={FadeInDown.delay(1000)} style={styles.actionsSection}>
           <PrimaryButton onPress={onDownload} fullWidth>
             <View style={styles.actionButtonContent}>
-              <Download size={20} color="#F5F5F5" />
+              <Download size={20} color={colors.textPrimary} />
               <Text style={styles.actionButtonText}>Télécharger maintenant</Text>
             </View>
           </PrimaryButton>
 
           <TouchableOpacity onPress={onViewPurchases} style={styles.secondaryButton} activeOpacity={0.8}>
-            <Package size={20} color="#F5F5F5" />
+            <Package size={20} color={colors.textPrimary} />
             <Text style={styles.secondaryButtonText}>Voir mes achats</Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={onGoHome} style={styles.tertiaryButton} activeOpacity={0.8}>
-            <Home size={20} color="#A3A3A3" />
+            <Home size={20} color={colors.textMuted} />
             <Text style={styles.tertiaryButtonText}>Retour à l'accueil</Text>
           </TouchableOpacity>
         </AnimatedView>
@@ -180,17 +185,17 @@ export function PaymentSuccessScreenFigma({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
   },
   scrollContent: {
     flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 24,
-    paddingBottom: 80,
+    padding: spacing.lg,
+    paddingBottom: spacing.xxl + spacing.xl, // 80px
   },
   iconContainer: {
-    marginBottom: 24,
+    marginBottom: spacing.lg,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -204,7 +209,7 @@ const styles = StyleSheet.create({
   iconGradient: {
     width: 128,
     height: 128,
-    borderRadius: 64,
+    borderRadius: 64, // Half of width/height for perfect circle
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -212,40 +217,40 @@ const styles = StyleSheet.create({
     position: 'absolute',
     width: 128,
     height: 128,
-    borderRadius: 64,
-    backgroundColor: '#10B981',
+    borderRadius: 64, // Half of width/height for perfect circle
+    backgroundColor: colors.success,
     opacity: 0.6,
   },
   messageSection: {
     alignItems: 'center',
-    marginBottom: 32,
-    gap: 8,
+    marginBottom: spacing.xl,
+    gap: spacing.sm,
   },
   messageTitle: {
-    color: '#F5F5F5',
-    fontSize: 32,
-    fontWeight: '700',
-    marginBottom: 8,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.displayXl, // 32px
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.sm,
   },
   messageSubtitle: {
-    color: '#A3A3A3',
-    fontSize: 16,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   detailsSection: {
     width: '100%',
     maxWidth: 400,
-    marginBottom: 32,
+    marginBottom: spacing.xl,
   },
   detailsCard: {
-    padding: 24,
-    borderRadius: 16,
-    backgroundColor: '#111111',
+    padding: spacing.lg,
+    borderRadius: radii.lg,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   detailsContent: {
-    gap: 16,
+    gap: spacing.md,
   },
   detailRow: {
     flexDirection: 'row',
@@ -253,140 +258,139 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   detailLabel: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   detailValue: {
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
     textAlign: 'right',
     flex: 1,
-    marginLeft: 16,
+    marginLeft: spacing.md,
   },
   detailValuePrice: {
-    color: '#10B981',
-    fontSize: 16,
-    fontWeight: '700',
+    color: colors.success,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.poppins.bold,
   },
   licenseBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radii.sm,
   },
   licenseBadgeText: {
-    color: '#F5F5F5',
-    fontSize: 12,
-    fontWeight: '700',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.poppins.bold,
     letterSpacing: 1,
   },
   detailDivider: {
     height: 1,
-    backgroundColor: '#404040',
-    marginTop: 12,
-    marginBottom: 12,
+    backgroundColor: colors.border,
+    marginTop: spacing.md - spacing.xs, // 12px
+    marginBottom: spacing.md - spacing.xs, // 12px
   },
   detailValueId: {
-    color: '#737373',
-    fontSize: 12,
-    fontWeight: '400',
-    fontFamily: 'monospace',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.caption,
+    fontFamily: 'monospace', // Monospace pour les IDs de transaction
   },
   stepsSection: {
     width: '100%',
     maxWidth: 400,
-    marginBottom: 32,
-    gap: 12,
+    marginBottom: spacing.xl,
+    gap: spacing.md - spacing.xs, // 12px
   },
   stepsTitle: {
-    color: '#F5F5F5',
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 12,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.headingLg - 4, // 20px
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.md - spacing.xs, // 12px
     textAlign: 'center',
   },
   stepsList: {
-    gap: 12,
+    gap: spacing.md - spacing.xs, // 12px
   },
   stepCard: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 12,
-    padding: 12,
-    borderRadius: 12,
-    backgroundColor: '#111111',
+    gap: spacing.md - spacing.xs, // 12px
+    padding: spacing.md - spacing.xs, // 12px
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   stepIcon: {
-    width: 32,
-    height: 32,
-    borderRadius: 8,
+    width: spacing.xl,
+    height: spacing.xl,
+    borderRadius: radii.sm,
     alignItems: 'center',
     justifyContent: 'center',
   },
   stepContent: {
     flex: 1,
-    gap: 4,
+    gap: spacing.xs,
   },
   stepTitle: {
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 4,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
+    marginBottom: spacing.xs,
   },
   stepDescription: {
-    color: '#737373',
-    fontSize: 12,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   actionsSection: {
     width: '100%',
     maxWidth: 400,
-    gap: 12,
+    gap: spacing.md - spacing.xs, // 12px
   },
   actionButtonContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
+    gap: spacing.sm,
   },
   actionButtonText: {
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontWeight: '600',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   secondaryButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    borderRadius: 12,
-    backgroundColor: '#111111',
+    gap: spacing.sm,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   secondaryButtonText: {
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontWeight: '400',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   tertiaryButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
-    paddingVertical: 16,
-    paddingHorizontal: 24,
-    borderRadius: 12,
-    backgroundColor: 'transparent',
+    gap: spacing.sm,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.lg,
+    borderRadius: radii.md,
+    backgroundColor: colors.transparent,
   },
   tertiaryButtonText: {
-    color: '#A3A3A3',
-    fontSize: 16,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.inter.regular,
   },
 });

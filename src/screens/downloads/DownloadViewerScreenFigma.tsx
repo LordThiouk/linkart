@@ -6,6 +6,8 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowLeft, Download, CheckCircle, Folder, FileAudio, File, AlertCircle } from 'lucide-react-native';
 import { ImageWithFallback } from '../../components/atoms/ImageWithFallback';
 import { PrimaryButton } from '../../components/atoms/PrimaryButton';
+import { colors, spacing, typography, radii } from '@/theme';
+import { hexToRgba } from '@/theme/helpers';
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -69,7 +71,7 @@ export function DownloadViewerScreenFigma({ onBack, purchaseId }: DownloadViewer
           <View style={styles.headerTop}>
             {onBack && (
               <TouchableOpacity onPress={onBack} style={styles.backButton} activeOpacity={0.8}>
-                <ArrowLeft size={20} color="#D4D4D4" />
+                <ArrowLeft size={20} color={colors.textSecondary} />
               </TouchableOpacity>
             )}
             <View style={styles.headerText}>
@@ -91,7 +93,7 @@ export function DownloadViewerScreenFigma({ onBack, purchaseId }: DownloadViewer
                 <Text style={styles.productTitle}>{downloadData.title}</Text>
                 <Text style={styles.productArtist}>{downloadData.artist}</Text>
                 <LinearGradient
-                  colors={['#6366F1', '#8B5CF6']}
+                  colors={[colors.primary, colors.primaryDark]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.licenseBadge}
@@ -106,7 +108,7 @@ export function DownloadViewerScreenFigma({ onBack, purchaseId }: DownloadViewer
         {/* Important Notice */}
         <AnimatedView entering={FadeIn.delay(100)} style={styles.noticeSection}>
           <View style={styles.noticeCard}>
-            <AlertCircle size={20} color="#EC4899" />
+            <AlertCircle size={20} color={colors.accent} />
             <View style={styles.noticeText}>
               <Text style={styles.noticeTitle}>⚠️ Important</Text>
               <Text style={styles.noticeMessage}>
@@ -120,7 +122,7 @@ export function DownloadViewerScreenFigma({ onBack, purchaseId }: DownloadViewer
         <AnimatedView entering={FadeIn.delay(200)} style={styles.downloadAllSection}>
           <PrimaryButton onPress={handleDownloadAll} disabled={downloading !== null} fullWidth>
             <View style={styles.downloadAllButtonContent}>
-              <Download size={20} color="#F5F5F5" />
+              <Download size={20} color={colors.textPrimary} />
               <Text style={styles.downloadAllButtonText}>
                 {downloading === 'all' ? 'Téléchargement...' : 'Tout télécharger'}
               </Text>
@@ -154,16 +156,16 @@ export function DownloadViewerScreenFigma({ onBack, purchaseId }: DownloadViewer
                       <LinearGradient
                         colors={
                           file.type === 'audio'
-                            ? ['#6366F1', '#8B5CF6']
+                            ? [colors.primary, colors.primaryDark]
                             : file.type === 'archive'
-                              ? ['#EC4899', '#F59E0B']
-                              : ['#06B6D4', '#8B5CF6']
+                              ? [colors.accent, colors.secondary]
+                              : [colors.cyan, colors.primaryDark]
                         }
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 1 }}
                         style={styles.fileIconGradient}
                       >
-                        <Icon size={24} color="#F5F5F5" />
+                        <Icon size={24} color={colors.textPrimary} />
                       </LinearGradient>
                     </View>
 
@@ -184,7 +186,7 @@ export function DownloadViewerScreenFigma({ onBack, purchaseId }: DownloadViewer
                     {/* Download Button */}
                     {isDownloaded ? (
                       <View style={styles.downloadedBadge}>
-                        <CheckCircle size={20} color="#06B6D4" fill="#06B6D4" />
+                        <CheckCircle size={20} color={colors.cyan} fill={colors.cyan} />
                         <Text style={styles.downloadedText}>Téléchargé</Text>
                       </View>
                     ) : (
@@ -195,15 +197,15 @@ export function DownloadViewerScreenFigma({ onBack, purchaseId }: DownloadViewer
                         activeOpacity={0.8}
                       >
                         {isDownloading ? (
-                          <ActivityIndicator size="small" color="#F5F5F5" />
+                          <ActivityIndicator size="small" color={colors.textPrimary} />
                         ) : (
                           <LinearGradient
-                            colors={['#6366F1', '#8B5CF6']}
+                            colors={[colors.primary, colors.primaryDark]}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 1 }}
                             style={styles.downloadButtonGradient}
                           >
-                            <Download size={20} color="#F5F5F5" />
+                            <Download size={20} color={colors.textPrimary} />
                           </LinearGradient>
                         )}
                       </TouchableOpacity>
@@ -234,7 +236,7 @@ export function DownloadViewerScreenFigma({ onBack, purchaseId }: DownloadViewer
                 ]}
               >
                 <LinearGradient
-                  colors={['#6366F1', '#8B5CF6']}
+                  colors={[colors.primary, colors.primaryDark]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.progressBarGradient}
@@ -251,170 +253,170 @@ export function DownloadViewerScreenFigma({ onBack, purchaseId }: DownloadViewer
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
   },
   header: {
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(64, 64, 64, 0.5)',
-    paddingTop: 48,
-    paddingBottom: 16,
-    paddingHorizontal: 24,
+    borderBottomColor: hexToRgba(colors.border, 0.5),
+    paddingTop: spacing.xxl + spacing.lg, // 48px
+    paddingBottom: spacing.md,
+    paddingHorizontal: spacing.lg,
   },
   headerContent: {
-    gap: 16,
+    gap: spacing.md,
   },
   headerTop: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
+    gap: spacing.md,
   },
   backButton: {
-    padding: 8,
-    borderRadius: 12,
-    backgroundColor: '#111111',
+    padding: spacing.sm,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   headerText: {
     flex: 1,
-    gap: 4,
+    gap: spacing.xs,
   },
   headerTitle: {
-    color: '#F5F5F5',
-    fontSize: 28,
-    fontWeight: '700',
-    marginBottom: 4,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.headingLg + 4, // 28px
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.xs,
   },
   headerSubtitle: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   scrollContent: {
-    paddingBottom: 80,
+    paddingBottom: spacing.xxl + spacing.xl, // 80px
   },
   productInfoSection: {
-    padding: 24,
-    paddingBottom: 16,
+    padding: spacing.lg,
+    paddingBottom: spacing.md,
   },
   productInfoCard: {
-    padding: 16,
-    borderRadius: 16,
-    backgroundColor: '#111111',
+    padding: spacing.md,
+    borderRadius: radii.lg,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   productInfoContent: {
     flexDirection: 'row',
-    gap: 16,
+    gap: spacing.md,
   },
   productImage: {
     width: 80,
     height: 80,
-    borderRadius: 12,
+    borderRadius: radii.md,
   },
   productInfoText: {
     flex: 1,
-    gap: 8,
+    gap: spacing.sm,
   },
   productTitle: {
-    color: '#F5F5F5',
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 4,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.headingLg - 4, // 20px
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.xs,
   },
   productArtist: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
-    marginBottom: 8,
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
+    marginBottom: spacing.sm,
   },
   licenseBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radii.sm,
     alignSelf: 'flex-start',
   },
   licenseBadgeText: {
-    color: '#F5F5F5',
-    fontSize: 12,
-    fontWeight: '600',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   noticeSection: {
-    paddingHorizontal: 24,
-    paddingVertical: 8,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
   },
   noticeCard: {
     flexDirection: 'row',
-    gap: 12,
-    padding: 16,
-    borderRadius: 12,
-    backgroundColor: 'rgba(236, 72, 153, 0.1)',
+    gap: spacing.md - spacing.xs, // 12px
+    padding: spacing.md,
+    borderRadius: radii.md,
+    backgroundColor: hexToRgba(colors.accent, 0.1),
     borderWidth: 1,
-    borderColor: 'rgba(236, 72, 153, 0.3)',
+    borderColor: hexToRgba(colors.accent, 0.3),
   },
   noticeText: {
     flex: 1,
-    gap: 4,
+    gap: spacing.xs,
   },
   noticeTitle: {
-    color: '#EC4899',
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 4,
+    color: colors.accent,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
+    marginBottom: spacing.xs,
   },
   noticeMessage: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   downloadAllSection: {
-    paddingHorizontal: 24,
-    paddingVertical: 16,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
   },
   downloadAllButtonContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
+    gap: spacing.sm,
   },
   downloadAllButtonText: {
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontWeight: '600',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   filesSection: {
-    padding: 24,
-    paddingTop: 16,
-    gap: 16,
+    padding: spacing.lg,
+    paddingTop: spacing.md,
+    gap: spacing.md,
   },
   sectionTitle: {
-    color: '#F5F5F5',
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 16,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.headingLg - 4, // 20px
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.md,
   },
   filesList: {
-    gap: 12,
+    gap: spacing.md - spacing.xs, // 12px
   },
   fileCard: {
-    borderRadius: 12,
-    backgroundColor: '#111111',
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
     overflow: 'hidden',
   },
   fileCardContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
-    padding: 16,
+    gap: spacing.md,
+    padding: spacing.md,
   },
   fileIconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
+    width: spacing.xxl * 2, // 48px
+    height: spacing.xxl * 2, // 48px
+    borderRadius: radii.md,
     overflow: 'hidden',
   },
   fileIconAudio: {
@@ -434,53 +436,53 @@ const styles = StyleSheet.create({
   },
   fileInfo: {
     flex: 1,
-    gap: 8,
+    gap: spacing.sm,
   },
   fileName: {
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontWeight: '600',
-    marginBottom: 4,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
+    marginBottom: spacing.xs,
   },
   fileMeta: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: spacing.sm,
   },
   fileSize: {
-    color: '#A3A3A3',
-    fontSize: 12,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   fileMetaSeparator: {
-    color: '#404040',
-    fontSize: 12,
+    color: colors.border,
+    fontSize: typography.fontSize.caption,
   },
   fileFormatBadge: {
-    paddingHorizontal: 8,
+    paddingHorizontal: spacing.sm,
     paddingVertical: 2,
-    borderRadius: 4,
-    backgroundColor: '#1A1A1A',
+    borderRadius: spacing.xs,
+    backgroundColor: colors.surfaceElevated,
   },
   fileFormatText: {
-    color: '#6366F1',
-    fontSize: 12,
-    fontWeight: '600',
+    color: colors.primary,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   downloadedBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
+    gap: spacing.sm,
   },
   downloadedText: {
-    color: '#06B6D4',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.cyan,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   downloadButton: {
     width: 44,
     height: 44,
-    borderRadius: 12,
+    borderRadius: radii.md,
     overflow: 'hidden',
   },
   downloadButtonDisabled: {
@@ -493,36 +495,36 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   statsSection: {
-    padding: 24,
-    paddingTop: 16,
+    padding: spacing.lg,
+    paddingTop: spacing.md,
   },
   statsCard: {
-    padding: 16,
-    borderRadius: 12,
-    backgroundColor: '#111111',
+    padding: spacing.md,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   statsHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 8,
+    marginBottom: spacing.sm,
   },
   statsLabel: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   statsValue: {
-    color: '#6366F1',
-    fontSize: 14,
-    fontWeight: '600',
+    color: colors.primary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   progressBarContainer: {
-    height: 8,
-    backgroundColor: '#1A1A1A',
-    borderRadius: 4,
+    height: spacing.sm,
+    backgroundColor: colors.surfaceElevated,
+    borderRadius: spacing.xs,
     overflow: 'hidden',
   },
   progressBar: {

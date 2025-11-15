@@ -16,6 +16,7 @@ import {
 import { Pill } from '../components/atoms/Pill';
 import { ProductCardFigma } from '../components/atoms/ProductCardFigma';
 import { ServiceCardFigma } from '../components/molecules/ServiceCardFigma';
+import { colors, spacing, typography, radii } from '@/theme';
 
 interface MarketplaceScreenFigmaProps {
   onProductClick?: (productId: string) => void;
@@ -187,7 +188,7 @@ export function MarketplaceScreenFigma({ onProductClick, onServiceClick, onSearc
 
         <View style={styles.headerRight}>
           <TouchableOpacity onPress={onSearch} style={styles.headerButton} activeOpacity={0.8}>
-            <Search size={20} color="#D4D4D4" />
+            <Search size={20} color={colors.textSecondary} />
           </TouchableOpacity>
 
           <TouchableOpacity
@@ -197,15 +198,15 @@ export function MarketplaceScreenFigma({ onProductClick, onServiceClick, onSearc
           >
             {showFilters ? (
               <LinearGradient
-                colors={['#6366F1', '#8B5CF6']}
+                colors={[colors.primary, colors.primaryDark]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.filterButtonGradient}
               >
-                <SlidersHorizontal size={20} color="#F5F5F5" />
+                <SlidersHorizontal size={20} color={colors.textPrimary} />
               </LinearGradient>
             ) : (
-              <SlidersHorizontal size={20} color="#D4D4D4" />
+              <SlidersHorizontal size={20} color={colors.textSecondary} />
             )}
           </TouchableOpacity>
         </View>
@@ -220,7 +221,7 @@ export function MarketplaceScreenFigma({ onProductClick, onServiceClick, onSearc
         >
           {selectedTab === 'products' ? (
             <LinearGradient
-              colors={['#6366F1', '#8B5CF6']}
+              colors={[colors.primary, colors.primaryDark]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.tabGradient}
@@ -239,7 +240,7 @@ export function MarketplaceScreenFigma({ onProductClick, onServiceClick, onSearc
         >
           {selectedTab === 'services' ? (
             <LinearGradient
-              colors={['#6366F1', '#8B5CF6']}
+              colors={[colors.primary, colors.primaryDark]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 0 }}
               style={styles.tabGradient}
@@ -279,7 +280,7 @@ export function MarketplaceScreenFigma({ onProductClick, onServiceClick, onSearc
                     >
                       {selectedGenre === genre ? (
                         <LinearGradient
-                          colors={['#6366F1', '#8B5CF6']}
+                          colors={[colors.primary, colors.primaryDark]}
                           start={{ x: 0, y: 0 }}
                           end={{ x: 1, y: 0 }}
                           style={styles.filterChipGradient}
@@ -313,7 +314,7 @@ export function MarketplaceScreenFigma({ onProductClick, onServiceClick, onSearc
                     >
                       {selectedServiceCategory === category ? (
                         <LinearGradient
-                          colors={['#6366F1', '#8B5CF6']}
+                          colors={[colors.primary, colors.primaryDark]}
                           start={{ x: 0, y: 0 }}
                           end={{ x: 1, y: 0 }}
                           style={styles.filterChipGradient}
@@ -342,7 +343,7 @@ export function MarketplaceScreenFigma({ onProductClick, onServiceClick, onSearc
                   >
                     {selectedLocation === location ? (
                       <LinearGradient
-                        colors={['#6366F1', '#8B5CF6']}
+                        colors={[colors.primary, colors.primaryDark]}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 0 }}
                         style={styles.filterChipGradient}
@@ -382,7 +383,7 @@ export function MarketplaceScreenFigma({ onProductClick, onServiceClick, onSearc
                   >
                     {minRating === rating ? (
                       <LinearGradient
-                        colors={['#6366F1', '#8B5CF6']}
+                        colors={[colors.primary, colors.primaryDark]}
                         start={{ x: 0, y: 0 }}
                         end={{ x: 1, y: 0 }}
                         style={styles.ratingFilterGradient}
@@ -475,7 +476,7 @@ export function MarketplaceScreenFigma({ onProductClick, onServiceClick, onSearc
         ) : (
           <View style={styles.emptyState}>
             <View style={styles.emptyIcon}>
-              <Search size={32} color="#404040" />
+              <Search size={32} color={colors.border} />
             </View>
             <Text style={styles.emptyTitle}>Aucun produit trouvé</Text>
             <Text style={styles.emptySubtitle}>Essayez de modifier vos filtres</Text>
@@ -490,7 +491,7 @@ export function MarketplaceScreenFigma({ onProductClick, onServiceClick, onSearc
       {/* Featured Services Banner */}
       <View style={styles.servicesBanner}>
         <LinearGradient
-          colors={['#06B6D4', '#8B5CF6']}
+          colors={[colors.cyan, colors.primaryDark]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.servicesBannerGradient}
@@ -511,12 +512,12 @@ export function MarketplaceScreenFigma({ onProductClick, onServiceClick, onSearc
       <View style={styles.servicesSection}>
         <View style={styles.sectionHeaderLeft}>
           <LinearGradient
-            colors={['#F59E0B', '#EC4899']}
+            colors={[colors.secondary, colors.accent]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.sectionIcon}
           >
-            <TrendingUp size={20} color="#F5F5F5" />
+            <TrendingUp size={20} color={colors.textPrimary} />
           </LinearGradient>
           <Text style={styles.sectionTitle}>Services populaires</Text>
         </View>
@@ -534,10 +535,10 @@ export function MarketplaceScreenFigma({ onProductClick, onServiceClick, onSearc
         <Text style={styles.sectionTitle}>Catégories</Text>
         <View style={styles.categoriesGrid}>
           {[
-            { icon: Mic, label: 'Recording', colors: ['#EC4899', '#F59E0B'] },
-            { icon: Headphones, label: 'Mixing', colors: ['#06B6D4', '#6366F1'] },
-            { icon: Radio, label: 'Mastering', colors: ['#8B5CF6', '#EC4899'] },
-            { icon: Music, label: 'Production', colors: ['#F59E0B', '#06B6D4'] },
+            { icon: Mic, label: 'Recording', colors: [colors.accent, colors.secondary] },
+            { icon: Headphones, label: 'Mixing', colors: [colors.cyan, colors.primary] },
+            { icon: Radio, label: 'Mastering', colors: [colors.primaryDark, colors.accent] },
+            { icon: Music, label: 'Production', colors: [colors.secondary, colors.cyan] },
           ].map((cat, index) => {
             const Icon = cat.icon;
             return (
@@ -548,7 +549,7 @@ export function MarketplaceScreenFigma({ onProductClick, onServiceClick, onSearc
                   end={{ x: 1, y: 1 }}
                   style={styles.categoryIcon}
                 >
-                  <Icon size={24} color="#F5F5F5" />
+                  <Icon size={24} color={colors.textPrimary} />
                 </LinearGradient>
                 <Text style={styles.categoryLabel}>{cat.label}</Text>
               </TouchableOpacity>
@@ -577,47 +578,47 @@ export function MarketplaceScreenFigma({ onProductClick, onServiceClick, onSearc
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
   },
   header: {
-    backgroundColor: 'rgba(10, 10, 10, 0.95)',
+    backgroundColor: 'rgba(10, 10, 10, 0.95)', // colors.background with opacity
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(64, 64, 64, 0.5)',
-    paddingTop: 48, // pt-12
-    paddingBottom: 16, // pb-4
+    borderBottomColor: 'rgba(64, 64, 64, 0.5)', // colors.border with opacity
+    paddingTop: spacing.xxl,
+    paddingBottom: spacing.md,
   },
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 24, // px-6
-    marginBottom: 24, // mb-6
+    paddingHorizontal: spacing.lg,
+    marginBottom: spacing.lg,
   },
   headerLeft: {
     flex: 1,
   },
   headerTitle: {
-    color: '#F5F5F5',
-    fontSize: 24,
-    fontFamily: 'Poppins_700Bold',
-    marginBottom: 4,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.headingLg,
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.xs,
   },
   headerSubtitle: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   headerRight: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12, // gap-3
+    gap: spacing.md,
   },
   headerButton: {
-    padding: 12, // p-3
-    borderRadius: 12, // rounded-xl
-    backgroundColor: '#111111',
+    padding: spacing.md,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -628,25 +629,25 @@ const styles = StyleSheet.create({
   filterButtonGradient: {
     width: '100%',
     height: '100%',
-    borderRadius: 12,
+    borderRadius: radii.md,
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 12,
+    padding: spacing.md,
   },
   tabSelector: {
     flexDirection: 'row',
-    gap: 8, // gap-2
-    paddingHorizontal: 24, // px-6
-    marginBottom: 16, // mb-4
+    gap: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    marginBottom: spacing.md,
   },
   tab: {
     flex: 1,
-    paddingVertical: 12, // py-3
-    paddingHorizontal: 16, // px-4
-    borderRadius: 12, // rounded-xl
-    backgroundColor: '#111111',
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.md,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
     overflow: 'hidden',
   },
   tabActive: {
@@ -660,55 +661,55 @@ const styles = StyleSheet.create({
     bottom: 0,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    paddingVertical: spacing.md,
+    paddingHorizontal: spacing.md,
   },
   tabText: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_500Medium',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
     textAlign: 'center',
   },
   tabTextActive: {
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontFamily: 'Inter_500Medium',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
     textAlign: 'center',
   },
   filtersPanel: {
-    backgroundColor: '#111111',
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(64, 64, 64, 0.5)',
+    borderBottomColor: 'rgba(64, 64, 64, 0.5)', // colors.border with opacity
     maxHeight: 400,
   },
   filtersScroll: {
     flex: 1,
   },
   filtersContent: {
-    paddingHorizontal: 24, // px-6
-    paddingVertical: 16, // py-4
-    gap: 16, // space-y-4
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    gap: spacing.md,
   },
   filterSection: {
-    marginBottom: 16,
+    marginBottom: spacing.md,
   },
   filterLabel: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontFamily: 'Inter_500Medium',
-    marginBottom: 8,
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
+    marginBottom: spacing.sm,
   },
   filterChips: {
-    gap: 8, // gap-2
-    paddingBottom: 8,
+    gap: spacing.sm,
+    paddingBottom: spacing.sm,
   },
   filterChip: {
-    paddingHorizontal: 12, // px-3
-    paddingVertical: 6, // py-1.5
-    borderRadius: 8, // rounded-lg
-    backgroundColor: '#1A1A1A',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs + 2, // 6px (between xs and sm)
+    borderRadius: radii.sm,
+    backgroundColor: colors.surfaceElevated,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
     overflow: 'hidden',
   },
   filterChipActive: {
@@ -720,43 +721,43 @@ const styles = StyleSheet.create({
     right: 0,
     top: 0,
     bottom: 0,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs + 2, // 6px
     alignItems: 'center',
     justifyContent: 'center',
   },
   filterChipText: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   filterChipTextActive: {
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontFamily: 'Inter_500Medium',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   priceRangeContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    marginTop: 8,
+    marginTop: spacing.sm,
   },
   priceRangeText: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   ratingFilterContainer: {
     flexDirection: 'row',
-    gap: 8, // gap-2
+    gap: spacing.sm,
     flexWrap: 'wrap',
   },
   ratingFilterChip: {
-    paddingHorizontal: 12, // px-3
-    paddingVertical: 6, // py-1.5
-    borderRadius: 8, // rounded-lg
-    backgroundColor: '#1A1A1A',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs + 2, // 6px (between xs and sm)
+    borderRadius: radii.sm,
+    backgroundColor: colors.surfaceElevated,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
     overflow: 'hidden',
   },
   ratingFilterChipActive: {
@@ -768,76 +769,76 @@ const styles = StyleSheet.create({
     right: 0,
     top: 0,
     bottom: 0,
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs + 2, // 6px
     alignItems: 'center',
     justifyContent: 'center',
   },
   ratingFilterText: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   ratingFilterTextActive: {
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontFamily: 'Inter_500Medium',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   resetButton: {
     width: '100%',
-    paddingVertical: 8, // py-2
-    borderRadius: 8, // rounded-lg
-    backgroundColor: '#1A1A1A',
+    paddingVertical: spacing.sm,
+    borderRadius: radii.sm,
+    backgroundColor: colors.surfaceElevated,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 8,
+    marginTop: spacing.sm,
   },
   resetButtonText: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 80, // pb-20
+    paddingBottom: spacing.xxl + spacing.xl, // pb-20 (80px)
   },
   categoriesContainer: {
-    paddingHorizontal: 24, // px-6
-    paddingVertical: 16, // py-4
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
   },
   categoriesScroll: {
-    gap: 8, // gap-2
-    paddingBottom: 8,
+    gap: spacing.sm,
+    paddingBottom: spacing.sm,
   },
   statsBar: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 24, // px-6
-    paddingVertical: 8, // py-2
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.sm,
   },
   statsText: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   sortLink: {
-    color: '#6366F1',
-    fontSize: 14,
-    fontFamily: 'Inter_500Medium',
+    color: colors.primary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   productsContainer: {
-    paddingHorizontal: 24, // px-6
-    paddingVertical: 16, // py-4
-    paddingBottom: 32, // pb-8
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    paddingBottom: spacing.xl,
   },
   productsGrid: {
-    gap: 16, // gap-4
+    gap: spacing.md,
   },
   productsRow: {
-    gap: 16, // gap-4
+    gap: spacing.md,
   },
   productCard: {
     flex: 1,
@@ -845,39 +846,39 @@ const styles = StyleSheet.create({
   },
   emptyState: {
     alignItems: 'center',
-    paddingVertical: 48, // py-12
+    paddingVertical: spacing.xxl,
   },
   emptyIcon: {
-    width: 64, // w-16
+    width: 64, // w-16 (specific size)
     height: 64, // h-16
-    borderRadius: 32,
-    backgroundColor: '#111111',
+    borderRadius: radii.full, // 32 = width/2 (circle)
+    backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16, // mb-4
+    marginBottom: spacing.md,
   },
   emptyTitle: {
-    color: '#F5F5F5',
-    fontSize: 18,
-    fontFamily: 'Poppins_600SemiBold',
-    marginBottom: 8,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd,
+    fontFamily: typography.fontFamily.poppins.semibold,
+    marginBottom: spacing.sm,
   },
   emptySubtitle: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   servicesBanner: {
-    height: 160, // h-40
-    borderRadius: 24, // rounded-2xl
+    height: 160, // h-40 (specific height)
+    borderRadius: radii.xxl,
     overflow: 'hidden',
-    marginHorizontal: 24, // px-6
-    marginVertical: 16, // py-4
+    marginHorizontal: spacing.lg,
+    marginVertical: spacing.md,
     position: 'relative',
   },
   servicesBannerGradient: {
     flex: 1,
-    padding: 24, // p-6
+    padding: spacing.lg,
     justifyContent: 'space-between',
   },
   servicesBannerContent: {
@@ -885,109 +886,109 @@ const styles = StyleSheet.create({
   },
   servicesBannerBadge: {
     alignSelf: 'flex-start',
-    paddingHorizontal: 12, // px-3
-    paddingVertical: 4, // py-1
-    borderRadius: 999,
-    backgroundColor: 'rgba(245, 245, 245, 0.2)',
-    marginBottom: 12, // mb-3
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    borderRadius: radii.full,
+    backgroundColor: 'rgba(245, 245, 245, 0.2)', // colors.textPrimary with opacity
+    marginBottom: spacing.md,
   },
   servicesBannerBadgeText: {
-    color: '#F5F5F5',
-    fontSize: 10,
-    fontFamily: 'Inter_500Medium',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.medium,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   servicesBannerTitle: {
-    color: '#F5F5F5',
-    fontSize: 20,
-    fontFamily: 'Poppins_600SemiBold',
-    marginBottom: 8,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd + 2, // 20px
+    fontFamily: typography.fontFamily.poppins.semibold,
+    marginBottom: spacing.sm,
   },
   servicesBannerSubtitle: {
-    color: 'rgba(245, 245, 245, 0.8)',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: 'rgba(245, 245, 245, 0.8)', // colors.textPrimary with opacity
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   servicesBannerGlow1: {
     position: 'absolute',
     top: 0,
     right: 0,
-    width: 128, // w-32
+    width: 128, // w-32 (specific size)
     height: 128, // h-32
-    borderRadius: 64,
-    backgroundColor: 'rgba(245, 245, 245, 0.1)',
+    borderRadius: radii.full, // 64 = width/2 (circle)
+    backgroundColor: 'rgba(245, 245, 245, 0.1)', // colors.textPrimary with opacity
     opacity: 0.3,
   },
   servicesBannerGlow2: {
     position: 'absolute',
     bottom: 0,
     left: '33%',
-    width: 96, // w-24
+    width: 96, // w-24 (specific size)
     height: 96, // h-24
-    borderRadius: 48,
-    backgroundColor: 'rgba(139, 92, 246, 0.2)',
+    borderRadius: radii.full, // 48 = width/2 (circle)
+    backgroundColor: 'rgba(139, 92, 246, 0.2)', // colors.primaryDark with opacity
     opacity: 0.3,
   },
   servicesSection: {
-    paddingHorizontal: 24, // px-6
-    paddingVertical: 16, // py-4
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
   },
   sectionHeaderLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8, // gap-2
-    marginBottom: 16, // mb-4
+    gap: spacing.sm,
+    marginBottom: spacing.md,
   },
   sectionIcon: {
-    padding: 8, // p-2
-    borderRadius: 8, // rounded-lg
+    padding: spacing.sm,
+    borderRadius: radii.sm,
     alignItems: 'center',
     justifyContent: 'center',
   },
   sectionTitle: {
-    color: '#F5F5F5',
-    fontSize: 18,
-    fontFamily: 'Poppins_600SemiBold',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd,
+    fontFamily: typography.fontFamily.poppins.semibold,
   },
   servicesList: {
-    gap: 16, // space-y-4
+    gap: spacing.md,
   },
   serviceCard: {
-    marginBottom: 16,
+    marginBottom: spacing.md,
   },
   categoriesGridSection: {
-    paddingHorizontal: 24, // px-6
-    paddingVertical: 16, // py-4
-    paddingBottom: 32, // pb-8
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    paddingBottom: spacing.xl,
   },
   categoriesGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12, // gap-3
-    marginTop: 16, // mb-4
+    gap: spacing.md,
+    marginTop: spacing.md,
   },
   categoryCard: {
     width: '48%',
-    padding: 24, // p-6
-    borderRadius: 24, // rounded-2xl
-    backgroundColor: '#111111',
+    padding: spacing.lg,
+    borderRadius: radii.xxl,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
   categoryIcon: {
-    width: 48, // w-12
+    width: 48, // w-12 (specific size)
     height: 48, // h-12
-    borderRadius: 12, // rounded-xl
+    borderRadius: radii.md,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 12, // mb-3
+    marginBottom: spacing.md,
   },
   categoryLabel: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
 });

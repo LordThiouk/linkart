@@ -6,6 +6,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowLeft, Search, SlidersHorizontal, X } from 'lucide-react-native';
 import { CategoryChipFigma } from '../../components/atoms/CategoryChipFigma';
 import { BeatCardFigma } from '../../components/atoms/BeatCardFigma';
+import { colors, spacing, typography, radii } from '@/theme';
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -72,17 +73,17 @@ export function SearchFiltersScreenFigma({ onBack, onBeatClick }: SearchFiltersS
           <View style={styles.headerTop}>
             {onBack && (
               <TouchableOpacity onPress={onBack} style={styles.backButton} activeOpacity={0.8}>
-                <ArrowLeft size={24} color="#D4D4D4" />
+                <ArrowLeft size={24} color={colors.textSecondary} />
               </TouchableOpacity>
             )}
 
             <View style={styles.searchContainer}>
-              <Search size={20} color="#A3A3A3" style={styles.searchIcon} />
+              <Search size={20} color={colors.textMuted} style={styles.searchIcon} />
               <TextInput
                 value={searchQuery}
                 onChangeText={setSearchQuery}
                 placeholder="Rechercher un beat, artiste..."
-                placeholderTextColor="#A3A3A3"
+                placeholderTextColor={colors.textMuted}
                 style={styles.searchInput}
                 autoFocus
               />
@@ -95,12 +96,12 @@ export function SearchFiltersScreenFigma({ onBack, onBeatClick }: SearchFiltersS
             >
               {showFilters || activeFiltersCount > 0 ? (
                 <LinearGradient
-                  colors={['#6366F1', '#8B5CF6']}
+                  colors={[colors.primary, colors.primaryDark]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.filterButtonGradient}
                 >
-                  <SlidersHorizontal size={20} color="#F5F5F5" />
+                  <SlidersHorizontal size={20} color={colors.textPrimary} />
                   {activeFiltersCount > 0 && (
                     <View style={styles.filterBadge}>
                       <Text style={styles.filterBadgeText}>{activeFiltersCount}</Text>
@@ -109,7 +110,7 @@ export function SearchFiltersScreenFigma({ onBack, onBeatClick }: SearchFiltersS
                 </LinearGradient>
               ) : (
                 <View style={styles.filterButtonContent}>
-                  <SlidersHorizontal size={20} color="#F5F5F5" />
+                  <SlidersHorizontal size={20} color={colors.textPrimary} />
                 </View>
               )}
             </TouchableOpacity>
@@ -191,7 +192,7 @@ export function SearchFiltersScreenFigma({ onBack, onBeatClick }: SearchFiltersS
             {/* Clear All */}
             {activeFiltersCount > 0 && (
               <TouchableOpacity onPress={clearFilters} style={styles.clearButton} activeOpacity={0.8}>
-                <X size={16} color="#D4D4D4" />
+                <X size={16} color={colors.textSecondary} />
                 <Text style={styles.clearButtonText}>Réinitialiser tous les filtres</Text>
               </TouchableOpacity>
             )}
@@ -232,7 +233,7 @@ export function SearchFiltersScreenFigma({ onBack, onBeatClick }: SearchFiltersS
         {!searchQuery && (
           <View style={styles.emptyState}>
             <View style={styles.emptyIcon}>
-              <Search size={40} color="#A3A3A3" />
+              <Search size={40} color={colors.textMuted} />
             </View>
             <Text style={styles.emptyTitle}>Commencez votre recherche</Text>
             <Text style={styles.emptySubtitle}>
@@ -248,31 +249,31 @@ export function SearchFiltersScreenFigma({ onBack, onBeatClick }: SearchFiltersS
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
   },
   header: {
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(64, 64, 64, 0.5)',
-    paddingTop: 48,
-    paddingBottom: 16,
-    paddingHorizontal: 24,
+    borderBottomColor: `rgba(${parseInt(colors.border.slice(1, 3), 16)}, ${parseInt(colors.border.slice(3, 5), 16)}, ${parseInt(colors.border.slice(5, 7), 16)}, 0.5)`,
+    paddingTop: spacing.xxl, // pt-12
+    paddingBottom: spacing.md, // pb-4
+    paddingHorizontal: spacing.lg, // px-6
   },
   headerContent: {
-    gap: 16,
+    gap: spacing.md, // gap-4
   },
   headerTop: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    marginBottom: 16,
+    gap: spacing.md - spacing.xs, // gap-3 (12px)
+    marginBottom: spacing.md, // mb-4
   },
   backButton: {
-    padding: 8,
-    borderRadius: 12,
-    backgroundColor: '#111111',
+    padding: spacing.sm, // p-2
+    borderRadius: radii.md, // rounded-xl
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   searchContainer: {
     flex: 1,
@@ -282,29 +283,29 @@ const styles = StyleSheet.create({
   },
   searchIcon: {
     position: 'absolute',
-    left: 16,
+    left: spacing.md, // left-4
     zIndex: 1,
   },
   searchInput: {
     flex: 1,
-    paddingLeft: 48,
-    paddingRight: 16,
-    paddingVertical: 12,
-    borderRadius: 16,
-    backgroundColor: '#111111',
+    paddingLeft: spacing.xxl + spacing.md, // pl-12 (48px)
+    paddingRight: spacing.md, // pr-4
+    paddingVertical: spacing.md - spacing.xs, // py-3 (12px)
+    borderRadius: radii.xl, // rounded-2xl
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontWeight: '400',
+    borderColor: colors.border,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   filterButton: {
-    width: 44,
+    width: 44, // Fixed size for button
     height: 44,
-    borderRadius: 12,
-    backgroundColor: '#111111',
+    borderRadius: radii.md, // rounded-xl
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
     overflow: 'hidden',
@@ -329,84 +330,84 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: -2,
     right: -2,
-    width: 20,
-    height: 20,
-    borderRadius: 10,
-    backgroundColor: '#EC4899',
+    width: spacing.md + spacing.xs, // w-5 (20px)
+    height: spacing.md + spacing.xs, // h-5 (20px)
+    borderRadius: (spacing.md + spacing.xs) / 2, // rounded-full (10px)
+    backgroundColor: colors.accent,
     alignItems: 'center',
     justifyContent: 'center',
   },
   filterBadgeText: {
-    color: '#F5F5F5',
-    fontSize: 10,
-    fontWeight: '600',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.caption, // 10px would be 12px with caption, but keeping close
+    fontFamily: typography.fontFamily.poppins.semibold,
   },
   filtersPanel: {
-    backgroundColor: '#111111',
+    backgroundColor: colors.surface,
     borderBottomWidth: 1,
-    borderBottomColor: '#404040',
-    maxHeight: 400,
+    borderBottomColor: colors.border,
+    maxHeight: spacing.xxl * 8 + spacing.md, // max-h-100 (400px)
   },
   filtersContent: {
-    padding: 24,
-    gap: 24,
+    padding: spacing.lg, // p-6
+    gap: spacing.lg, // gap-6
   },
   filterSection: {
-    gap: 12,
+    gap: spacing.md - spacing.xs, // gap-3 (12px)
   },
   filterHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 12,
+    marginBottom: spacing.md - spacing.xs, // mb-3 (12px)
   },
   filterLabel: {
-    color: '#D4D4D4',
-    fontSize: 16,
-    fontWeight: '600',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.poppins.semibold,
   },
   filterClear: {
-    color: '#6366F1',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.primary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   filterChips: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 8,
+    gap: spacing.sm, // gap-2
   },
   clearButton: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 12,
-    backgroundColor: '#1A1A1A',
-    marginTop: 8,
+    gap: spacing.sm, // gap-2
+    paddingVertical: spacing.md - spacing.xs, // py-3 (12px)
+    paddingHorizontal: spacing.md, // px-4
+    borderRadius: radii.md, // rounded-xl
+    backgroundColor: colors.surfaceElevated,
+    marginTop: spacing.sm, // mt-2
   },
   clearButtonText: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   resultsContent: {
-    padding: 24,
-    paddingBottom: 96,
+    padding: spacing.lg, // p-6
+    paddingBottom: spacing.xxl * 2, // pb-24 (96px)
   },
   resultsHeader: {
-    marginBottom: 16,
+    marginBottom: spacing.md, // mb-4
   },
   resultsCount: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   resultsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 16,
+    gap: spacing.md, // gap-4
     justifyContent: 'space-between',
   },
   beatCard: {
@@ -416,29 +417,29 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 64,
-    paddingHorizontal: 24,
+    paddingVertical: spacing.xl * 2, // py-16 (64px)
+    paddingHorizontal: spacing.lg, // px-6
   },
   emptyIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: '#111111',
+    width: spacing.xl * 2.5, // w-20 (80px)
+    height: spacing.xl * 2.5, // h-20 (80px)
+    borderRadius: radii.full, // rounded-full
+    backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
+    marginBottom: spacing.md, // mb-4
   },
   emptyTitle: {
-    color: '#F5F5F5',
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 8,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.headingLg - spacing.xs, // 20px (close to headingLg 24px)
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.sm, // mb-2
   },
   emptySubtitle: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
     textAlign: 'center',
-    maxWidth: 300,
+    maxWidth: 300, // Specific max width for text readability
   },
 });

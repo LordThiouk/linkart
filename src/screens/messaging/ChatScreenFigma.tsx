@@ -5,6 +5,8 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowLeft, Send, AlertCircle } from 'lucide-react-native';
 import { ImageWithFallback } from '../../components/atoms/ImageWithFallback';
+import { colors, spacing, typography, radii } from '@/theme';
+import { hexToRgba } from '@/theme/helpers';
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -119,7 +121,7 @@ export function ChatScreenFigma({
           <View style={styles.headerTop}>
             {onBack && (
               <TouchableOpacity onPress={onBack} style={styles.backButton} activeOpacity={0.8}>
-                <ArrowLeft size={20} color="#D4D4D4" />
+                <ArrowLeft size={20} color={colors.textSecondary} />
               </TouchableOpacity>
             )}
 
@@ -136,7 +138,7 @@ export function ChatScreenFigma({
       {/* Info Banner */}
       <View style={styles.infoBanner}>
         <View style={styles.infoBannerContent}>
-          <AlertCircle size={16} color="#06B6D4" />
+          <AlertCircle size={16} color={colors.cyan} />
           <Text style={styles.infoBannerText}>
             Cette conversation est privée et limitée à ce service. Restez respectueux.
           </Text>
@@ -152,7 +154,7 @@ export function ChatScreenFigma({
       >
         {loading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#6366F1" />
+            <ActivityIndicator size="large" color={colors.primary} />
           </View>
         ) : messages.length === 0 ? (
           <View style={styles.emptyContainer}>
@@ -172,7 +174,7 @@ export function ChatScreenFigma({
                 <View style={[styles.messageBubble, isOwn ? styles.messageBubbleOwn : styles.messageBubbleOther]}>
                   {isOwn ? (
                     <LinearGradient
-                      colors={['#6366F1', '#8B5CF6']}
+                      colors={[colors.primary, colors.primaryDark]}
                       start={{ x: 0, y: 0 }}
                       end={{ x: 1, y: 1 }}
                       style={styles.messageGradient}
@@ -201,7 +203,7 @@ export function ChatScreenFigma({
             value={newMessage}
             onChangeText={setNewMessage}
             placeholder="Écrivez votre message..."
-            placeholderTextColor="#737373"
+            placeholderTextColor={colors.textMuted}
             style={styles.input}
             multiline
             maxLength={500}
@@ -214,15 +216,15 @@ export function ChatScreenFigma({
             activeOpacity={0.8}
           >
             {sending ? (
-              <ActivityIndicator size="small" color="#F5F5F5" />
+              <ActivityIndicator size="small" color={colors.textPrimary} />
             ) : (
               <LinearGradient
-                colors={['#6366F1', '#8B5CF6']}
+                colors={[colors.primary, colors.primaryDark]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.sendButtonGradient}
               >
-                <Send size={20} color="#F5F5F5" />
+                <Send size={20} color={colors.textPrimary} />
               </LinearGradient>
             )}
           </TouchableOpacity>
@@ -235,30 +237,30 @@ export function ChatScreenFigma({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
   },
   header: {
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(64, 64, 64, 0.5)',
-    paddingTop: 48,
-    paddingBottom: 16,
-    paddingHorizontal: 24,
+    borderBottomColor: hexToRgba(colors.border, 0.5),
+    paddingTop: spacing.xxl + spacing.lg, // 48px
+    paddingBottom: spacing.md,
+    paddingHorizontal: spacing.lg,
   },
   headerContent: {
-    gap: 16,
+    gap: spacing.md,
   },
   headerTop: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
+    gap: spacing.md,
   },
   backButton: {
-    padding: 8,
-    borderRadius: 12,
-    backgroundColor: '#111111',
+    padding: spacing.sm,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   userImage: {
     width: 40,
@@ -267,43 +269,43 @@ const styles = StyleSheet.create({
   },
   headerText: {
     flex: 1,
-    gap: 4,
+    gap: spacing.xs,
   },
   headerTitle: {
-    color: '#F5F5F5',
-    fontSize: 20,
-    fontWeight: '700',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.headingLg - 4, // 20px
+    fontFamily: typography.fontFamily.poppins.bold,
   },
   headerSubtitle: {
-    color: '#A3A3A3',
-    fontSize: 12,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   infoBanner: {
-    backgroundColor: 'rgba(6, 182, 212, 0.1)',
+    backgroundColor: hexToRgba(colors.cyan, 0.1),
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(6, 182, 212, 0.3)',
-    paddingHorizontal: 24,
-    paddingVertical: 12,
+    borderBottomColor: hexToRgba(colors.cyan, 0.3),
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md - spacing.xs, // 12px
   },
   infoBannerContent: {
     flexDirection: 'row',
-    gap: 8,
+    gap: spacing.sm,
     alignItems: 'flex-start',
   },
   infoBannerText: {
     flex: 1,
-    color: '#06B6D4',
-    fontSize: 12,
-    fontWeight: '400',
+    color: colors.cyan,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   messagesContainer: {
     flex: 1,
   },
   messagesContent: {
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    gap: 16,
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    gap: spacing.md,
   },
   loadingContainer: {
     flex: 1,
@@ -315,22 +317,22 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingVertical: 32,
+    paddingVertical: spacing.xl,
   },
   emptyText: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   emptySubtext: {
-    color: '#A3A3A3',
-    fontSize: 12,
-    fontWeight: '400',
-    marginTop: 4,
+    color: colors.textMuted,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.regular,
+    marginTop: spacing.xs,
   },
   messageWrapper: {
     maxWidth: '80%',
-    gap: 4,
+    gap: spacing.xs,
   },
   messageWrapperOwn: {
     alignSelf: 'flex-end',
@@ -339,77 +341,77 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
   },
   messageBubble: {
-    borderRadius: 16,
+    borderRadius: radii.lg,
     overflow: 'hidden',
   },
   messageBubbleOwn: {
     // Gradient handled by LinearGradient
   },
   messageBubbleOther: {
-    backgroundColor: '#111111',
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   messageGradient: {
-    padding: 12,
+    padding: spacing.md - spacing.xs, // 12px
   },
   messageBubbleOtherView: {
-    padding: 12,
+    padding: spacing.md - spacing.xs, // 12px
   },
   messageTextOwn: {
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   messageTextOther: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   messageTime: {
-    fontSize: 12,
-    fontWeight: '400',
-    paddingHorizontal: 4,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.regular,
+    paddingHorizontal: spacing.xs,
   },
   messageTimeOwn: {
-    color: '#737373',
+    color: colors.textMuted,
     textAlign: 'right',
   },
   messageTimeOther: {
-    color: '#737373',
+    color: colors.textMuted,
     textAlign: 'left',
   },
   inputContainer: {
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(64, 64, 64, 0.5)',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    paddingBottom: 32,
+    borderTopColor: hexToRgba(colors.border, 0.5),
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    paddingBottom: spacing.xl,
   },
   inputWrapper: {
     flexDirection: 'row',
     alignItems: 'flex-end',
-    gap: 12,
+    gap: spacing.md - spacing.xs, // 12px
   },
   input: {
     flex: 1,
     minHeight: 44,
     maxHeight: 120,
-    paddingHorizontal: 16,
-    paddingVertical: 12,
-    borderRadius: 12,
-    backgroundColor: '#111111',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md - spacing.xs, // 12px
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontWeight: '400',
+    borderColor: colors.border,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   sendButton: {
     width: 44,
     height: 44,
-    borderRadius: 12,
+    borderRadius: radii.md,
     overflow: 'hidden',
   },
   sendButtonDisabled: {

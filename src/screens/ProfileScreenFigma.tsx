@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, FlatList, ColorValue } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, FlatList, ColorValue, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import {
@@ -19,6 +19,7 @@ import {
 import { ImageWithFallback } from '../components/atoms/ImageWithFallback';
 import { PrimaryButton } from '../components/atoms/PrimaryButton';
 import { ProductCardFigma } from '../components/atoms/ProductCardFigma';
+import { colors, spacing, typography, radii } from '@/theme';
 
 interface ProfileScreenFigmaProps {
   onMyPurchases?: () => void;
@@ -61,14 +62,20 @@ const userBeats = [
 ];
 
 const stats = [
-  { icon: TrendingUp, label: 'Vues totales', value: '12.4K', colors: ['#6366F1', '#8B5CF6'] },
-  { icon: Music, label: 'Beats publiés', value: '24', colors: ['#EC4899', '#F59E0B'] },
-  { icon: Star, label: 'Note moyenne', value: '4.8', colors: ['#F59E0B', '#EC4899'] },
-  { icon: Award, label: 'Ventes', value: '47', colors: ['#06B6D4', '#8B5CF6'] },
+  { icon: TrendingUp, label: 'Vues totales', value: '12.4K', colors: [colors.primary, colors.primaryDark] },
+  { icon: Music, label: 'Beats publiés', value: '24', colors: [colors.accent, colors.secondary] },
+  { icon: Star, label: 'Note moyenne', value: '4.8', colors: [colors.secondary, colors.accent] },
+  { icon: Award, label: 'Ventes', value: '47', colors: [colors.cyan, colors.primaryDark] },
 ];
 
 export function ProfileScreenFigma({ onMyPurchases, onBoost, onFavorites, onBookings }: ProfileScreenFigmaProps = {}) {
   const [activeTab, setActiveTab] = useState<'beats' | 'services' | 'stats'>('beats');
+
+  // Calculate card width for 2 columns with gap
+  const screenWidth = Dimensions.get('window').width;
+  const horizontalPadding = spacing.xl * 2; // paddingHorizontal from quickActions
+  const gap = spacing.md;
+  const cardWidth = (screenWidth - horizontalPadding - gap) / 2;
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
@@ -77,12 +84,12 @@ export function ProfileScreenFigma({ onMyPurchases, onBoost, onFavorites, onBook
         <View style={styles.headerActions}>
           <TouchableOpacity style={styles.headerButton} activeOpacity={0.9}>
             <View style={styles.headerButtonInner}>
-              <Share2 size={20} color="#D4D4D4" />
+              <Share2 size={20} color={colors.textSecondary} />
             </View>
           </TouchableOpacity>
           <TouchableOpacity style={styles.headerButton} activeOpacity={0.9}>
             <View style={styles.headerButtonInner}>
-              <Settings size={20} color="#D4D4D4" />
+              <Settings size={20} color={colors.textSecondary} />
             </View>
           </TouchableOpacity>
         </View>
@@ -104,12 +111,12 @@ export function ProfileScreenFigma({ onMyPurchases, onBoost, onFavorites, onBook
               />
               <View style={styles.avatarBadge}>
                 <LinearGradient
-                  colors={['#F59E0B', '#EC4899']}
+                  colors={[colors.secondary, colors.accent]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 1 }}
                   style={styles.badgeGradient}
                 >
-                  <Award size={16} color="#F5F5F5" />
+                  <Award size={16} color={colors.textPrimary} />
                 </LinearGradient>
               </View>
             </View>
@@ -134,7 +141,7 @@ export function ProfileScreenFigma({ onMyPurchases, onBoost, onFavorites, onBook
 
           <View style={styles.editButtonContainer}>
             <PrimaryButton style={styles.editButton}>
-              <Edit size={20} color="#F5F5F5" />
+              <Edit size={20} color={colors.textPrimary} />
               <Text style={styles.editButtonText}>Modifier le profil</Text>
             </PrimaryButton>
           </View>
@@ -144,53 +151,69 @@ export function ProfileScreenFigma({ onMyPurchases, onBoost, onFavorites, onBook
         <View style={styles.quickActions}>
           <Text style={styles.sectionTitle}>Actions rapides</Text>
           <View style={styles.quickActionsGrid}>
-            <TouchableOpacity style={styles.quickActionCard} onPress={onMyPurchases} activeOpacity={0.9}>
+            <TouchableOpacity
+              style={[styles.quickActionCard, { width: cardWidth }]}
+              onPress={onMyPurchases}
+              activeOpacity={0.9}
+            >
               <LinearGradient
-                colors={['#6366F1', '#8B5CF6']}
+                colors={[colors.primary, colors.primaryDark]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.quickActionIcon}
               >
-                <Package size={20} color="#F5F5F5" />
+                <Package size={20} color={colors.textPrimary} />
               </LinearGradient>
               <Text style={styles.quickActionTitle}>Mes Achats</Text>
               <Text style={styles.quickActionSubtitle}>Licences & Téléchargements</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.quickActionCard} onPress={onFavorites} activeOpacity={0.9}>
+            <TouchableOpacity
+              style={[styles.quickActionCard, { width: cardWidth }]}
+              onPress={onFavorites}
+              activeOpacity={0.9}
+            >
               <LinearGradient
-                colors={['#EC4899', '#F59E0B']}
+                colors={[colors.accent, colors.secondary]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.quickActionIcon}
               >
-                <Heart size={20} color="#F5F5F5" fill="#F5F5F5" />
+                <Heart size={20} color={colors.textPrimary} fill={colors.textPrimary} />
               </LinearGradient>
               <Text style={styles.quickActionTitle}>Favoris</Text>
               <Text style={styles.quickActionSubtitle}>Beats sauvegardés</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.quickActionCard} onPress={onBoost} activeOpacity={0.9}>
+            <TouchableOpacity
+              style={[styles.quickActionCard, { width: cardWidth }]}
+              onPress={onBoost}
+              activeOpacity={0.9}
+            >
               <LinearGradient
-                colors={['#F59E0B', '#EAB308']}
+                colors={[colors.secondary, colors.warning]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.quickActionIcon}
               >
-                <Zap size={20} color="#F5F5F5" fill="#F5F5F5" />
+                <Zap size={20} color={colors.textPrimary} fill={colors.textPrimary} />
               </LinearGradient>
               <Text style={styles.quickActionTitle}>Booster</Text>
               <Text style={styles.quickActionSubtitle}>Augmenter la visibilité</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.quickActionCard} onPress={onBookings} activeOpacity={0.9}>
+            <TouchableOpacity
+              style={[styles.quickActionCard, { width: cardWidth }]}
+              onPress={onBookings}
+              activeOpacity={0.9}
+            >
               <LinearGradient
-                colors={['#06B6D4', '#8B5CF6']}
+                colors={[colors.cyan, colors.primaryDark]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.quickActionIcon}
               >
-                <Calendar size={20} color="#F5F5F5" />
+                <Calendar size={20} color={colors.textPrimary} />
               </LinearGradient>
               <Text style={styles.quickActionTitle}>Réservations</Text>
               <Text style={styles.quickActionSubtitle}>Services demandés</Text>
@@ -204,14 +227,14 @@ export function ProfileScreenFigma({ onMyPurchases, onBoost, onFavorites, onBook
             {stats.map((stat, index) => {
               const Icon = stat.icon;
               return (
-                <View key={stat.label} style={styles.statCard}>
+                <View key={stat.label} style={[styles.statCard, { width: cardWidth }]}>
                   <LinearGradient
                     colors={stat.colors as [ColorValue, ColorValue, ...ColorValue[]]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 1 }}
                     style={styles.statIcon}
                   >
-                    <Icon size={20} color="#F5F5F5" />
+                    <Icon size={20} color={colors.textPrimary} />
                   </LinearGradient>
                   <Text style={styles.statCardValue}>{stat.value}</Text>
                   <Text style={styles.statCardLabel}>{stat.label}</Text>
@@ -231,7 +254,7 @@ export function ProfileScreenFigma({ onMyPurchases, onBoost, onFavorites, onBook
             >
               {activeTab === 'beats' ? (
                 <LinearGradient
-                  colors={['#6366F1', '#8B5CF6']}
+                  colors={[colors.primary, colors.primaryDark]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.tabGradient}
@@ -249,7 +272,7 @@ export function ProfileScreenFigma({ onMyPurchases, onBoost, onFavorites, onBook
             >
               {activeTab === 'services' ? (
                 <LinearGradient
-                  colors={['#6366F1', '#8B5CF6']}
+                  colors={[colors.primary, colors.primaryDark]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.tabGradient}
@@ -267,7 +290,7 @@ export function ProfileScreenFigma({ onMyPurchases, onBoost, onFavorites, onBook
             >
               {activeTab === 'stats' ? (
                 <LinearGradient
-                  colors={['#6366F1', '#8B5CF6']}
+                  colors={[colors.primary, colors.primaryDark]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.tabGradient}
@@ -302,7 +325,7 @@ export function ProfileScreenFigma({ onMyPurchases, onBoost, onFavorites, onBook
           {activeTab === 'services' && (
             <View style={styles.emptyState}>
               <View style={styles.emptyIcon}>
-                <Headphones size={32} color="#A3A3A3" />
+                <Headphones size={32} color={colors.textMuted} />
               </View>
               <Text style={styles.emptyTitle}>Aucun service</Text>
               <Text style={styles.emptySubtitle}>Vous n'avez pas encore publié de service</Text>
@@ -349,26 +372,26 @@ export function ProfileScreenFigma({ onMyPurchases, onBoost, onFavorites, onBook
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
   },
   header: {
-    backgroundColor: 'rgba(10, 10, 10, 0.95)',
-    paddingTop: 48, // pt-12
-    paddingBottom: 16, // pb-4
+    backgroundColor: 'rgba(10, 10, 10, 0.95)', // Semi-transparent background for backdrop blur effect
+    paddingTop: spacing.xl + spacing.lg,
+    paddingBottom: spacing.lg,
   },
   headerActions: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'flex-end',
-    gap: 12, // gap-3
-    paddingHorizontal: 24, // px-6
+    gap: spacing.md,
+    paddingHorizontal: spacing.xl,
   },
   headerButton: {
-    padding: 12, // p-3
-    borderRadius: 12, // rounded-xl
-    backgroundColor: '#111111',
+    padding: spacing.md,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   headerButtonInner: {
     alignItems: 'center',
@@ -378,37 +401,37 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   scrollContent: {
-    paddingBottom: 80, // pb-20
+    paddingBottom: spacing.xl * 5,
   },
   profileSection: {
-    paddingHorizontal: 24, // px-6
-    paddingVertical: 16, // py-4
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.lg,
   },
   profileRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 16, // gap-4
-    marginBottom: 24, // mb-6
+    gap: spacing.lg,
+    marginBottom: spacing.xl + spacing.sm,
   },
   avatarContainer: {
     position: 'relative',
   },
   avatar: {
-    width: 96, // w-24
-    height: 96, // h-24
-    borderRadius: 24, // rounded-2xl
+    width: spacing.xl * 4,
+    height: spacing.xl * 4,
+    borderRadius: radii.xxl,
     borderWidth: 2,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   avatarBadge: {
     position: 'absolute',
-    bottom: -8, // -bottom-2
-    right: -8, // -right-2
-    width: 32, // w-8
-    height: 32, // h-8
-    borderRadius: 12, // rounded-xl
+    bottom: -spacing.sm,
+    right: -spacing.sm,
+    width: spacing.xl * 2,
+    height: spacing.xl * 2,
+    borderRadius: radii.md,
     borderWidth: 2,
-    borderColor: '#0A0A0A',
+    borderColor: colors.background,
     overflow: 'hidden',
   },
   badgeGradient: {
@@ -421,154 +444,154 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   profileName: {
-    color: '#F5F5F5',
-    fontSize: 24,
-    fontFamily: 'Poppins_700Bold',
-    marginBottom: 4,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.headingLg,
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.xs,
   },
   profileHandle: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
-    marginBottom: 12, // mb-3
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
+    marginBottom: spacing.md,
   },
   profileStats: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16, // gap-4
+    gap: spacing.lg,
   },
   statItem: {
     alignItems: 'flex-start',
   },
   statValue: {
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontFamily: 'Poppins_600SemiBold',
-    marginBottom: 2,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.poppins.semibold,
+    marginBottom: spacing.xs - 2,
   },
   statLabel: {
-    color: '#A3A3A3',
-    fontSize: 11,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.caption - 1,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   profileBio: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
-    marginBottom: 16, // mb-4
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
+    marginBottom: spacing.lg,
     lineHeight: 20,
   },
   editButtonContainer: {
     flexDirection: 'row',
-    gap: 12, // gap-3
+    gap: spacing.md,
   },
   editButton: {
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8, // gap-2
+    gap: spacing.sm,
   },
   editButtonText: {
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontFamily: 'Inter_500Medium',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   quickActions: {
-    paddingHorizontal: 24, // px-6
-    paddingVertical: 16, // py-4
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.lg,
   },
   sectionTitle: {
-    color: '#F5F5F5',
-    fontSize: 18,
-    fontFamily: 'Poppins_600SemiBold',
-    marginBottom: 12, // mb-3
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd,
+    fontFamily: typography.fontFamily.poppins.semibold,
+    marginBottom: spacing.md,
   },
   quickActionsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12, // gap-3
+    gap: spacing.md,
+    justifyContent: 'space-between',
   },
   quickActionCard: {
-    width: '48%',
-    padding: 16, // p-4
-    borderRadius: 12, // rounded-xl
-    backgroundColor: '#111111',
+    padding: spacing.lg,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   quickActionIcon: {
-    width: 40, // w-10
-    height: 40, // h-10
-    borderRadius: 12, // rounded-xl
+    width: 40, // w-10 (40px) in Figma
+    height: 40, // h-10 (40px) in Figma
+    borderRadius: radii.md,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 8, // mb-2
+    marginBottom: spacing.sm,
   },
   quickActionTitle: {
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontFamily: 'Inter_500Medium',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   quickActionSubtitle: {
-    color: '#A3A3A3',
-    fontSize: 12,
-    fontFamily: 'Inter_400Regular',
-    marginTop: 4,
+    color: colors.textMuted,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.regular,
+    marginTop: spacing.xs,
   },
   statsSection: {
-    paddingHorizontal: 24, // px-6
-    paddingVertical: 16, // py-4
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.lg,
   },
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 12, // gap-3
+    gap: spacing.md,
+    justifyContent: 'space-between',
   },
   statCard: {
-    width: '48%',
-    padding: 16, // p-4
-    borderRadius: 24, // rounded-2xl
-    backgroundColor: '#111111',
+    padding: spacing.lg,
+    borderRadius: radii.xxl,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   statIcon: {
-    width: 40, // w-10
-    height: 40, // h-10
-    borderRadius: 12, // rounded-xl
+    width: 40, // w-10 (40px) in Figma
+    height: 40, // h-10 (40px) in Figma
+    borderRadius: radii.md,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 12, // mb-3
+    marginBottom: spacing.md,
   },
   statCardValue: {
-    color: '#F5F5F5',
-    fontSize: 18,
-    fontFamily: 'Poppins_600SemiBold',
-    marginBottom: 4,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd,
+    fontFamily: typography.fontFamily.poppins.semibold,
+    marginBottom: spacing.xs,
   },
   statCardLabel: {
-    color: '#A3A3A3',
-    fontSize: 11,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.caption - 1,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   tabsSection: {
-    paddingHorizontal: 24, // px-6
-    paddingVertical: 16, // py-4
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.lg,
   },
   tabsRow: {
     flexDirection: 'row',
-    gap: 8, // gap-2
-    marginBottom: 16, // mb-4
+    gap: spacing.sm,
+    marginBottom: spacing.lg,
   },
   tab: {
     flex: 1,
-    paddingVertical: 8, // py-2
-    paddingHorizontal: 16, // px-4
-    borderRadius: 12, // rounded-xl
-    backgroundColor: '#111111',
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.lg,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
     overflow: 'hidden',
   },
   tabActive: {
@@ -580,32 +603,32 @@ const styles = StyleSheet.create({
     right: 0,
     top: 0,
     bottom: 0,
-    paddingVertical: 8,
-    paddingHorizontal: 16,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.lg,
     alignItems: 'center',
     justifyContent: 'center',
   },
   tabText: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_500Medium',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
     textAlign: 'center',
   },
   tabTextActive: {
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontFamily: 'Inter_500Medium',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
     textAlign: 'center',
   },
   contentSection: {
-    paddingHorizontal: 24, // px-6
-    paddingBottom: 32, // pb-8
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing.xl * 2,
   },
   beatsGrid: {
-    gap: 16, // gap-4
+    gap: spacing.lg,
   },
   beatsRow: {
-    gap: 16, // gap-4
+    gap: spacing.lg,
   },
   beatCard: {
     flex: 1,
@@ -613,50 +636,50 @@ const styles = StyleSheet.create({
   },
   emptyState: {
     alignItems: 'center',
-    paddingVertical: 64, // py-16
+    paddingVertical: spacing.xl * 4,
   },
   emptyIcon: {
-    width: 64, // w-16
-    height: 64, // h-16
-    borderRadius: 24, // rounded-2xl
-    backgroundColor: '#111111',
+    width: spacing.xl * 4,
+    height: spacing.xl * 4,
+    borderRadius: radii.xxl,
+    backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16, // mb-4
+    marginBottom: spacing.lg,
   },
   emptyTitle: {
-    color: '#F5F5F5',
-    fontSize: 18,
-    fontFamily: 'Poppins_600SemiBold',
-    marginBottom: 8,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd,
+    fontFamily: typography.fontFamily.poppins.semibold,
+    marginBottom: spacing.sm,
   },
   emptySubtitle: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
-    marginBottom: 16, // mb-4
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
+    marginBottom: spacing.lg,
   },
   emptyButton: {
     alignSelf: 'center',
   },
   statsContent: {
-    gap: 16, // space-y-4
+    gap: spacing.lg,
   },
   statsCard: {
-    padding: 16, // p-4
-    borderRadius: 24, // rounded-2xl
-    backgroundColor: '#111111',
+    padding: spacing.lg,
+    borderRadius: radii.xxl,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   statsCardTitle: {
-    color: '#F5F5F5',
-    fontSize: 18,
-    fontFamily: 'Poppins_600SemiBold',
-    marginBottom: 16, // mb-4
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd,
+    fontFamily: typography.fontFamily.poppins.semibold,
+    marginBottom: spacing.lg,
   },
   statsList: {
-    gap: 12, // space-y-3
+    gap: spacing.md,
   },
   statsItem: {
     flexDirection: 'row',
@@ -664,28 +687,28 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   statsItemLabel: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   statsItemRight: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8, // gap-2
+    gap: spacing.sm,
   },
   statsItemValue: {
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontFamily: 'Inter_500Medium',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   statsItemChange: {
-    fontSize: 14,
-    fontFamily: 'Inter_500Medium',
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   statsItemChangePositive: {
-    color: '#22C55E',
+    color: colors.success,
   },
   statsItemChangeNegative: {
-    color: '#EF4444',
+    color: colors.error,
   },
 });

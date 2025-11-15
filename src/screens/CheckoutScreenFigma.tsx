@@ -7,6 +7,7 @@ import { ArrowLeft, ShoppingCart, Tag, AlertCircle, ChevronRight } from 'lucide-
 import { ImageWithFallback } from '../components/atoms/ImageWithFallback';
 import { PrimaryButton } from '../components/atoms/PrimaryButton';
 import { InputField } from '../components/atoms/InputField';
+import { colors, spacing, typography, radii } from '@/theme';
 
 interface CheckoutScreenFigmaProps {
   onBack: () => void;
@@ -71,11 +72,11 @@ export function CheckoutScreenFigma({
           <View style={styles.headerContent}>
             <TouchableOpacity onPress={onBack} style={styles.backButton} activeOpacity={0.9}>
               <View style={styles.backButtonInner}>
-                <ArrowLeft size={20} color="#D4D4D4" />
+                <ArrowLeft size={20} color={colors.textSecondary} />
               </View>
             </TouchableOpacity>
             <View style={styles.headerTitleContainer}>
-              <ShoppingCart size={24} color="#6366F1" />
+              <ShoppingCart size={24} color={colors.primary} />
               <Text style={styles.headerTitle}>Finaliser l'achat</Text>
             </View>
           </View>
@@ -97,12 +98,12 @@ export function CheckoutScreenFigma({
                 <Text style={styles.productArtist}>{artistName}</Text>
                 <View style={styles.licenseBadge}>
                   <LinearGradient
-                    colors={['#6366F1', '#8B5CF6']}
+                    colors={[colors.primary, colors.primaryDark]}
                     start={{ x: 0, y: 0 }}
                     end={{ x: 1, y: 0 }}
                     style={styles.licenseBadgeGradient}
                   >
-                    <Tag size={12} color="#F5F5F5" />
+                    <Tag size={12} color={colors.textPrimary} />
                     <Text style={styles.licenseBadgeText}>{selectedLicense.name}</Text>
                   </LinearGradient>
                 </View>
@@ -141,7 +142,7 @@ export function CheckoutScreenFigma({
                 activeOpacity={0.9}
               >
                 <LinearGradient
-                  colors={['#6366F1', '#8B5CF6']}
+                  colors={[colors.primary, colors.primaryDark]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.promoButtonGradient}
@@ -152,7 +153,7 @@ export function CheckoutScreenFigma({
             </View>
             {promoApplied && (
               <View style={styles.promoApplied}>
-                <AlertCircle size={16} color="#22C55E" />
+                <AlertCircle size={16} color={colors.success} />
                 <Text style={styles.promoAppliedText}>Code promo appliqué : -10%</Text>
               </View>
             )}
@@ -189,7 +190,7 @@ export function CheckoutScreenFigma({
 
           {/* Info Banner */}
           <View style={styles.infoBanner}>
-            <AlertCircle size={20} color="#06B6D4" />
+            <AlertCircle size={20} color={colors.cyan} />
             <View style={styles.infoBannerContent}>
               <Text style={styles.infoBannerTitle}>Paiement transparent</Text>
               <Text style={styles.infoBannerText}>
@@ -205,7 +206,7 @@ export function CheckoutScreenFigma({
           <PrimaryButton onPress={handleProceed} fullWidth>
             <View style={styles.proceedButtonContent}>
               <Text style={styles.proceedButtonText}>Procéder au paiement</Text>
-              <ChevronRight size={20} color="#F5F5F5" />
+              <ChevronRight size={20} color={colors.textPrimary} />
             </View>
           </PrimaryButton>
         </View>
@@ -217,30 +218,30 @@ export function CheckoutScreenFigma({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
   },
   keyboardView: {
     flex: 1,
   },
   header: {
-    backgroundColor: 'rgba(10, 10, 10, 0.95)',
+    backgroundColor: 'rgba(10, 10, 10, 0.95)', // colors.background with opacity
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(64, 64, 64, 0.5)',
-    paddingTop: 48, // pt-12
-    paddingBottom: 16, // pb-4
+    borderBottomColor: 'rgba(64, 64, 64, 0.5)', // colors.border with opacity
+    paddingTop: spacing.xxl,
+    paddingBottom: spacing.md,
   },
   headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16, // gap-4
-    paddingHorizontal: 24, // px-6
+    gap: spacing.md,
+    paddingHorizontal: spacing.lg,
   },
   backButton: {
-    padding: 8, // p-2
-    borderRadius: 12, // rounded-xl
-    backgroundColor: '#111111',
+    padding: spacing.sm,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   backButtonInner: {
     alignItems: 'center',
@@ -250,233 +251,233 @@ const styles = StyleSheet.create({
     flex: 1,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8, // gap-2
+    gap: spacing.sm,
   },
   headerTitle: {
-    color: '#F5F5F5',
-    fontSize: 24,
-    fontFamily: 'Poppins_700Bold',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.headingLg,
+    fontFamily: typography.fontFamily.poppins.bold,
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 24, // px-6
-    paddingVertical: 24, // py-6
-    gap: 24, // space-y-6
-    paddingBottom: 100, // Space for bottom CTA
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.lg,
+    gap: spacing.lg,
+    paddingBottom: spacing.xxl + spacing.xl + spacing.md, // Space for bottom CTA (100px)
   },
   productSummary: {
-    padding: 16, // p-4
-    borderRadius: 24, // rounded-2xl
-    backgroundColor: '#111111',
+    padding: spacing.md,
+    borderRadius: radii.xxl,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   productSummaryRow: {
     flexDirection: 'row',
-    gap: 16, // gap-4
-    marginBottom: 16, // mb-4
+    gap: spacing.md,
+    marginBottom: spacing.md,
   },
   productImage: {
-    width: 80, // w-20
+    width: 80, // w-20 (specific size)
     height: 80, // h-20
-    borderRadius: 12, // rounded-xl
+    borderRadius: radii.md,
   },
   productDetails: {
     flex: 1,
   },
   productTitle: {
-    color: '#F5F5F5',
-    fontSize: 18,
-    fontFamily: 'Poppins_600SemiBold',
-    marginBottom: 4,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd,
+    fontFamily: typography.fontFamily.poppins.semibold,
+    marginBottom: spacing.xs,
   },
   productArtist: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
-    marginBottom: 8,
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
+    marginBottom: spacing.sm,
   },
   licenseBadge: {
     alignSelf: 'flex-start',
     overflow: 'hidden',
-    borderRadius: 8, // rounded-lg
+    borderRadius: radii.sm,
   },
   licenseBadgeGradient: {
-    paddingHorizontal: 8, // px-2
-    paddingVertical: 4, // py-1
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4, // gap-1
+    gap: spacing.xs,
   },
   licenseBadgeText: {
-    color: '#F5F5F5',
-    fontSize: 10,
-    fontFamily: 'Inter_500Medium',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.medium,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
   },
   licenseFeatures: {
-    marginTop: 16, // mt-4
-    paddingTop: 16, // pt-4
+    marginTop: spacing.md,
+    paddingTop: spacing.md,
     borderTopWidth: 1,
-    borderTopColor: '#404040',
+    borderTopColor: colors.border,
   },
   licenseFeaturesTitle: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
-    marginBottom: 8,
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
+    marginBottom: spacing.sm,
   },
   licenseFeaturesList: {
-    gap: 4, // space-y-1
+    gap: spacing.xs,
   },
   licenseFeature: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8, // gap-2
+    gap: spacing.sm,
   },
   featureDot: {
-    width: 6, // w-1.5
+    width: 6, // w-1.5 (specific size)
     height: 6, // h-1.5
-    borderRadius: 3,
-    backgroundColor: '#6366F1',
+    borderRadius: radii.full, // 3 = width/2 (circle)
+    backgroundColor: colors.primary,
   },
   featureText: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   promoSection: {
-    padding: 16, // p-4
-    borderRadius: 24, // rounded-2xl
-    backgroundColor: '#111111',
+    padding: spacing.md,
+    borderRadius: radii.xxl,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   sectionTitle: {
-    color: '#F5F5F5',
-    fontSize: 18,
-    fontFamily: 'Poppins_600SemiBold',
-    marginBottom: 12, // mb-3
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd,
+    fontFamily: typography.fontFamily.poppins.semibold,
+    marginBottom: spacing.md,
   },
   promoRow: {
     flexDirection: 'row',
-    gap: 8, // gap-2
-    marginBottom: 8,
+    gap: spacing.sm,
+    marginBottom: spacing.sm,
   },
   promoInput: {
     flex: 1,
   },
   promoButton: {
-    paddingHorizontal: 16, // px-4
-    paddingVertical: 12, // py-3
-    borderRadius: 12, // rounded-xl
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md,
+    borderRadius: radii.md,
     overflow: 'hidden',
   },
   promoButtonGradient: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.md,
     alignItems: 'center',
     justifyContent: 'center',
   },
   promoButtonText: {
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontFamily: 'Inter_500Medium',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   promoApplied: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8, // gap-2
-    marginTop: 8,
+    gap: spacing.sm,
+    marginTop: spacing.sm,
   },
   promoAppliedText: {
-    color: '#22C55E',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.success,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   priceBreakdown: {
-    padding: 16, // p-4
-    borderRadius: 24, // rounded-2xl
-    backgroundColor: '#111111',
+    padding: spacing.md,
+    borderRadius: radii.xxl,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   priceRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 12, // space-y-3
+    marginBottom: spacing.md,
   },
   priceLabel: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   priceValue: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   discountLabel: {
-    color: '#22C55E',
+    color: colors.success,
   },
   discountValue: {
-    color: '#22C55E',
+    color: colors.success,
   },
   totalRow: {
-    paddingTop: 12, // pt-3
+    paddingTop: spacing.md,
     borderTopWidth: 1,
-    borderTopColor: '#404040',
+    borderTopColor: colors.border,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
   },
   totalLabel: {
-    color: '#F5F5F5',
-    fontSize: 18,
-    fontFamily: 'Poppins_600SemiBold',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd,
+    fontFamily: typography.fontFamily.poppins.semibold,
   },
   totalValue: {
-    color: '#F5F5F5',
-    fontSize: 20, // text-xl
-    fontFamily: 'Poppins_700Bold',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd + 2, // 20px
+    fontFamily: typography.fontFamily.poppins.bold,
   },
   commissionInfo: {
-    marginTop: 12, // mt-3
-    paddingTop: 12, // pt-3
+    marginTop: spacing.md,
+    paddingTop: spacing.md,
     borderTopWidth: 1,
-    borderTopColor: '#404040',
+    borderTopColor: colors.border,
   },
   commissionText: {
-    color: '#737373',
-    fontSize: 12,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   infoBanner: {
-    padding: 16, // p-4
-    borderRadius: 24, // rounded-2xl
-    backgroundColor: 'rgba(6, 182, 212, 0.1)',
+    padding: spacing.md,
+    borderRadius: radii.xxl,
+    backgroundColor: 'rgba(6, 182, 212, 0.1)', // colors.cyan with opacity
     borderWidth: 1,
-    borderColor: 'rgba(6, 182, 212, 0.3)',
+    borderColor: 'rgba(6, 182, 212, 0.3)', // colors.cyan with opacity
     flexDirection: 'row',
-    gap: 12, // gap-3
+    gap: spacing.md,
   },
   infoBannerContent: {
     flex: 1,
   },
   infoBannerTitle: {
-    color: '#06B6D4',
-    fontSize: 14,
-    fontFamily: 'Poppins_600SemiBold',
-    marginBottom: 4,
+    color: colors.cyan,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.poppins.semibold,
+    marginBottom: spacing.xs,
   },
   infoBannerText: {
-    color: '#06B6D4',
-    fontSize: 12,
-    fontFamily: 'Inter_400Regular',
+    color: colors.cyan,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.regular,
     lineHeight: 18,
   },
   bottomCTA: {
@@ -484,21 +485,21 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    paddingHorizontal: 24, // px-6
-    paddingVertical: 16, // py-4
-    backgroundColor: '#0A0A0A',
+    paddingHorizontal: spacing.lg,
+    paddingVertical: spacing.md,
+    backgroundColor: colors.background,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(64, 64, 64, 0.5)',
+    borderTopColor: 'rgba(64, 64, 64, 0.5)', // colors.border with opacity
   },
   proceedButtonContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8, // gap-2
+    gap: spacing.sm,
   },
   proceedButtonText: {
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontFamily: 'Inter_500Medium',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.inter.medium,
   },
 });

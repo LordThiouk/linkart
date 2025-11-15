@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
@@ -13,11 +13,18 @@ import {
   Download,
   Wallet,
 } from 'lucide-react-native';
+import { colors, spacing, typography, radii } from '@/theme';
 
 const AnimatedText = Animated.createAnimatedComponent(Text);
 
 export function WalletScreenFigma() {
   const [showBalance, setShowBalance] = useState(true);
+
+  // Calculate card width for 3 columns with gap (stats)
+  const screenWidth = Dimensions.get('window').width;
+  const horizontalPadding = spacing.xl * 2; // paddingHorizontal from statsSection
+  const gap = spacing.md;
+  const statCardWidth = (screenWidth - horizontalPadding - gap * 2) / 3;
 
   const transactions = [
     {
@@ -90,7 +97,7 @@ export function WalletScreenFigma() {
         {/* Balance Card */}
         <View style={styles.balanceCard}>
           <LinearGradient
-            colors={['#6366F1', '#8B5CF6']}
+            colors={[colors.primary, colors.primaryDark]}
             start={{ x: 0, y: 0 }}
             end={{ x: 1, y: 1 }}
             style={styles.balanceGradient}
@@ -105,7 +112,7 @@ export function WalletScreenFigma() {
               <View style={styles.balanceHeader}>
                 <View style={styles.balanceHeaderLeft}>
                   <View style={styles.balanceIcon}>
-                    <Wallet size={20} color="#F5F5F5" />
+                    <Wallet size={20} color={colors.textPrimary} />
                   </View>
                   <Text style={styles.balanceLabel}>Solde disponible</Text>
                 </View>
@@ -114,7 +121,11 @@ export function WalletScreenFigma() {
                   style={styles.balanceToggle}
                   activeOpacity={0.8}
                 >
-                  {showBalance ? <Eye size={20} color="#F5F5F5" /> : <EyeOff size={20} color="#F5F5F5" />}
+                  {showBalance ? (
+                    <Eye size={20} color={colors.textPrimary} />
+                  ) : (
+                    <EyeOff size={20} color={colors.textPrimary} />
+                  )}
                 </TouchableOpacity>
               </View>
 
@@ -133,12 +144,12 @@ export function WalletScreenFigma() {
               <View style={styles.balanceActions}>
                 <TouchableOpacity style={styles.withdrawButton} activeOpacity={0.9}>
                   <View style={styles.withdrawButtonContent}>
-                    <Download size={20} color="#6366F1" />
+                    <Download size={20} color={colors.primary} />
                     <Text style={styles.withdrawButtonText}>Retirer</Text>
                   </View>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.cardButton} activeOpacity={0.9}>
-                  <CreditCard size={20} color="#F5F5F5" />
+                  <CreditCard size={20} color={colors.textPrimary} />
                   <Text style={styles.cardButtonText}>Carte</Text>
                 </TouchableOpacity>
               </View>
@@ -150,11 +161,11 @@ export function WalletScreenFigma() {
         <View style={styles.statsSection}>
           <View style={styles.statsGrid}>
             {stats.map((stat, index) => (
-              <View key={stat.label} style={styles.statCard}>
+              <View key={stat.label} style={[styles.statCard, { width: statCardWidth }]}>
                 <Text style={styles.statCardLabel}>{stat.label}</Text>
                 <Text style={styles.statCardValue}>{stat.value}</Text>
                 <View style={styles.statCardChange}>
-                  <TrendingUp size={12} color="#22C55E" />
+                  <TrendingUp size={12} color={colors.success} />
                   <Text style={styles.statCardChangeText}>{stat.change}</Text>
                 </View>
               </View>
@@ -182,9 +193,12 @@ export function WalletScreenFigma() {
                     ]}
                   >
                     {transaction.type === 'income' ? (
-                      <ArrowDownLeft size={20} color={transaction.type === 'income' ? '#22C55E' : '#F59E0B'} />
+                      <ArrowDownLeft
+                        size={20}
+                        color={transaction.type === 'income' ? colors.success : colors.secondary}
+                      />
                     ) : (
-                      <ArrowUpRight size={20} color="#F59E0B" />
+                      <ArrowUpRight size={20} color={colors.secondary} />
                     )}
                   </View>
 
@@ -236,47 +250,47 @@ export function WalletScreenFigma() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
   },
   header: {
-    backgroundColor: 'rgba(10, 10, 10, 0.95)',
+    backgroundColor: 'rgba(10, 10, 10, 0.95)', // Semi-transparent background for backdrop blur effect
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(64, 64, 64, 0.5)',
-    paddingTop: 48, // pt-12
-    paddingBottom: 16, // pb-4
+    paddingTop: spacing.xl + spacing.lg,
+    paddingBottom: spacing.lg,
   },
   headerContent: {
-    paddingHorizontal: 24, // px-6
+    paddingHorizontal: spacing.xl,
   },
   headerLeft: {
     flex: 1,
   },
   headerTitle: {
-    color: '#F5F5F5',
-    fontSize: 24,
-    fontFamily: 'Poppins_700Bold',
-    marginBottom: 4,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.headingLg,
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.xs,
   },
   headerSubtitle: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   scrollView: {
     flex: 1,
   },
   scrollContent: {
-    paddingHorizontal: 24, // px-6
-    paddingVertical: 24, // py-6
-    paddingBottom: 80, // pb-20
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.xl,
+    paddingBottom: spacing.xl * 5,
   },
   balanceCard: {
-    marginBottom: 24, // py-6
-    borderRadius: 24, // rounded-2xl
+    marginBottom: spacing.xl,
+    borderRadius: radii.xxl,
     overflow: 'hidden',
   },
   balanceGradient: {
-    padding: 24, // p-6
+    padding: spacing.xl,
     position: 'relative',
   },
   balancePattern: {
@@ -291,20 +305,20 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: 0,
     right: 0,
-    width: 128, // w-32
-    height: 128, // h-32
-    borderRadius: 64,
-    backgroundColor: '#F5F5F5',
+    width: spacing.xl * 4,
+    height: spacing.xl * 4,
+    borderRadius: spacing.xl * 2,
+    backgroundColor: colors.textPrimary,
     opacity: 0.3,
   },
   balanceGlow2: {
     position: 'absolute',
     bottom: 0,
     left: 0,
-    width: 160, // w-40
-    height: 160, // h-40
-    borderRadius: 80,
-    backgroundColor: '#F5F5F5',
+    width: spacing.xl * 5,
+    height: spacing.xl * 5,
+    borderRadius: spacing.xl * 2.5,
+    backgroundColor: colors.textPrimary,
     opacity: 0.3,
   },
   balanceContent: {
@@ -315,162 +329,162 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 24, // mb-6
+    marginBottom: spacing.xl,
   },
   balanceHeaderLeft: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8, // gap-2
+    gap: spacing.sm,
   },
   balanceIcon: {
-    width: 40, // w-10
-    height: 40, // h-10
-    borderRadius: 12, // rounded-xl
+    width: 40, // w-10 (40px) in Figma
+    height: 40, // h-10 (40px) in Figma
+    borderRadius: radii.md,
     backgroundColor: 'rgba(245, 245, 245, 0.2)',
     alignItems: 'center',
     justifyContent: 'center',
   },
   balanceLabel: {
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontFamily: 'Inter_500Medium',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   balanceToggle: {
-    padding: 8, // p-2
-    borderRadius: 8, // rounded-lg
+    padding: spacing.sm,
+    borderRadius: radii.sm,
     backgroundColor: 'rgba(245, 245, 245, 0.2)',
   },
   balanceAmountContainer: {
-    marginBottom: 24, // mb-6
-    minHeight: 48,
+    marginBottom: spacing.xl,
+    minHeight: spacing.xl * 3,
     justifyContent: 'center',
   },
   balanceAmount: {
-    color: '#F5F5F5',
-    fontSize: 36, // text-4xl
-    fontFamily: 'Poppins_700Bold',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.displayXl + 4,
+    fontFamily: typography.fontFamily.poppins.bold,
   },
   balanceDots: {
     flexDirection: 'row',
-    gap: 8, // gap-2
+    gap: spacing.sm,
   },
   balanceDot: {
-    width: 12, // w-3
-    height: 12, // h-3
-    borderRadius: 6,
+    width: spacing.md,
+    height: spacing.md,
+    borderRadius: spacing.md / 2,
     backgroundColor: 'rgba(245, 245, 245, 0.5)',
   },
   balanceActions: {
     flexDirection: 'row',
-    gap: 12, // gap-3
+    gap: spacing.md,
   },
   withdrawButton: {
     flex: 1,
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 24,
-    backgroundColor: '#F5F5F5',
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.md,
+    borderRadius: radii.xxl,
+    backgroundColor: colors.textPrimary,
   },
   withdrawButtonContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8, // gap-2
+    gap: spacing.sm,
   },
   withdrawButtonText: {
-    color: '#6366F1',
-    fontSize: 16,
-    fontFamily: 'Inter_500Medium',
+    color: colors.primary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   cardButton: {
-    paddingHorizontal: 24, // px-6
-    paddingVertical: 12, // py-3
-    borderRadius: 24, // rounded-2xl
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.md,
+    borderRadius: radii.xxl,
     backgroundColor: 'rgba(245, 245, 245, 0.2)',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8, // gap-2
+    gap: spacing.sm,
   },
   cardButtonText: {
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontFamily: 'Inter_500Medium',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   statsSection: {
-    marginBottom: 24, // py-4
+    marginBottom: spacing.xl,
   },
   statsGrid: {
     flexDirection: 'row',
-    gap: 12, // gap-3
+    gap: spacing.md,
+    justifyContent: 'space-between',
   },
   statCard: {
-    flex: 1,
-    padding: 16, // p-4
-    borderRadius: 24, // rounded-2xl
-    backgroundColor: '#111111',
+    padding: spacing.lg,
+    borderRadius: radii.xxl,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   statCardLabel: {
-    color: '#A3A3A3',
-    fontSize: 11,
-    fontFamily: 'Inter_400Regular',
-    marginBottom: 8,
+    color: colors.textMuted,
+    fontSize: typography.fontSize.caption - 1,
+    fontFamily: typography.fontFamily.inter.regular,
+    marginBottom: spacing.sm,
   },
   statCardValue: {
-    color: '#F5F5F5',
-    fontSize: 18,
-    fontFamily: 'Poppins_600SemiBold',
-    marginBottom: 4,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd,
+    fontFamily: typography.fontFamily.poppins.semibold,
+    marginBottom: spacing.xs,
   },
   statCardChange: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4, // gap-1
+    gap: spacing.xs,
   },
   statCardChangeText: {
-    color: '#22C55E',
-    fontSize: 11,
-    fontFamily: 'Inter_400Regular',
+    color: colors.success,
+    fontSize: typography.fontSize.caption - 1,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   transactionsSection: {
-    marginBottom: 32, // pb-8
+    marginBottom: spacing.xl * 2,
   },
   transactionsHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 16, // mb-4
+    marginBottom: spacing.lg,
   },
   transactionsTitle: {
-    color: '#F5F5F5',
-    fontSize: 20,
-    fontFamily: 'Poppins_600SemiBold',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd + 2,
+    fontFamily: typography.fontFamily.poppins.semibold,
   },
   seeAllLink: {
-    color: '#6366F1',
-    fontSize: 14,
-    fontFamily: 'Inter_500Medium',
+    color: colors.primary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   transactionsList: {
-    gap: 12, // space-y-3
+    gap: spacing.md,
   },
   transactionCard: {
-    padding: 16, // p-4
-    borderRadius: 24, // rounded-2xl
-    backgroundColor: '#111111',
+    padding: spacing.lg,
+    borderRadius: radii.xxl,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   transactionRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12, // gap-3
+    gap: spacing.md,
   },
   transactionIcon: {
-    width: 48, // w-12
-    height: 48, // h-12
-    borderRadius: 12, // rounded-xl
+    width: spacing.xl * 1.5,
+    height: spacing.xl * 1.5,
+    borderRadius: radii.md,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -485,34 +499,34 @@ const styles = StyleSheet.create({
     minWidth: 0,
   },
   transactionTitle: {
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontFamily: 'Poppins_500Medium',
-    marginBottom: 4,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.poppins.semibold,
+    marginBottom: spacing.xs,
   },
   transactionDate: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   transactionRight: {
     alignItems: 'flex-end',
   },
   transactionAmount: {
-    fontSize: 16,
-    fontFamily: 'Poppins_600SemiBold',
-    marginBottom: 4,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.poppins.semibold,
+    marginBottom: spacing.xs,
   },
   transactionAmountIncome: {
-    color: '#22C55E',
+    color: colors.success,
   },
   transactionAmountWithdraw: {
-    color: '#F5F5F5',
+    color: colors.textPrimary,
   },
   transactionStatus: {
-    paddingHorizontal: 8, // px-2
-    paddingVertical: 2, // py-0.5
-    borderRadius: 999,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs - 2,
+    borderRadius: radii.full,
   },
   transactionStatusCompleted: {
     backgroundColor: 'rgba(34, 197, 94, 0.2)',
@@ -521,13 +535,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(245, 158, 11, 0.2)',
   },
   transactionStatusText: {
-    fontSize: 10,
-    fontFamily: 'Inter_500Medium',
+    fontSize: typography.fontSize.caption - 2,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   transactionStatusTextCompleted: {
-    color: '#22C55E',
+    color: colors.success,
   },
   transactionStatusTextPending: {
-    color: '#F59E0B',
+    color: colors.secondary,
   },
 });
