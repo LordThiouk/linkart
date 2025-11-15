@@ -5,6 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import { ArrowLeft, Calendar, CheckCircle, Clock, XCircle, MessageCircle } from 'lucide-react-native';
 import { CategoryChipFigma } from '../../components/atoms/CategoryChipFigma';
+import { colors, spacing, typography, radii, hexToRgba } from '@/theme';
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -33,32 +34,33 @@ interface BookingsScreenFigmaProps {
 
 type FilterType = 'all' | 'pending' | 'confirmed' | 'completed';
 
-const statusConfig = {
+// Status config - moved calculation inside component to avoid undefined colors
+const getStatusConfig = () => ({
   pending: {
     label: 'En attente',
-    color: '#F59E0B',
-    bgColor: 'rgba(245, 158, 11, 0.1)',
+    color: colors.secondary, // #F59E0B
+    bgColor: hexToRgba(colors.secondary, 0.1),
     icon: Clock,
   },
   confirmed: {
     label: 'Confirmée',
-    color: '#06B6D4',
+    color: '#06B6D4', // Cyan - not in theme, keeping as is
     bgColor: 'rgba(6, 182, 212, 0.1)',
     icon: CheckCircle,
   },
   completed: {
     label: 'Terminée',
-    color: '#10B981',
-    bgColor: 'rgba(16, 185, 129, 0.1)',
+    color: colors.success, // #22C55E
+    bgColor: hexToRgba(colors.success, 0.1),
     icon: CheckCircle,
   },
   cancelled: {
     label: 'Annulée',
-    color: '#EF4444',
-    bgColor: 'rgba(239, 68, 68, 0.1)',
+    color: colors.error, // #EF4444
+    bgColor: hexToRgba(colors.error, 0.1),
     icon: XCircle,
   },
-};
+});
 
 export function BookingsScreenFigma({ onBack, onOpenChat, userId, accessToken }: BookingsScreenFigmaProps) {
   const [bookings, setBookings] = useState<Booking[]>([]);
@@ -115,6 +117,7 @@ export function BookingsScreenFigma({ onBack, onOpenChat, userId, accessToken }:
 
   const renderBookingCard = (booking: Booking, index: number) => {
     const isProvider = booking.providerId === userId;
+    const statusConfig = getStatusConfig();
     const config = statusConfig[booking.status];
     const Icon = config.icon;
 
@@ -144,7 +147,7 @@ export function BookingsScreenFigma({ onBack, onOpenChat, userId, accessToken }:
         {/* Date */}
         {booking.preferredDate && (
           <View style={styles.dateContainer}>
-            <Calendar size={16} color="#A3A3A3" />
+            <Calendar size={16} color={colors.textMuted} />
             <Text style={styles.dateText}>
               {new Date(booking.preferredDate).toLocaleDateString('fr-FR', {
                 day: 'numeric',
@@ -166,7 +169,7 @@ export function BookingsScreenFigma({ onBack, onOpenChat, userId, accessToken }:
                 activeOpacity={0.9}
               >
                 <LinearGradient
-                  colors={['#06B6D4', '#8B5CF6']}
+                  colors={['#06B6D4', colors.primaryDark]} // Cyan to primaryDark
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.confirmButtonGradient}
@@ -194,12 +197,12 @@ export function BookingsScreenFigma({ onBack, onOpenChat, userId, accessToken }:
               activeOpacity={0.9}
             >
               <LinearGradient
-                colors={['#6366F1', '#8B5CF6']}
+                colors={[colors.primary, colors.primaryDark]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
                 style={styles.chatButtonGradient}
               >
-                <MessageCircle size={16} color="#F5F5F5" />
+                <MessageCircle size={16} color={colors.textPrimary} />
                 <Text style={styles.chatButtonText}>Ouvrir le chat</Text>
               </LinearGradient>
             </TouchableOpacity>
@@ -212,7 +215,7 @@ export function BookingsScreenFigma({ onBack, onOpenChat, userId, accessToken }:
               style={styles.completeButton}
               activeOpacity={0.8}
             >
-              <Text style={styles.completeButtonText}>Terminer</Text>
+              <Text style={[styles.completeButtonText, { color: colors.success }]}>Terminer</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -228,7 +231,7 @@ export function BookingsScreenFigma({ onBack, onOpenChat, userId, accessToken }:
           <View style={styles.headerTop}>
             {onBack && (
               <TouchableOpacity onPress={onBack} style={styles.backButton} activeOpacity={0.8}>
-                <ArrowLeft size={20} color="#D4D4D4" />
+                <ArrowLeft size={20} color={colors.textSecondary} />
               </TouchableOpacity>
             )}
             <View style={styles.headerText}>
@@ -262,12 +265,12 @@ export function BookingsScreenFigma({ onBack, onOpenChat, userId, accessToken }:
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} bounces={false}>
         {loading ? (
           <View style={styles.loadingContainer}>
-            <ActivityIndicator size="large" color="#6366F1" />
+            <ActivityIndicator size="large" color={colors.primary} />
           </View>
         ) : filteredBookings.length === 0 ? (
           <View style={styles.emptyContainer}>
             <View style={styles.emptyIcon}>
-              <Calendar size={40} color="#404040" />
+              <Calendar size={40} color={colors.border} />
             </View>
             <Text style={styles.emptyTitle}>Aucune réservation</Text>
             <Text style={styles.emptySubtitle}>Vos réservations de services apparaîtront ici</Text>
@@ -285,227 +288,226 @@ export function BookingsScreenFigma({ onBack, onOpenChat, userId, accessToken }:
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
   },
   header: {
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(64, 64, 64, 0.5)',
-    paddingTop: 48,
-    paddingBottom: 16,
-    paddingHorizontal: 24,
+    borderBottomColor: hexToRgba(colors.border, 0.5),
+    paddingTop: spacing.xxl, // pt-12
+    paddingBottom: spacing.md, // pb-4
+    paddingHorizontal: spacing.lg, // px-6
   },
   headerContent: {
-    gap: 16,
+    gap: spacing.md, // gap-4
   },
   headerTop: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
-    marginBottom: 16,
+    gap: spacing.md, // gap-4
+    marginBottom: spacing.md, // mb-4
   },
   backButton: {
-    padding: 8,
-    borderRadius: 12,
-    backgroundColor: '#111111',
+    padding: spacing.sm, // p-2
+    borderRadius: radii.md, // rounded-xl
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   headerText: {
     flex: 1,
-    gap: 4,
+    gap: spacing.xs,
   },
   headerTitle: {
-    color: '#F5F5F5',
-    fontSize: 28,
-    fontWeight: '700',
-    marginBottom: 4,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.displayXl - spacing.xs, // 28px (close to displayXl 32px)
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.xs,
   },
   headerSubtitle: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   filtersContainer: {
-    gap: 8,
-    paddingRight: 24,
+    gap: spacing.sm, // gap-2
+    paddingRight: spacing.lg, // pr-6
   },
   scrollContent: {
-    paddingBottom: 40,
+    paddingBottom: spacing.xl + spacing.sm, // pb-10 (40px)
   },
   loadingContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 256,
+    minHeight: spacing.xxl * 2 + spacing.xl * 2, // h-64 (256px)
   },
   emptyContainer: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    minHeight: 256,
-    paddingHorizontal: 24,
-    gap: 16,
+    minHeight: spacing.xxl * 2 + spacing.xl * 2, // h-64 (256px)
+    paddingHorizontal: spacing.lg, // px-6
+    gap: spacing.md, // gap-4
   },
   emptyIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    backgroundColor: '#111111',
+    width: spacing.xl * 2, // w-20 (80px)
+    height: spacing.xl * 2, // h-20 (80px)
+    borderRadius: radii.full, // rounded-full (40px)
+    backgroundColor: colors.surface,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
+    marginBottom: spacing.md, // mb-4
   },
   emptyTitle: {
-    color: '#F5F5F5',
-    fontSize: 20,
-    fontWeight: '600',
-    marginBottom: 8,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd, // 20px (close to titleMd 18px)
+    fontFamily: typography.fontFamily.poppins.semibold,
+    marginBottom: spacing.sm, // mb-2
     textAlign: 'center',
   },
   emptySubtitle: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
     textAlign: 'center',
   },
   bookingsContainer: {
-    padding: 24,
-    gap: 16,
+    padding: spacing.lg, // p-6
+    gap: spacing.md, // gap-4
   },
   bookingCard: {
-    padding: 16,
-    borderRadius: 16,
-    backgroundColor: '#111111',
+    padding: spacing.md, // p-4
+    borderRadius: radii.xl, // rounded-2xl
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
-    gap: 12,
+    borderColor: colors.border,
+    gap: spacing.md - spacing.xs, // gap-3 (12px)
   },
   bookingHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    marginBottom: 12,
+    marginBottom: spacing.md - spacing.xs, // mb-3 (12px)
   },
   bookingInfo: {
     flex: 1,
-    gap: 4,
+    gap: spacing.xs,
   },
   bookingTitle: {
-    color: '#F5F5F5',
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 4,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd,
+    fontFamily: typography.fontFamily.poppins.semibold,
+    marginBottom: spacing.xs,
   },
   bookingSubtitle: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   statusBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
+    gap: spacing.xs,
+    paddingHorizontal: spacing.sm, // px-2
+    paddingVertical: spacing.xs,
+    borderRadius: radii.sm, // rounded-lg
   },
   statusText: {
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.poppins.semibold,
   },
   messageContainer: {
-    padding: 12,
-    borderRadius: 12,
-    backgroundColor: '#1A1A1A',
+    padding: spacing.md - spacing.xs, // p-3 (12px)
+    borderRadius: radii.md, // rounded-xl
+    backgroundColor: colors.surfaceElevated,
     borderWidth: 1,
-    borderColor: '#404040',
-    marginBottom: 12,
+    borderColor: colors.border,
+    marginBottom: spacing.md - spacing.xs, // mb-3 (12px)
   },
   messageText: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontWeight: '400',
-    lineHeight: 20,
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
+    lineHeight: spacing.xl * 2.5, // line-height 20px (close to 20)
   },
   dateContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 12,
+    gap: spacing.sm, // gap-2
+    marginBottom: spacing.md - spacing.xs, // mb-3 (12px)
   },
   dateText: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   actionsContainer: {
     flexDirection: 'row',
-    gap: 8,
-    marginTop: 8,
+    gap: spacing.sm, // gap-2
+    marginTop: spacing.sm, // mt-2
   },
   confirmButton: {
     flex: 1,
-    borderRadius: 12,
+    borderRadius: radii.md, // rounded-xl
     overflow: 'hidden',
   },
   confirmButtonGradient: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
+    paddingVertical: spacing.md + spacing.xs, // py-2.5 (10px)
+    paddingHorizontal: spacing.md - spacing.xs, // px-3 (12px)
     alignItems: 'center',
     justifyContent: 'center',
   },
   confirmButtonText: {
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontWeight: '600',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.poppins.semibold,
   },
   cancelButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: 12,
-    backgroundColor: '#1A1A1A',
+    paddingVertical: spacing.md + spacing.xs, // py-2.5 (10px)
+    paddingHorizontal: spacing.md - spacing.xs, // px-3 (12px)
+    borderRadius: radii.md, // rounded-xl
+    backgroundColor: colors.surfaceElevated,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
   cancelButtonText: {
-    color: '#EF4444',
-    fontSize: 14,
-    fontWeight: '600',
+    color: colors.error,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.poppins.semibold,
   },
   chatButton: {
     flex: 1,
-    borderRadius: 12,
+    borderRadius: radii.md, // rounded-xl
     overflow: 'hidden',
   },
   chatButtonGradient: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
+    paddingVertical: spacing.md + spacing.xs, // py-2.5 (10px)
+    paddingHorizontal: spacing.md - spacing.xs, // px-3 (12px)
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
+    gap: spacing.sm, // gap-2
   },
   chatButtonText: {
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontWeight: '600',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.poppins.semibold,
   },
   completeButton: {
-    paddingVertical: 10,
-    paddingHorizontal: 12,
-    borderRadius: 12,
-    backgroundColor: '#1A1A1A',
+    paddingVertical: spacing.md + spacing.xs, // py-2.5 (10px)
+    paddingHorizontal: spacing.md - spacing.xs, // px-3 (12px)
+    borderRadius: radii.md, // rounded-xl
+    backgroundColor: colors.surfaceElevated,
     borderWidth: 1,
-    borderColor: '#10B981',
+    borderColor: colors.success,
     alignItems: 'center',
     justifyContent: 'center',
   },
   completeButtonText: {
-    color: '#10B981',
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.poppins.semibold,
   },
 });

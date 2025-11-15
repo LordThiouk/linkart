@@ -7,6 +7,7 @@ import { ChevronLeft, FileText, Upload, CheckCircle } from 'lucide-react-native'
 import { ImageWithFallback } from '../../components/atoms/ImageWithFallback';
 import { PrimaryButton } from '../../components/atoms/PrimaryButton';
 import { InputField } from '../../components/atoms/InputField';
+import { colors, spacing, typography, radii } from '@/theme';
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -126,7 +127,7 @@ export function BookingFormScreenFigma({
           value={formData.description}
           onChangeText={value => setFormData({ ...formData, description: value })}
           placeholder="Décrivez en détail ce que vous attendez du prestataire..."
-          placeholderTextColor="#A3A3A3"
+          placeholderTextColor={colors.textMuted}
           multiline
           numberOfLines={6}
           style={styles.textArea}
@@ -147,7 +148,7 @@ export function BookingFormScreenFigma({
           value={formData.additionalNotes}
           onChangeText={value => setFormData({ ...formData, additionalNotes: value })}
           placeholder="Références, style souhaité, informations complémentaires..."
-          placeholderTextColor="#A3A3A3"
+          placeholderTextColor={colors.textMuted}
           multiline
           numberOfLines={4}
           style={styles.textArea}
@@ -169,12 +170,12 @@ export function BookingFormScreenFigma({
       {/* Upload Area */}
       <TouchableOpacity onPress={handleFileUpload} style={styles.uploadArea} activeOpacity={0.9}>
         <LinearGradient
-          colors={['#6366F1', '#8B5CF6']}
+          colors={[colors.primary, colors.primaryDark]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.uploadIcon}
         >
-          <Upload size={32} color="#F5F5F5" />
+          <Upload size={32} color={colors.textPrimary} />
         </LinearGradient>
         <Text style={styles.uploadTitle}>Glissez vos fichiers ici</Text>
         <Text style={styles.uploadSubtitle}>ou cliquez pour parcourir</Text>
@@ -190,13 +191,13 @@ export function BookingFormScreenFigma({
           {uploadedFiles.map((file, index) => (
             <View key={index} style={styles.uploadedFileCard}>
               <View style={styles.uploadedFileIcon}>
-                <FileText size={20} color="#6366F1" />
+                <FileText size={20} color={colors.primary} />
               </View>
               <View style={styles.uploadedFileInfo}>
                 <Text style={styles.uploadedFileName}>{file}</Text>
                 <Text style={styles.uploadedFileSize}>2.4 MB</Text>
               </View>
-              <CheckCircle size={20} color="#22C55E" />
+              <CheckCircle size={20} color={colors.success} />
             </View>
           ))}
         </View>
@@ -204,7 +205,10 @@ export function BookingFormScreenFigma({
 
       <View style={styles.infoCard}>
         <LinearGradient
-          colors={['rgba(99, 102, 241, 0.1)', 'rgba(139, 92, 246, 0.1)']}
+          colors={[
+            `rgba(${parseInt(colors.primary.slice(1, 3), 16)}, ${parseInt(colors.primary.slice(3, 5), 16)}, ${parseInt(colors.primary.slice(5, 7), 16)}, 0.1)`,
+            `rgba(${parseInt(colors.primaryDark.slice(1, 3), 16)}, ${parseInt(colors.primaryDark.slice(3, 5), 16)}, ${parseInt(colors.primaryDark.slice(5, 7), 16)}, 0.1)`,
+          ]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.infoCardGradient}
@@ -262,7 +266,10 @@ export function BookingFormScreenFigma({
 
       <View style={styles.infoCard}>
         <LinearGradient
-          colors={['rgba(99, 102, 241, 0.1)', 'rgba(139, 92, 246, 0.1)']}
+          colors={[
+            `rgba(${parseInt(colors.primary.slice(1, 3), 16)}, ${parseInt(colors.primary.slice(3, 5), 16)}, ${parseInt(colors.primary.slice(5, 7), 16)}, 0.1)`,
+            `rgba(${parseInt(colors.primaryDark.slice(1, 3), 16)}, ${parseInt(colors.primaryDark.slice(3, 5), 16)}, ${parseInt(colors.primaryDark.slice(5, 7), 16)}, 0.1)`,
+          ]}
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 1 }}
           style={styles.infoCardGradient}
@@ -296,7 +303,7 @@ export function BookingFormScreenFigma({
           <View style={styles.headerTop}>
             {onBack && (
               <TouchableOpacity onPress={onBack} style={styles.backButton} activeOpacity={0.8}>
-                <ChevronLeft size={20} color="#D4D4D4" />
+                <ChevronLeft size={20} color={colors.textSecondary} />
               </TouchableOpacity>
             )}
             <View style={styles.headerText}>
@@ -364,360 +371,361 @@ export function BookingFormScreenFigma({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
   },
   header: {
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
     borderBottomWidth: 1,
-    borderBottomColor: 'rgba(64, 64, 64, 0.5)',
-    paddingTop: 48,
-    paddingBottom: 16,
-    paddingHorizontal: 24,
+    borderBottomColor: `rgba(${parseInt(colors.border.slice(1, 3), 16)}, ${parseInt(colors.border.slice(3, 5), 16)}, ${parseInt(colors.border.slice(5, 7), 16)}, 0.5)`,
+    paddingTop: spacing.xxl, // pt-12
+    paddingBottom: spacing.md, // pb-4
+    paddingHorizontal: spacing.lg, // px-6
   },
   headerContent: {
-    gap: 16,
+    gap: spacing.md, // gap-4
   },
   headerTop: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
-    marginBottom: 16,
+    gap: spacing.md, // gap-4
+    marginBottom: spacing.md, // mb-4
   },
   backButton: {
-    padding: 12,
-    borderRadius: 12,
-    backgroundColor: '#111111',
+    padding: spacing.md - spacing.xs, // p-3 (12px)
+    borderRadius: radii.md, // rounded-xl
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   headerText: {
     flex: 1,
-    gap: 4,
+    gap: spacing.xs,
   },
   headerTitle: {
-    color: '#F5F5F5',
-    fontSize: 28,
-    fontWeight: '700',
-    marginBottom: 4,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.displayXl - spacing.xs, // 28px (close to displayXl 32px)
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.xs,
   },
   headerSubtitle: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   progressContainer: {
     flexDirection: 'row',
-    gap: 8,
+    gap: spacing.sm, // gap-2
   },
   progressBar: {
     flex: 1,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: '#404040',
+    height: spacing.xs, // h-1 (4px)
+    borderRadius: spacing.xs / 2, // rounded-full (2px)
+    backgroundColor: colors.border,
   },
   progressBarActive: {
-    backgroundColor: '#6366F1',
+    backgroundColor: colors.primary,
   },
   serviceCard: {
-    margin: 16,
-    padding: 16,
-    borderRadius: 16,
-    backgroundColor: '#111111',
+    margin: spacing.md, // m-4
+    padding: spacing.md, // p-4
+    borderRadius: radii.xl, // rounded-2xl
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
-    gap: 12,
+    borderColor: colors.border,
+    gap: spacing.md - spacing.xs, // gap-3 (12px)
   },
   serviceCardHeader: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    marginBottom: 12,
+    gap: spacing.md - spacing.xs, // gap-3 (12px)
+    marginBottom: spacing.md - spacing.xs, // mb-3 (12px)
   },
   providerImage: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
+    width: spacing.xxl + spacing.md, // w-12 (48px)
+    height: spacing.xxl + spacing.md, // h-12 (48px)
+    borderRadius: radii.md, // rounded-xl
   },
   serviceCardInfo: {
     flex: 1,
-    gap: 4,
+    gap: spacing.xs,
   },
   serviceCardTitle: {
-    color: '#F5F5F5',
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 4,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd,
+    fontFamily: typography.fontFamily.poppins.semibold,
+    marginBottom: spacing.xs,
   },
   serviceCardSubtitle: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   serviceCardFooter: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'flex-start',
-    paddingTop: 12,
+    paddingTop: spacing.md - spacing.xs, // pt-3 (12px)
     borderTopWidth: 1,
-    borderTopColor: 'rgba(64, 64, 64, 0.5)',
+    borderTopColor: `rgba(${parseInt(colors.border.slice(1, 3), 16)}, ${parseInt(colors.border.slice(3, 5), 16)}, ${parseInt(colors.border.slice(5, 7), 16)}, 0.5)`,
   },
   serviceCardDetail: {
     flex: 1,
-    gap: 4,
+    gap: spacing.xs,
   },
   serviceCardDetailLabel: {
-    color: '#A3A3A3',
-    fontSize: 12,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   serviceCardDetailValue: {
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontWeight: '600',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.poppins.semibold,
   },
   serviceCardDetailValuePrice: {
-    color: '#F59E0B',
-    fontSize: 14,
-    fontWeight: '600',
+    color: colors.secondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.poppins.semibold,
   },
   scrollContent: {
-    paddingBottom: 100,
+    paddingBottom: spacing.xxl * 2 + spacing.xs, // pb-25 (100px)
   },
   stepContainer: {
-    padding: 24,
-    gap: 24,
+    padding: spacing.lg, // p-6
+    gap: spacing.lg, // gap-6
   },
   stepHeader: {
-    gap: 8,
-    marginBottom: 8,
+    gap: spacing.sm, // gap-2
+    marginBottom: spacing.sm, // mb-2
   },
   stepTitle: {
-    color: '#F5F5F5',
-    fontSize: 24,
-    fontWeight: '700',
-    marginBottom: 8,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.headingLg,
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.sm, // mb-2
   },
   stepSubtitle: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   textAreaSection: {
-    gap: 8,
+    gap: spacing.sm, // gap-2
   },
   textAreaLabel: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontWeight: '500',
-    marginBottom: 8,
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
+    marginBottom: spacing.sm, // mb-2
   },
   textArea: {
-    padding: 16,
-    backgroundColor: '#1A1A1A',
+    padding: spacing.md, // p-4
+    backgroundColor: colors.surfaceElevated,
     borderWidth: 1,
-    borderColor: '#404040',
-    borderRadius: 16,
-    color: '#F5F5F5',
-    fontSize: 16,
-    minHeight: 120,
+    borderColor: colors.border,
+    borderRadius: radii.xl, // rounded-2xl
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    minHeight: spacing.xxl * 2 + spacing.md, // min-h-30 (120px)
   },
   uploadArea: {
-    padding: 32,
-    borderRadius: 16,
+    padding: spacing.xl, // p-8
+    borderRadius: radii.xl, // rounded-2xl
     borderWidth: 2,
     borderStyle: 'dashed',
-    borderColor: '#404040',
-    backgroundColor: '#111111',
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
     alignItems: 'center',
-    gap: 16,
+    gap: spacing.md, // gap-4
   },
   uploadIcon: {
-    width: 64,
-    height: 64,
-    borderRadius: 16,
+    width: spacing.xl * 2, // w-16 (64px)
+    height: spacing.xl * 2, // h-16 (64px)
+    borderRadius: radii.xl, // rounded-2xl
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 16,
+    marginBottom: spacing.md, // mb-4
   },
   uploadTitle: {
-    color: '#F5F5F5',
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 8,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd,
+    fontFamily: typography.fontFamily.poppins.semibold,
+    marginBottom: spacing.sm, // mb-2
   },
   uploadSubtitle: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
-    marginBottom: 16,
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
+    marginBottom: spacing.md, // mb-4
   },
   uploadButton: {
-    paddingHorizontal: 24,
-    paddingVertical: 12,
-    borderRadius: 12,
-    backgroundColor: '#1A1A1A',
+    paddingHorizontal: spacing.lg, // px-6
+    paddingVertical: spacing.md - spacing.xs, // py-3 (12px)
+    borderRadius: radii.md, // rounded-xl
+    backgroundColor: colors.surfaceElevated,
   },
   uploadButtonText: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontWeight: '500',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   uploadedFilesContainer: {
-    gap: 12,
+    gap: spacing.md - spacing.xs, // gap-3 (12px)
   },
   uploadedFilesTitle: {
-    color: '#F5F5F5',
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 12,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd,
+    fontFamily: typography.fontFamily.poppins.semibold,
+    marginBottom: spacing.md - spacing.xs, // mb-3 (12px)
   },
   uploadedFileCard: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    padding: 12,
-    borderRadius: 12,
-    backgroundColor: '#111111',
+    gap: spacing.md - spacing.xs, // gap-3 (12px)
+    padding: spacing.md - spacing.xs, // p-3 (12px)
+    borderRadius: radii.md, // rounded-xl
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   uploadedFileIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 8,
-    backgroundColor: 'rgba(99, 102, 241, 0.2)',
+    width: spacing.xl + spacing.sm, // w-10 (40px)
+    height: spacing.xl + spacing.sm, // h-10 (40px)
+    borderRadius: radii.sm, // rounded-lg
+    backgroundColor: `rgba(${parseInt(colors.primary.slice(1, 3), 16)}, ${parseInt(colors.primary.slice(3, 5), 16)}, ${parseInt(colors.primary.slice(5, 7), 16)}, 0.2)`,
     alignItems: 'center',
     justifyContent: 'center',
   },
   uploadedFileInfo: {
     flex: 1,
-    gap: 4,
+    gap: spacing.xs,
   },
   uploadedFileName: {
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontWeight: '500',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   uploadedFileSize: {
-    color: '#A3A3A3',
-    fontSize: 12,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   infoCard: {
-    borderRadius: 16,
+    borderRadius: radii.xl, // rounded-2xl
     overflow: 'hidden',
     borderWidth: 1,
+    borderColor: `rgba(${parseInt(colors.primary.slice(1, 3), 16)}, ${parseInt(colors.primary.slice(3, 5), 16)}, ${parseInt(colors.primary.slice(5, 7), 16)}, 0.3)`,
   },
   infoCardGradient: {
-    padding: 16,
+    padding: spacing.md, // p-4
   },
   infoCardText: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontWeight: '400',
-    lineHeight: 20,
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
+    lineHeight: spacing.xl * 2.5, // line-height 20px (close to 20)
   },
   infoCardTextAccent: {
-    color: '#6366F1',
-    fontWeight: '600',
+    color: colors.primary,
+    fontFamily: typography.fontFamily.poppins.semibold,
   },
   summaryCard: {
-    padding: 16,
-    borderRadius: 16,
-    backgroundColor: '#111111',
+    padding: spacing.md, // p-4
+    borderRadius: radii.xl, // rounded-2xl
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
-    gap: 12,
+    borderColor: colors.border,
+    gap: spacing.md - spacing.xs, // gap-3 (12px)
   },
   summaryCardTitle: {
-    color: '#F5F5F5',
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 12,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd,
+    fontFamily: typography.fontFamily.poppins.semibold,
+    marginBottom: spacing.md - spacing.xs, // mb-3 (12px)
   },
   summaryDetails: {
-    gap: 12,
+    gap: spacing.md - spacing.xs, // gap-3 (12px)
   },
   summaryDetail: {
-    gap: 8,
+    gap: spacing.sm, // gap-2
   },
   summaryDetailLabel: {
-    color: '#A3A3A3',
-    fontSize: 12,
-    fontWeight: '400',
-    marginBottom: 4,
+    color: colors.textMuted,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.regular,
+    marginBottom: spacing.xs,
   },
   summaryDetailValue: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   summaryRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: spacing.sm, // mb-2
   },
   summaryRowTotal: {
-    paddingTop: 12,
+    paddingTop: spacing.md - spacing.xs, // pt-3 (12px)
     borderTopWidth: 1,
-    borderTopColor: 'rgba(64, 64, 64, 0.5)',
-    marginTop: 12,
+    borderTopColor: `rgba(${parseInt(colors.border.slice(1, 3), 16)}, ${parseInt(colors.border.slice(3, 5), 16)}, ${parseInt(colors.border.slice(5, 7), 16)}, 0.5)`,
+    marginTop: spacing.md - spacing.xs, // mt-3 (12px)
   },
   summaryRowLabel: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   summaryRowValue: {
-    color: '#F5F5F5',
-    fontSize: 14,
-    fontWeight: '600',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.poppins.semibold,
   },
   summaryRowLabelTotal: {
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontWeight: '600',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.poppins.semibold,
   },
   summaryRowValueTotal: {
-    color: '#F59E0B',
-    fontSize: 16,
-    fontWeight: '700',
+    color: colors.secondary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.poppins.bold,
   },
   bottomCTA: {
     position: 'absolute',
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(64, 64, 64, 0.5)',
-    paddingHorizontal: 24,
-    paddingVertical: 16,
-    paddingBottom: 32,
+    borderTopColor: `rgba(${parseInt(colors.border.slice(1, 3), 16)}, ${parseInt(colors.border.slice(3, 5), 16)}, ${parseInt(colors.border.slice(5, 7), 16)}, 0.5)`,
+    paddingHorizontal: spacing.lg, // px-6
+    paddingVertical: spacing.md, // py-4
+    paddingBottom: spacing.xl, // pb-8
   },
   bottomCTAContent: {
     flexDirection: 'row',
-    gap: 12,
-    maxWidth: 375,
+    gap: spacing.md - spacing.xs, // gap-3 (12px)
+    maxWidth: 375, // Specific max width
     alignSelf: 'center',
     width: '100%',
   },
   bottomBackButton: {
     flex: 1,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderRadius: 16,
-    backgroundColor: '#111111',
+    paddingVertical: spacing.md - spacing.xs, // py-3 (12px)
+    paddingHorizontal: spacing.md, // px-4
+    borderRadius: radii.xl, // rounded-2xl
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
     alignItems: 'center',
     justifyContent: 'center',
   },
   bottomBackButtonText: {
-    color: '#D4D4D4',
-    fontSize: 16,
-    fontWeight: '500',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   bottomNextButton: {
     flex: 1,

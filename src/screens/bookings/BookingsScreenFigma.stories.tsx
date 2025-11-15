@@ -5,7 +5,13 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 const meta: Meta<typeof BookingsScreenFigma> = {
   title: 'Screens/Bookings/BookingsScreenFigma',
   component: BookingsScreenFigma,
-  decorators: [Story => <SafeAreaProvider></SafeAreaProvider>],
+  decorators: [
+    Story => (
+      <SafeAreaProvider>
+        <Story />
+      </SafeAreaProvider>
+    ),
+  ],
   parameters: {
     layout: 'fullscreen',
   },
