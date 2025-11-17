@@ -77,7 +77,7 @@ export function PaymentScreenFigma({
       name: 'Wave',
       description: 'Paiement mobile rapide et sécurisé',
       icon: Smartphone,
-      colors: ['#00D9FF', '#0099FF'] as [ColorValue, ColorValue], // Wave brand colors (specific)
+      colors: [colors.wavePrimary, colors.waveSecondary] as [ColorValue, ColorValue],
       available: true,
     },
     {
@@ -85,7 +85,7 @@ export function PaymentScreenFigma({
       name: 'Orange Money',
       description: 'Paiement via Orange Money',
       icon: CreditCard,
-      colors: ['#FF7900', '#FFB84D'] as [ColorValue, ColorValue], // Orange Money brand colors (specific)
+      colors: [colors.orangeMoneyPrimary, colors.orangeMoneySecondary] as [ColorValue, ColorValue],
       available: true,
     },
   ];

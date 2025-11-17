@@ -68,7 +68,7 @@ export function PaymentSuccessScreenFigma({
         <AnimatedView entering={FadeIn.delay(200)} style={styles.iconContainer}>
           <View style={styles.iconWrapper}>
             <LinearGradient
-              colors={[colors.success, '#059669']}
+              colors={[colors.success, colors.successDark]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.iconGradient}
@@ -143,7 +143,7 @@ export function PaymentSuccessScreenFigma({
 
             <View style={styles.stepCard}>
               <LinearGradient
-                colors={[colors.success, '#059669']}
+                colors={[colors.success, colors.successDark]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.stepIcon}

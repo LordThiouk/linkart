@@ -1,6 +1,6 @@
 import React from 'react';
 import { Text as RNText, TextProps as RNTextProps, TextStyle } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { colors } from '@/theme';
 
 export type TextVariant =
   | 'displayLarge'
@@ -39,8 +39,6 @@ export const Text: React.FC<TextProps> = ({
   style,
   ...props
 }) => {
-  const theme = useTheme();
-
   const getVariantStyles = (): TextStyle => {
     switch (variant) {
       case 'displayLarge':
@@ -105,7 +103,7 @@ export const Text: React.FC<TextProps> = ({
         getVariantStyles(),
         getWeightStyles(),
         {
-          color: color || theme.colors.onSurface,
+          color: color || colors.textPrimary,
           textAlign: align,
         },
         style,

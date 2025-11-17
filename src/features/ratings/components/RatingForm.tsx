@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, ViewStyle, ScrollView } from 'react-native';
+import { View, ViewStyle, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { Card, Title, Button } from 'react-native-paper';
 import { useTheme } from 'react-native-paper';
+import { Star } from 'lucide-react-native';
 import { Input, Text } from '../../../components/atoms';
-import { RatingStars } from '../../../components/molecules';
+import { colors } from '../../../theme';
 
 export interface RatingFormProps {
   productTitle: string;
@@ -52,12 +53,22 @@ export const RatingForm: React.FC<RatingFormProps> = ({ productTitle, onSubmit, 
             </Text>
 
             <View style={{ alignItems: 'center', marginBottom: 24 }}>
-              <RatingStars
-                rating={formData.rating ?? 0}
-                onRatingChange={handleRatingChange}
-                size={32}
-                readonly={false}
-              />
+              <View style={styles.starsContainer}>
+                {[1, 2, 3, 4, 5].map(star => (
+                  <TouchableOpacity
+                    key={star}
+                    onPress={() => handleRatingChange(star)}
+                    style={styles.starButton}
+                    testID={`${testID}-star-${star}`}
+                  >
+                    <Star
+                      size={32}
+                      color={star <= (formData.rating ?? 0) ? colors.golden : colors.border}
+                      fill={star <= (formData.rating ?? 0) ? colors.golden : 'transparent'}
+                    />
+                  </TouchableOpacity>
+                ))}
+              </View>
               <Text variant="body2" style={{ marginTop: 8, color: theme.colors.onSurfaceVariant }}>
                 {formData.rating === 0 && 'Sélectionnez une note'}
                 {formData.rating === 1 && 'Très décevant'}
@@ -117,3 +128,14 @@ export const RatingForm: React.FC<RatingFormProps> = ({ productTitle, onSubmit, 
     </ScrollView>
   );
 };
+
+const styles = StyleSheet.create({
+  starsContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  starButton: {
+    padding: 4,
+  },
+});

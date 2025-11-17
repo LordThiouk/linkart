@@ -38,25 +38,25 @@ type FilterType = 'all' | 'pending' | 'confirmed' | 'completed';
 const getStatusConfig = () => ({
   pending: {
     label: 'En attente',
-    color: colors.secondary, // #F59E0B
+    color: colors.secondary, // Orange Linkart
     bgColor: hexToRgba(colors.secondary, 0.1),
     icon: Clock,
   },
   confirmed: {
     label: 'Confirmée',
-    color: '#06B6D4', // Cyan - not in theme, keeping as is
-    bgColor: 'rgba(6, 182, 212, 0.1)',
+    color: colors.cyan,
+    bgColor: hexToRgba(colors.cyan, 0.1),
     icon: CheckCircle,
   },
   completed: {
     label: 'Terminée',
-    color: colors.success, // #22C55E
+    color: colors.success, // Green success
     bgColor: hexToRgba(colors.success, 0.1),
     icon: CheckCircle,
   },
   cancelled: {
     label: 'Annulée',
-    color: colors.error, // #EF4444
+    color: colors.error, // Error red
     bgColor: hexToRgba(colors.error, 0.1),
     icon: XCircle,
   },
@@ -169,7 +169,7 @@ export function BookingsScreenFigma({ onBack, onOpenChat, userId, accessToken }:
                 activeOpacity={0.9}
               >
                 <LinearGradient
-                  colors={['#06B6D4', colors.primaryDark]} // Cyan to primaryDark
+                  colors={[colors.cyan, colors.primaryDark]} // Cyan to primaryDark
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.confirmButtonGradient}

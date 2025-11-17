@@ -1,15 +1,16 @@
 import React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import { PlaylistDetailScreen } from '../PlaylistDetailScreen';
+import { colors } from '@/theme';
 
 // Mock theme
 const mockTheme = {
   colors: {
-    onSurface: '#FFFFFF',
-    onSurfaceVariant: '#CCCCCC',
-    primary: '#6366F1',
-    onPrimary: '#FFFFFF',
-    error: '#FF0000',
+    onSurface: colors.textPrimary,
+    onSurfaceVariant: colors.textMuted,
+    primary: colors.primary,
+    onPrimary: colors.primaryForeground,
+    error: colors.error,
   },
 };
 

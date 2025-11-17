@@ -4,23 +4,13 @@ export { StatCard } from './StatCard';
 export { StatContent } from './StatContent';
 export { StatValue } from './StatValue';
 export { StatLabel } from './StatLabel';
-export { SectionTitle } from './SectionTitle';
 export { StatsContainer } from './StatsContainer';
 export { ScrollContent } from './ScrollContent';
 export { CenteredContent } from './CenteredContent';
-export { ProductCard } from './ProductCard';
-export { ProductIcon } from './ProductIcon';
-export { ProductInfo } from './ProductInfo';
-export { ProductTitle } from './ProductTitle';
-export { ProductPrice } from './ProductPrice';
-export { ProductTags } from './ProductTags';
-export { ProductFooter } from './ProductFooter';
-export { RatingContainer, RatingIcon, RatingText } from './RatingContainer';
 
 // Nouveaux composants atoms modernisés
 export { default as Button } from './Button';
 export { default as Input } from './Input';
-export { Icon } from './Icon';
 export { Text } from './Text';
 export { Spacer } from './Spacer';
 export { LoadingSpinner } from './LoadingSpinner';
@@ -30,7 +20,6 @@ export type { ToastProps, ToastVariant, ToastPosition } from './Toast';
 // Composants métriques et interactions
 export { HeartIcon } from './HeartIcon';
 export { PlayButton } from './PlayButton';
-export { MetricItem } from './MetricItem';
 export { WebLinearGradient } from './WebLinearGradient';
 
 // Design System v2.0 - Groupe A (Conformité Figma 100%)

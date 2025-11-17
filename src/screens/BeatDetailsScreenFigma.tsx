@@ -9,7 +9,7 @@ import { RatingStarsFigma } from '../components/molecules/RatingStarsFigma';
 import { ProductCardFigma } from '../components/atoms/ProductCardFigma';
 import { colors, spacing, typography, radii } from '@/theme';
 
-interface BeatDetailsScreenFigmaProps {
+export interface BeatDetailsScreenFigmaProps {
   beatId: string;
   onBack: () => void;
   onBuyClick?: () => void;

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, ViewStyle } from 'react-native';
 import { Card, Title, Button, ProgressBar, Text } from 'react-native-paper';
 import { useTheme } from 'react-native-paper';
-import { Icon } from '../../../components/atoms';
+import { Upload } from 'lucide-react-native';
 import { useUpload } from '../hooks/useUpload';
 
 export interface FileUploadProps {
@@ -90,7 +90,7 @@ export const FileUpload: React.FC<FileUploadProps> = ({
       {!selectedFile ? (
         <Card>
           <Card.Content style={{ alignItems: 'center', padding: 24 }}>
-            <Icon name="cloud-upload" size={48} color={theme.colors.primary} />
+            <Upload size={48} color={theme.colors.primary} />
             <Title style={{ marginTop: 16, marginBottom: 8, color: theme.colors.onSurface }}>
               {fileType === 'preview' ? 'Téléverser un aperçu' : 'Téléverser le fichier complet'}
             </Title>

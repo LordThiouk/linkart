@@ -1,9 +1,11 @@
 import React from 'react';
-import { Text } from 'react-native';
-import { Button, Card, Title, Paragraph } from 'react-native-paper';
+import { Text, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import * as Sentry from '@sentry/react-native';
 import { Container, CenteredContent } from './atoms';
+import Card, { CardContent, CardHeader, CardTitle, CardDescription } from './atoms/Card';
+import Button from './atoms/Button';
+import { colors, typography, spacing } from '../theme';
 
 interface ErrorBoundaryState {
   hasError: boolean;
@@ -42,22 +44,20 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   render() {
     if (this.state.hasError) {
       return (
-        <SafeAreaView style={{ flex: 1, backgroundColor: '#f8fafc' }}>
+        <SafeAreaView style={[styles.safeArea, { backgroundColor: colors.background }]}>
           <Container flex={1}>
             <CenteredContent>
-              <Card style={{ maxWidth: 400, width: '100%' }}>
-                <Card.Content style={{ alignItems: 'center' }}>
-                  <Text style={{ fontSize: 48, marginBottom: 16 }}>😵</Text>
-                  <Title style={{ fontSize: 20, fontWeight: 'bold', textAlign: 'center', marginBottom: 8 }}>
-                    Oups! Quelque chose s'est mal passé
-                  </Title>
-                  <Paragraph style={{ textAlign: 'center', marginBottom: 24, color: '#6b7280' }}>
+              <Card variant="elevated" style={styles.card}>
+                <CardHeader>
+                  <Text style={styles.emoji}>😵</Text>
+                </CardHeader>
+                <CardContent style={styles.cardContent}>
+                  <CardTitle style={styles.title}>Oups! Quelque chose s'est mal passé</CardTitle>
+                  <CardDescription style={styles.description}>
                     Une erreur inattendue s'est produite. Veuillez réessayer ou redémarrer l'application.
-                  </Paragraph>
-                  <Button mode="contained" onPress={this.handleReset} style={{ marginTop: 8 }}>
-                    Réessayer
-                  </Button>
-                </Card.Content>
+                  </CardDescription>
+                  <Button title="Réessayer" variant="primary" size="default" onPress={this.handleReset} />
+                </CardContent>
               </Card>
             </CenteredContent>
           </Container>
@@ -68,3 +68,36 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
     return this.props.children;
   }
 }
+
+const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+  },
+  card: {
+    maxWidth: 400,
+    width: '100%',
+  },
+  cardContent: {
+    alignItems: 'center',
+  },
+  emoji: {
+    fontSize: 48,
+    marginBottom: spacing.md,
+    textAlign: 'center',
+  },
+  title: {
+    fontSize: typography.fontSize.titleMd,
+    fontFamily: typography.fontFamily.poppins.bold,
+    fontWeight: typography.fontWeight.bold,
+    textAlign: 'center',
+    marginBottom: spacing.sm,
+    color: colors.textPrimary,
+  },
+  description: {
+    textAlign: 'center',
+    marginBottom: spacing.xl,
+    color: colors.textMuted,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.inter.regular,
+  },
+});

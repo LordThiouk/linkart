@@ -1,7 +1,6 @@
 import React from 'react';
-import { View, ViewStyle } from 'react-native';
-import { ActivityIndicator } from 'react-native-paper';
-import { useTheme } from 'react-native-paper';
+import { View, ViewStyle, ActivityIndicator } from 'react-native';
+import { colors } from '@/theme';
 
 export interface LoadingSpinnerProps {
   size?: 'small' | 'medium' | 'large';
@@ -11,8 +10,7 @@ export interface LoadingSpinnerProps {
 }
 
 export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({ size = 'medium', color, style, testID }) => {
-  const theme = useTheme();
-  const spinnerColor = color || theme.colors.primary;
+  const spinnerColor = color || colors.primary;
 
   return (
     <View

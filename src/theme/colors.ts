@@ -25,7 +25,9 @@ export const colors = {
   golden: '#F59E0B', // Prix, highlights (alias de secondary)
   pink: '#EC4899', // Heart icon, special
   cyan: '#06B6D4', // Info
+  // Success variants
   success: '#22C55E', // Success states
+  successDark: '#059669', // Success gradient darker tone
   error: '#EF4444', // Error states
   warning: '#F59E0B', // Warning states
 
@@ -55,6 +57,12 @@ export const colors = {
   white: '#FFFFFF',
   black: '#000000',
   transparent: 'transparent',
+
+  // Partner / brand-specific palettes
+  wavePrimary: '#00D9FF',
+  waveSecondary: '#0099FF',
+  orangeMoneyPrimary: '#FF7900',
+  orangeMoneySecondary: '#FFB84D',
 } as const;
 
 export type ColorKey = keyof typeof colors;

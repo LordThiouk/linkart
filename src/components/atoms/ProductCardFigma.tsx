@@ -4,7 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { Play, Pause, Heart, ShoppingCart, Download, Package, LucideIcon } from 'lucide-react-native';
 import { ImageWithFallback } from './ImageWithFallback';
-import { RatingStars } from '../molecules/RatingStars';
+import { RatingStarsFigma } from '../molecules/RatingStarsFigma';
 
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
@@ -214,8 +214,12 @@ export function ProductCardFigma({
           {/* Rating */}
           {rating !== undefined && (
             <View style={styles.ratingContainer}>
-              <RatingStars rating={rating} size={20} />
-              {reviewCount !== undefined && <Text style={styles.reviewCountText}>({reviewCount})</Text>}
+              <RatingStarsFigma
+                rating={rating}
+                size="lg"
+                showNumber={reviewCount !== undefined}
+                reviewCount={reviewCount}
+              />
             </View>
           )}
 

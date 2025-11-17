@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { TouchableOpacity, Animated, ViewStyle } from 'react-native';
 import { Play, Pause } from 'lucide-react-native';
-import { useTheme } from 'react-native-paper';
+import { colors, radii, hexToRgba } from '@/theme';
 
 export interface PlayButtonProps {
   isPlaying: boolean;
@@ -12,7 +12,6 @@ export interface PlayButtonProps {
 }
 
 export const PlayButton: React.FC<PlayButtonProps> = ({ isPlaying, size, onPress, disabled = false, testID }) => {
-  const theme = useTheme();
   const scaleAnim = useRef(new Animated.Value(1)).current;
 
   const handlePress = () => {
@@ -67,11 +66,11 @@ export const PlayButton: React.FC<PlayButtonProps> = ({ isPlaying, size, onPress
   const containerStyle: ViewStyle = {
     width: buttonSize,
     height: buttonSize,
-    borderRadius: theme.roundness,
-    backgroundColor: theme.colors.primary,
+    borderRadius: radii.full,
+    backgroundColor: disabled ? hexToRgba(colors.primary, 0.4) : colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
-    opacity: disabled ? 0.5 : 1,
+    opacity: disabled ? 0.6 : 1,
   };
 
   return (
@@ -85,9 +84,9 @@ export const PlayButton: React.FC<PlayButtonProps> = ({ isPlaying, size, onPress
     >
       <Animated.View style={{ transform: [{ scale: scaleAnim }] }}>
         {isPlaying ? (
-          <Pause size={iconSize} color={theme.colors.onPrimary} />
+          <Pause size={iconSize} color={colors.primaryForeground} />
         ) : (
-          <Play size={iconSize} color={theme.colors.onPrimary} />
+          <Play size={iconSize} color={colors.primaryForeground} />
         )}
       </Animated.View>
     </TouchableOpacity>

@@ -3,7 +3,7 @@ import { View, ViewStyle, FlatList } from 'react-native';
 import { Card, Avatar, Chip } from 'react-native-paper';
 import { useTheme } from 'react-native-paper';
 import { Text, LoadingSpinner } from '../../../components/atoms';
-import { RatingStars } from '../../../components/molecules';
+import { RatingStarsFigma } from '../../../components/molecules';
 import { RatingData } from '../hooks/useRatings';
 
 export interface RatingListProps {
@@ -57,7 +57,7 @@ export const RatingList: React.FC<RatingListProps> = ({
         </View>
 
         <View style={{ marginBottom: 12 }}>
-          <RatingStars rating={item.rating} size={16} readonly />
+          <RatingStarsFigma rating={item.rating} size="sm" />
         </View>
 
         {item.comment && (

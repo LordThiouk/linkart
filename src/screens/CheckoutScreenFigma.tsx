@@ -9,7 +9,7 @@ import { PrimaryButton } from '../components/atoms/PrimaryButton';
 import { InputField } from '../components/atoms/InputField';
 import { colors, spacing, typography, radii } from '@/theme';
 
-interface CheckoutScreenFigmaProps {
+export interface CheckoutScreenFigmaProps {
   onBack: () => void;
   onProceedToPayment: (data: CheckoutData) => void;
   productId: string;

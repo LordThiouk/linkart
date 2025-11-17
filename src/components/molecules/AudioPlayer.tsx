@@ -1,8 +1,8 @@
 import React, { useState, useRef } from 'react';
 import { View, Text, TouchableOpacity, Image, ViewStyle } from 'react-native';
-import { useTheme } from 'react-native-paper';
 import { Audio } from 'expo-av';
 import { SkipForward } from 'lucide-react-native';
+import { colors, typography, spacing, radii, shadows } from '../../theme';
 import { HeartIcon } from '../atoms/HeartIcon';
 import { PlayButton } from '../atoms/PlayButton';
 
@@ -39,7 +39,6 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
   style,
   testID,
 }) => {
-  const theme = useTheme();
   const [sound, setSound] = useState<Audio.Sound | null>(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [position, setPosition] = useState(0);
@@ -159,16 +158,12 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
         {
           flexDirection: 'row',
           alignItems: 'center',
-          backgroundColor: theme.colors.surface,
-          borderRadius: 8,
-          padding: 16,
-          marginHorizontal: sticky ? 0 : 16,
-          marginBottom: sticky ? 0 : 8,
-          elevation: sticky ? 8 : 2,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: sticky ? 4 : 1 },
-          shadowOpacity: sticky ? 0.3 : 0.2,
-          shadowRadius: sticky ? 8 : 1.41,
+          backgroundColor: colors.surface,
+          borderRadius: radii.lg,
+          padding: spacing.md,
+          marginHorizontal: sticky ? 0 : spacing.md,
+          marginBottom: sticky ? 0 : spacing.sm,
+          ...(sticky ? shadows.lg : shadows.md),
           position: sticky ? 'absolute' : 'relative',
           bottom: sticky ? 0 : 'auto',
           left: sticky ? 0 : 'auto',
@@ -187,20 +182,20 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
         style={{
           width: 40,
           height: 40,
-          borderRadius: theme.roundness / 2,
-          marginRight: 16,
+          borderRadius: radii.md,
+          marginRight: spacing.md,
         }}
         resizeMode="cover"
       />
 
       {/* Title and Artist */}
-      <View style={{ flex: 1, marginRight: 8 }}>
+      <View style={{ flex: 1, marginRight: spacing.sm }}>
         <Text
           style={{
-            fontSize: theme.fonts.bodyMedium.fontSize,
-            fontFamily: theme.fonts.bodyMedium.fontFamily,
-            color: theme.colors.onSurface,
-            fontWeight: '600',
+            fontSize: typography.fontSize.body,
+            fontFamily: typography.fontFamily.inter.medium,
+            color: colors.textPrimary,
+            fontWeight: typography.fontWeight.semibold,
             marginBottom: 2,
           }}
           numberOfLines={1}
@@ -209,9 +204,9 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
         </Text>
         <Text
           style={{
-            fontSize: theme.fonts.bodySmall.fontSize,
-            fontFamily: theme.fonts.bodySmall.fontFamily,
-            color: theme.colors.onSurfaceVariant,
+            fontSize: typography.fontSize.caption,
+            fontFamily: typography.fontFamily.inter.regular,
+            color: colors.textMuted,
           }}
           numberOfLines={1}
         >
@@ -222,9 +217,9 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
         <View
           style={{
             height: 2,
-            backgroundColor: theme.colors.surfaceVariant,
+            backgroundColor: colors.surfaceElevated,
             borderRadius: 1,
-            marginTop: 4,
+            marginTop: spacing.xs,
             overflow: 'hidden',
           }}
         >
@@ -232,7 +227,7 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
             style={{
               height: '100%',
               width: `${position * 100}%`,
-              backgroundColor: theme.colors.primary,
+              backgroundColor: colors.primary,
               borderRadius: 1,
             }}
           />
@@ -240,12 +235,12 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
       </View>
 
       {/* HeartIcon */}
-      <View style={{ marginRight: 16 }}>
+      <View style={{ marginRight: spacing.md }}>
         <HeartIcon productId={productId} size="sm" testID={`${testID}-heart-icon`} />
       </View>
 
       {/* PlayButton */}
-      <View style={{ marginRight: 16 }}>
+      <View style={{ marginRight: spacing.md }}>
         <PlayButton
           isPlaying={isPlaying}
           size="sm"
@@ -260,20 +255,16 @@ export const AudioPlayer: React.FC<AudioPlayerProps> = ({
         <TouchableOpacity
           onPress={handleNext}
           style={{
-            padding: 4,
-            borderRadius: 4 + 1, // 1px de plus pour éviter les effets de bord
-            backgroundColor: theme.colors.surfaceVariant,
+            padding: spacing.xs,
+            borderRadius: radii.sm,
+            backgroundColor: colors.surfaceElevated,
             justifyContent: 'center',
             alignItems: 'center',
-            shadowColor: theme.colors.shadow,
-            shadowOffset: { width: 0, height: 1 },
-            shadowOpacity: 0.1,
-            shadowRadius: 2,
-            elevation: 1,
+            ...shadows.sm,
           }}
           testID={`${testID}-next-button`}
         >
-          <SkipForward size={20} color={theme.colors.onSurfaceVariant} />
+          <SkipForward size={20} color={colors.textMuted} />
         </TouchableOpacity>
       )}
     </TouchableOpacity>
