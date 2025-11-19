@@ -32,10 +32,14 @@ export default meta;
 
 type Story = StoryObj<typeof SearchBar>;
 
-const InteractiveWrapper = ({ initialValue = '', ...args }: any) => {
+type InteractiveWrapperProps = React.ComponentProps<typeof SearchBar> & {
+  initialValue?: string;
+};
+
+const InteractiveWrapper: React.FC<InteractiveWrapperProps> = ({ initialValue = '', ...props }) => {
   const [value, setValue] = useState(initialValue);
 
-  return <SearchBar {...args} value={value} onChangeText={setValue} />;
+  return <SearchBar {...props} value={value} onChangeText={setValue} />;
 };
 
 export const Default: Story = {

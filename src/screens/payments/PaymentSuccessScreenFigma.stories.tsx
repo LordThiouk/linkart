@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
-import { PaymentSuccessScreenFigma } from './PaymentSuccessScreenFigma';
+import { PaymentSuccessScreenFigma } from '@/features/payments/screens/PaymentSuccessScreenFigma';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const meta: Meta<typeof PaymentSuccessScreenFigma> = {

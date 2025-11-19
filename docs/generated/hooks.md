@@ -1,6 +1,6 @@
 # Documentation des Hooks
 
-> Généré le: 2025-11-15
+> Généré le: 2025-11-17
 
 ## useAdmin
 

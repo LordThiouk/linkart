@@ -78,14 +78,14 @@
 | 19  | **ProfileSetupScreenFigma**    | `screens/auth/ProfileSetupScreenFigma.tsx`           | StyleSheet | ✅      | 🟢 Complet |
 | 20  | **WelcomeScreenFigma**         | `screens/auth/WelcomeScreenFigma.tsx`                | StyleSheet | ✅      | 🟢 Complet |
 | 21  | **BookingFormScreenFigma**     | `screens/bookings/BookingFormScreenFigma.tsx`        | StyleSheet | ✅      | 🟢 Complet |
-| 22  | **BookingsScreenFigma**        | `screens/bookings/BookingsScreenFigma.tsx`           | StyleSheet | ✅      | 🟢 Complet |
+| 22  | **BookingsScreenFigma**        | `features/bookings/screens/BookingsScreenFigma.tsx`  | StyleSheet | ✅      | 🟢 Complet |
 | 23  | **BoostScreenFigma**           | `screens/boost/BoostScreenFigma.tsx`                 | StyleSheet | ✅      | 🟢 Complet |
 | 24  | **DownloadViewerScreenFigma**  | `screens/downloads/DownloadViewerScreenFigma.tsx`    | StyleSheet | ✅      | 🟢 Complet |
 | 25  | **LicenseContractScreenFigma** | `screens/legal/LicenseContractScreenFigma.tsx`       | StyleSheet | ✅      | 🟢 Complet |
 | 26  | **ChatScreenFigma**            | `screens/messaging/ChatScreenFigma.tsx`              | StyleSheet | ✅      | 🟢 Complet |
 | 27  | **InboxScreenFigma**           | `screens/messaging/InboxScreenFigma.tsx`             | StyleSheet | ✅      | 🟢 Complet |
 | 28  | **NotificationsScreenFigma**   | `screens/notifications/NotificationsScreenFigma.tsx` | StyleSheet | ✅      | 🟢 Complet |
-| 29  | **PaymentScreenFigma**         | `screens/payments/PaymentScreenFigma.tsx`            | StyleSheet | ✅      | 🟢 Complet |
+| 29  | **PaymentScreenFigma**         | `features/payments/screens/PaymentScreenFigma.tsx`   | StyleSheet | ✅      | 🟢 Complet |
 | 30  | **PaymentSuccessScreenFigma**  | `screens/payments/PaymentSuccessScreenFigma.tsx`     | StyleSheet | ✅      | 🟢 Complet |
 | 31  | **MyPurchasesScreenFigma**     | `screens/purchases/MyPurchasesScreenFigma.tsx`       | StyleSheet | ✅      | 🟢 Complet |
 | 32  | **SearchFiltersScreenFigma**   | `screens/search/SearchFiltersScreenFigma.tsx`        | StyleSheet | ✅      | 🟢 Complet |

@@ -89,16 +89,16 @@ Remplacer par :
 
 Screens les plus utilisés et critiques pour le MVP :
 
-| Screen                        | Complexité | Durée    | Priorité    | État       |
-| ----------------------------- | ---------- | -------- | ----------- | ---------- |
-| `HomeScreenFigma.tsx`         | Élevée     | 1 jour   | 🔴 Critique | ✅ Terminé |
-| `MarketplaceScreenFigma.tsx`  | Élevée     | 1 jour   | 🔴 Critique | ✅ Terminé |
-| `BeatDetailsScreenFigma.tsx`  | Moyenne    | 0.5 jour | 🔴 Critique | ✅ Terminé |
-| `CheckoutScreenFigma.tsx`     | Moyenne    | 0.5 jour | 🔴 Critique | ✅ Terminé |
-| `PaymentScreenFigma.tsx`      | Simple     | 0.5 jour | 🔴 Critique | ✅ Terminé |
-| `LoginScreen.tsx`             | Simple     | 0.5 jour | 🔴 Critique | ✅ Terminé |
-| `OTPVerificationScreen.tsx`   | Simple     | 0.5 jour | 🔴 Critique | ✅ Terminé |
-| `ProfileSetupScreenFigma.tsx` | Moyenne    | 0.5 jour | 🔴 Critique | ✅ Terminé |
+| Screen                        | Complexité | Durée    | Priorité          | État                                     |
+| ----------------------------- | ---------- | -------- | ----------------- | ---------------------------------------- |
+| `HomeScreenFigma.tsx`         | Élevée     | 1 jour   | 🔴 Critique       | ✅ Terminé                               |
+| `MarketplaceScreenFigma.tsx`  | Élevée     | 1 jour   | 🔴 Critique       | ✅ Terminé                               |
+| `BeatDetailsScreenFigma.tsx`  | Moyenne    | 0.5 jour | 🔴 Critique       | ✅ Terminé                               |
+| `CheckoutScreenFigma.tsx`     | Moyenne    | 0.5 jour | 🔴 Critique       | ✅ Terminé                               |
+| `PaymentScreenFigma.tsx`      | Simple     | 0.5 jour | 🟡 Focus Payments | ✅ Terminé (`features/payments/screens`) |
+| `LoginScreen.tsx`             | Simple     | 0.5 jour | 🔴 Critique       | ✅ Terminé                               |
+| `OTPVerificationScreen.tsx`   | Simple     | 0.5 jour | 🔴 Critique       | ✅ Terminé                               |
+| `ProfileSetupScreenFigma.tsx` | Moyenne    | 0.5 jour | 🔴 Critique       | ✅ Terminé                               |
 
 **Durée totale** : 5 jours — **✅ Phase 1 complète !**
 

@@ -1,12 +1,11 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, ScrollView, StyleSheet, ColorValue } from 'react-native';
+import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-native';
 import Animated, { FadeInLeft } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
-import { ArrowLeft, Heart, ShoppingCart, MessageCircle, UserPlus, Sparkles, CheckCheck } from 'lucide-react-native';
-import { ImageWithFallback } from '../../components/atoms/ImageWithFallback';
+import { ArrowLeft, CheckCheck } from 'lucide-react-native';
 import { colors, spacing, typography, radii } from '@/theme';
 import { hexToRgba } from '@/theme/helpers';
+import { NotificationTabs, NotificationEmptyState, NotificationItem } from '@/features/notifications/components';
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 
@@ -135,36 +134,6 @@ export function NotificationsScreenFigma({ onBack }: NotificationsScreenFigmaPro
 
   const unreadCount = notificationsList.filter(n => !n.read).length;
 
-  const getIcon = (type: Notification['type']) => {
-    switch (type) {
-      case 'like':
-        return <Heart size={20} color={colors.accent} />;
-      case 'purchase':
-        return <ShoppingCart size={20} color={colors.secondary} />;
-      case 'comment':
-        return <MessageCircle size={20} color={colors.cyan} />;
-      case 'follow':
-        return <UserPlus size={20} color={colors.primary} />;
-      case 'system':
-        return <Sparkles size={20} color={colors.primaryDark} />;
-    }
-  };
-
-  const getIconBg = (type: Notification['type']) => {
-    switch (type) {
-      case 'like':
-        return [hexToRgba(colors.accent, 0.2), hexToRgba(colors.accent, 0.1)];
-      case 'purchase':
-        return [hexToRgba(colors.secondary, 0.2), hexToRgba(colors.secondary, 0.1)];
-      case 'comment':
-        return [hexToRgba(colors.cyan, 0.2), hexToRgba(colors.cyan, 0.1)];
-      case 'follow':
-        return [hexToRgba(colors.primary, 0.2), hexToRgba(colors.primary, 0.1)];
-      case 'system':
-        return [hexToRgba(colors.primaryDark, 0.2), hexToRgba(colors.primaryDark, 0.1)];
-    }
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       {/* Header */}
@@ -194,144 +163,32 @@ export function NotificationsScreenFigma({ onBack }: NotificationsScreenFigmaPro
             )}
           </View>
 
-          {/* Filter Tabs */}
-          <View style={styles.filters}>
-            <TouchableOpacity
-              onPress={() => setFilter('all')}
-              style={[styles.filterButton, filter === 'all' && styles.filterButtonSelected]}
-              activeOpacity={0.8}
-            >
-              {filter === 'all' ? (
-                <LinearGradient
-                  colors={[colors.primary, colors.primaryDark]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={styles.filterButtonGradient}
-                >
-                  <Text style={styles.filterButtonTextSelected}>Toutes</Text>
-                </LinearGradient>
-              ) : (
-                <Text style={styles.filterButtonText}>Toutes</Text>
-              )}
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => setFilter('unread')}
-              style={[styles.filterButton, filter === 'unread' && styles.filterButtonSelected]}
-              activeOpacity={0.8}
-            >
-              {filter === 'unread' ? (
-                <LinearGradient
-                  colors={[colors.primary, colors.primaryDark]}
-                  start={{ x: 0, y: 0 }}
-                  end={{ x: 1, y: 0 }}
-                  style={styles.filterButtonGradient}
-                >
-                  <Text style={styles.filterButtonTextSelected}>Non lues</Text>
-                  {unreadCount > 0 && (
-                    <View style={styles.unreadBadge}>
-                      <Text style={styles.unreadBadgeText}>{unreadCount}</Text>
-                    </View>
-                  )}
-                </LinearGradient>
-              ) : (
-                <View style={styles.filterButtonContent}>
-                  <Text style={styles.filterButtonText}>Non lues</Text>
-                  {unreadCount > 0 && (
-                    <View style={styles.unreadBadgeUnselected}>
-                      <Text style={styles.unreadBadgeText}>{unreadCount}</Text>
-                    </View>
-                  )}
-                </View>
-              )}
-            </TouchableOpacity>
-          </View>
+          <NotificationTabs filter={filter} unreadCount={unreadCount} onChange={setFilter} />
         </View>
       </View>
 
       {/* Notifications List */}
       <ScrollView contentContainerStyle={styles.scrollContent} showsVerticalScrollIndicator={false} bounces={false}>
         {filteredNotifications.length === 0 ? (
-          <View style={styles.emptyState}>
-            <View style={styles.emptyIcon}>
-              <CheckCheck size={40} color={colors.textMuted} />
-            </View>
-            <Text style={styles.emptyTitle}>Tout est lu !</Text>
-            <Text style={styles.emptySubtitle}>
-              {filter === 'unread' ? "Vous n'avez aucune notification non lue" : "Vous n'avez aucune notification"}
-            </Text>
-          </View>
+          <NotificationEmptyState filter={filter} />
         ) : (
           <View style={styles.notificationsList}>
             {filteredNotifications.map((notification, index) => (
-              <AnimatedView
-                key={notification.id}
-                entering={FadeInLeft.delay(index * 50)}
-                style={[
-                  styles.notificationCard,
-                  notification.read ? styles.notificationCardRead : styles.notificationCardUnread,
-                ]}
-              >
-                <View style={styles.notificationContent}>
-                  {notification.user ? (
-                    <View style={styles.notificationAvatarContainer}>
-                      <ImageWithFallback
-                        src={notification.user.image}
-                        alt={notification.user.name}
-                        style={styles.notificationAvatar}
-                      />
-                      <LinearGradient
-                        colors={getIconBg(notification.type) as [ColorValue, ColorValue]}
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 1 }}
-                        style={styles.notificationIconBadge}
-                      >
-                        {getIcon(notification.type)}
-                      </LinearGradient>
-                    </View>
-                  ) : (
-                    <LinearGradient
-                      colors={getIconBg(notification.type) as [ColorValue, ColorValue, ...ColorValue[]]}
-                      start={{ x: 0, y: 0 }}
-                      end={{ x: 1, y: 1 }}
-                      style={styles.notificationIconContainer}
-                    >
-                      {getIcon(notification.type)}
-                    </LinearGradient>
-                  )}
-
-                  <View style={styles.notificationInfo}>
-                    <View style={styles.notificationHeader}>
-                      <Text style={styles.notificationMessage} numberOfLines={2}>
-                        {notification.user && (
-                          <Text style={styles.notificationUserName}>{notification.user.name} </Text>
-                        )}
-                        <Text style={styles.notificationMessageText}>{notification.message}</Text>
-                      </Text>
-                      {!notification.read && (
-                        <LinearGradient
-                          colors={[colors.primary, colors.primaryDark]}
-                          start={{ x: 0, y: 0 }}
-                          end={{ x: 1, y: 1 }}
-                          style={styles.unreadDot}
-                        />
-                      )}
-                    </View>
-
-                    {notification.metadata?.beatTitle && (
-                      <Text style={styles.notificationBeatTitle}>"{notification.metadata.beatTitle}"</Text>
-                    )}
-
-                    <View style={styles.notificationFooter}>
-                      <Text style={styles.notificationTime}>{notification.time}</Text>
-                      {notification.metadata?.amount && (
-                        <>
-                          <Text style={styles.notificationSeparator}>•</Text>
-                          <Text style={styles.notificationAmount}>+€{notification.metadata.amount}</Text>
-                        </>
-                      )}
-                    </View>
-                  </View>
-                </View>
+              <AnimatedView key={notification.id} entering={FadeInLeft.delay(index * 50)}>
+                <NotificationItem
+                  type={notification.type}
+                  userName={notification.user?.name}
+                  userImage={notification.user?.image}
+                  message={notification.message}
+                  time={notification.time}
+                  read={notification.read}
+                  beatTitle={notification.metadata?.beatTitle}
+                  amount={
+                    notification.metadata?.amount !== undefined
+                      ? Math.round(notification.metadata.amount * 1000)
+                      : undefined
+                  }
+                />
               </AnimatedView>
             ))}
           </View>

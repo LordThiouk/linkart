@@ -76,21 +76,24 @@
 - `StatValue.tsx` → utilise `@/theme` (colors)
 - `StatLabel.tsx` → utilise `@/theme` (colors)
 
-#### ⚠️ Restants à migrer
+#### ✅ Vague 2 de migration finalisée (2025-11-19)
 
-| Composant           | Couche    | Problème principal                               | Action                                                           |
-| ------------------- | --------- | ------------------------------------------------ | ---------------------------------------------------------------- |
-| `PriceDisplay.tsx`  | molecules | Utilise `react-native-paper`                     | **Migrer** vers DS tokens (utilisé dans wallet, checkout, admin) |
-| `SearchBar.tsx`     | molecules | Utilise `react-native-paper`                     | **Migrer** vers DS tokens (utilisé dans `MarketplaceHeader`)     |
-| `AudioPlayer.tsx`   | molecules | Utilise `react-native-paper`                     | **Migrer** vers DS tokens (utilisé dans plusieurs écrans)        |
-| `ErrorBoundary.tsx` | root      | Utilise `react-native-paper` pour la UI fallback | **Migrer** UI vers DS tokens (logique à garder)                  |
+| Composant                       | Couche         | Statut                | Notes clés                                                                                                   |
+| ------------------------------- | -------------- | --------------------- | ------------------------------------------------------------------------------------------------------------ |
+| `PriceDisplay.tsx`              | molecules      | ✅ Migré              | Utilise désormais `typography`, `colors` et `spacing` + typage corrigé (`fontWeight.regular`).               |
+| `SearchBar.tsx`                 | molecules      | ✅ Migré              | UI 100% tokens (`colors.surface`, `radii.lg`, `shadows.sm/md`) + icônes Lucide + suppression de Paper.       |
+| `AudioPlayer.tsx`               | molecules      | ✅ Migré              | Gradient natif + `shadows.lg`, `typography` et suppression de `theme.roundness`; stories à mettre à jour.    |
+| `ErrorBoundary.tsx`             | root           | ✅ Migré              | Utilise `Card` + `PrimaryButton` DS, fallback cohérent, suppression des imports `react-native-paper`.        |
+| `ProductDetailScreen.tsx`       | screen wrapper | ✅ Refacto navigation | Wrapper typed (RouteProp/StackNavigationProp) → délègue aux composants Figma pour éviter les props `any`.    |
+| `CheckoutScreen.tsx`            | screen wrapper | ✅ Refacto navigation | Même principe : conversion des params navigation → `CheckoutScreenFigma`, export des interfaces nécessaires. |
+| `UploadScreen.tsx`              | screen entry   | ✅ Import corrigé     | Pointe vers `./upload/UploadScreenFigma`.                                                                    |
+| `FileUpload.tsx`                | feature upload | ✅ Remplacement icône | Icône `Upload` (lucide) à la place du composant supprimé `Icon`.                                             |
+| `PlaylistDetailScreenFigma.tsx` | screen         | ✅ Placeholder créé   | Permet de re-exporter proprement depuis `PlaylistDetailScreen.tsx` en attendant la version finale.           |
 
 #### Détail des fichiers utilisant `react-native-paper` (scan `rg`)
 
-| Dossier                     | Fichiers restants                                      | Remédiation                 |
-| --------------------------- | ------------------------------------------------------ | --------------------------- |
-| `src/components/molecules/` | `PriceDisplay.tsx`, `SearchBar.tsx`, `AudioPlayer.tsx` | migrer vers DS tokens       |
-| Racine                      | `src/components/ErrorBoundary.tsx`                     | réimplémenter UI sans Paper |
+> 2025-11-19 : `rg "react-native-paper" src/components -l` → **0 fichier**.  
+> Règle ESLint `no-restricted-imports` ajoutée pour empêcher toute régression.
 
 ### 2.3 Composants dupliqués / non utilisés
 
@@ -114,30 +117,33 @@
    - ✅ Vérifier manuellement via `rg "ComponentName" src`.
 2. **Suppression progressive**
    - ✅ Itération 1 : supprimer tous les composants `Product*/Service*` legacy non référencés.
-     **TERMINÉ**
    - ✅ Itération 2 : remplacer les derniers écrans legacy (`CheckoutScreen.tsx`,
-     `ProductDetailScreen.tsx`, `ProfileScreen.tsx`) par les versions Figma -> supprimer leurs
-     dépendances Paper. **TERMINÉ**
-   - ⏳ Itération 3 : migrer les composants restants (`PriceDisplay`, `SearchBar`, `AudioPlayer`,
-     `ErrorBoundary`) vers DS tokens.
-3. **Blocage CI (optionnel)**
-   - ⏳ Ajouter une règle ESLint pour interdire `react-native-paper` dans `src/components` (hors
-     éventuel dossier `legacy/`).
+     `ProductDetailScreen.tsx`, `ProfileScreen.tsx`) par les versions Figma pour pouvoir retirer les
+     organismes Paper.
+   - ✅ Itération 3 : migrer les composants restants (`PriceDisplay`, `SearchBar`, `AudioPlayer`,
+     `ErrorBoundary`) vers DS tokens + wrappers navigation.
+   - 🚧 Itération 4 : Storybook → stories DS v2.0 actualisées pour `PriceDisplay`, `SearchBar`,
+     `AudioPlayer`, `ErrorBoundary`. Stories legacy supprimées (`FavoritesScreen`, `ProductsScreen`,
+     `ProductDetailScreen`, `UploadScreen`, `PlaylistDetailScreen`, `src/stories/*`). Prochaine
+     étape : ajouter les sous-sections Payment/Bookings/Notifications.
+3. **Blocage CI**
+   - ✅ Règle ESLint `no-restricted-imports` pour bloquer `react-native-paper` dans
+     `src/components/**`.
 
 ---
 
 ## 4. Décomposition des écrans Figma
 
-| Écran                       | Sous-composants à extraire                                                                    | Bénéfices                                                                |
-| --------------------------- | --------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
-| `PaymentScreenFigma`        | `PaymentHeader`, `OrderSummaryCard`, `PaymentMethodCard`, `PhoneNumberForm`, `SecurityNotice` | Réutilisation dans `CheckoutScreenFigma`, tests unitaires ciblés.        |
-| `PaymentSuccessScreenFigma` | `SuccessHero`, `PurchaseDetailsCard`, `NextStepCard`, `SuccessActions`                        | Facilite l'intégration dans une modal ou une version web.                |
-| `BookingsScreenFigma`       | `BookingsFilterBar`, `BookingCard`, `BookingActions`, `StatusBadge`, `EmptyState`             | Utilisable dans `BookingsScreen` (provider vs client) + tests isolés.    |
-| `MyPurchasesScreenFigma`    | `PurchaseFilters`, `PurchaseCard`, `DownloadCTA`, `ContractBadge`                             | Mutualiser avec `DownloadViewerScreenFigma`.                             |
-| `NotificationsScreenFigma`  | `NotificationTabs`, `NotificationItem`, `NotificationIcon`, `EmptyState`                      | Permet d'utiliser `NotificationItem` dans d'autres flux (activity feed). |
-| `InboxScreenFigma`          | `ConversationFilter`, `ConversationItem`, `UnreadBadge`                                       | Réutilisable pour un éventuel dashboard web.                             |
-| `ChatScreenFigma`           | `ChatHeader`, `MessageList`, `Composer`, `TypingIndicator`                                    | Prépare l'arrivée d'un module messaging partagé (services uniquement).   |
-| `DownloadViewerScreenFigma` | `FilePreview`, `ContractInfo`, `ActionButtons`, `LimitBadge`                                  | Réutilisable depuis `MyPurchases`, `PaymentSuccess`.                     |
+| Écran                       | Sous-composants à extraire                                                                                                 | Bénéfices                                                                                                                      |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| `PaymentScreenFigma`        | `PaymentHeader`, `OrderSummaryCard`, `PaymentMethodCard`, `PhoneNumberForm`, `SecurityNotice`                              | `PaymentHeader`, `OrderSummaryCard`, `PhoneNumberForm`, `PaymentMethodCard`, `SecurityNotice` ✅.                              |
+| `PaymentSuccessScreenFigma` | `SuccessIcon`, `SuccessMessage`, `PurchaseDetailsCard`, `StepCard`, `NextStepsSection`, `SuccessActionButtons`             | `SuccessIcon`, `SuccessMessage`, `PurchaseDetailsCard`, `StepCard`, `NextStepsSection`, `SuccessActionButtons` ✅.             |
+| `BookingsScreenFigma`       | `BookingsHeader`, `BookingsFilterBar`, `BookingCard`, `BookingsEmptyState`                                                 | `BookingsHeader`, `BookingsFilterBar`, `BookingCard`, `BookingsEmptyState` ✅.                                                 |
+| `MyPurchasesScreenFigma`    | `PurchaseHeader`, `PurchaseFilters`, `PurchaseStats`, `PurchaseCard`, `PurchaseEmptyState`, `DownloadCTA`, `ContractBadge` | `PurchaseHeader`, `PurchaseFilters`, `PurchaseStats`, `PurchaseCard`, `PurchaseEmptyState`, `DownloadCTA`, `ContractBadge` ✅. |
+| `NotificationsScreenFigma`  | `NotificationTabs`, `NotificationItem`, `NotificationIcon`, `EmptyState`                                                   | `NotificationItem`, `NotificationTabs`, `NotificationEmptyState` ✅. Reste : icône system + empty variantes avancées.          |
+| `InboxScreenFigma`          | `ConversationFilter`, `ConversationItem`, `UnreadBadge`                                                                    | Réutilisable pour un éventuel dashboard web.                                                                                   |
+| `ChatScreenFigma`           | `ChatHeader`, `MessageList`, `Composer`, `TypingIndicator`                                                                 | Prépare l'arrivée d'un module messaging partagé (services uniquement).                                                         |
+| `DownloadViewerScreenFigma` | `FilePreview`, `ContractInfo`, `ActionButtons`, `LimitBadge`                                                               | Réutilisable depuis `MyPurchases`, `PaymentSuccess`.                                                                           |
 
 > Chaque extraction doit vivre dans `src/features/<domain>/components/` avec Storybook + test Jest
 > ciblé.
@@ -147,20 +153,29 @@
 ## 5. Backlog priorisé
 
 1. ✅ **Supprimer les composants legacy non utilisés** (`ProductCard.tsx`, `ProductIcon.tsx`,
-   `ProductPrice.tsx`, etc.). **TERMINÉ**
+   `ProductPrice.tsx`, etc.).
 2. ✅ **Remplacer les derniers écrans legacy** (`CheckoutScreen.tsx`, `ProductDetailScreen.tsx`,
-   `ProfileScreen.tsx`) par les versions Figma pour pouvoir retirer les organismes
-   `react-native-paper` (DONE via re-export). **TERMINÉ**
-3. ⏳ **Migrer les composants restants** (`PriceDisplay.tsx`, `SearchBar.tsx`, `AudioPlayer.tsx`,
-   `ErrorBoundary.tsx`) vers DS tokens.
-4. ⏳ **Ajouter une règle ESLint** interdisant `react-native-paper` dans `src/components` (sauf
+   `ProfileScreen.tsx`) par les versions Figma pour pouvoir retirer les organismes Paper.
+3. ✅ **Migrer les composants restants** (`PriceDisplay.tsx`, `SearchBar.tsx`, `AudioPlayer.tsx`,
+   `ErrorBoundary.tsx`) vers DS tokens et corriger les wrappers navigation / props.
+4. ✅ **Ajouter une règle ESLint** interdisant `react-native-paper` dans `src/components` (sauf
    dossier `legacy/`).
-5. ⏳ **Créer les sous-composants listés en §4**, commencer par `PaymentScreenFigma` et
-   `BookingsScreenFigma` (les plus complexes).
-6. ⏳ **Mettre à jour Storybook** pour pointer uniquement vers les composants Figma (supprimer
-   stories legacy).
-7. ⏳ **Documenter la procédure** dans `docs/internal/COMPONENTS_AUDIT.md` (ce fichier) et tenir à
-   jour lors des prochaines features.
+5. ✅ **Créer les sous-composants listés en §4** :
+   - ✅ `PaymentHeader`, `OrderSummaryCard`, `PhoneNumberForm`, `PaymentMethodCard`,
+     `SecurityNotice`, `NotificationItem`, `NotificationTabs`, `NotificationEmptyState` (+ stories).
+   - ✅ `SuccessIcon`, `SuccessMessage`, `PurchaseDetailsCard`, `StepCard`, `NextStepsSection`,
+     `SuccessActionButtons` (+ stories).
+   - ✅ `BookingsHeader`, `BookingsFilterBar`, `BookingCard`, `BookingsEmptyState` (+ stories).
+   - ⏳ `NotificationIcon` variantes.
+6. ✅ **Mettre à jour Storybook** : stories DS alignées pour `PriceDisplay`, `SearchBar`,
+   `AudioPlayer`, `ErrorBoundary`, `PaymentMethodCard`, `BookingCard`, `NotificationItem`,
+   `SuccessIcon`, `SuccessMessage`, `PurchaseDetailsCard`, `StepCard`, `NextStepsSection`,
+   `SuccessActionButtons`, `BookingsHeader`, `BookingsFilterBar`, `BookingsEmptyState`. Prochaine
+   étape : rédiger la doc d’usage complète.
+7. ⏳ **Réduire la dette ESLint restante** (warnings `any`, `useEffect` deps) en priorisant les
+   features critiques (auth, wallet, services).
+8. ⏳ **Documenter la procédure** (ce fichier + FIGMA_COMPONENTS_ORGANIZATION) et tenir à jour à
+   chaque sprint de design system.
 
 ---
 
