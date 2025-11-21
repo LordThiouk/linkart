@@ -3,7 +3,7 @@ import { BookingsScreenFigma } from '@/features/bookings/screens/BookingsScreenF
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const meta: Meta<typeof BookingsScreenFigma> = {
-  title: 'Screens/Bookings/BookingsScreenFigma',
+  title: 'Features/Bookings/BookingsScreenFigma',
   component: BookingsScreenFigma,
   decorators: [
     Story => (

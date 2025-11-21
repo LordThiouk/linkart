@@ -1,1 +1,1 @@
-export { ProfileScreenFigma as ProfileScreen } from './ProfileScreenFigma';
+export { ProfileScreenFigma as ProfileScreen } from '@/features/profile/screens';

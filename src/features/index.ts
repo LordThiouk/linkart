@@ -27,3 +27,6 @@ export * from './bookings';
 
 // Notifications
 export * from './notifications';
+
+// Home
+export * from './home';

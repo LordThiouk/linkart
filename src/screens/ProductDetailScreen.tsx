@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import { BeatDetailsScreenFigma, BeatDetailsScreenFigmaProps } from './BeatDetailsScreenFigma';
+import { BeatDetailsScreenFigma, BeatDetailsScreenFigmaProps } from '@/features/products/screens';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 type ProductDetailRouteProp = RouteProp<

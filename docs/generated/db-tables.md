@@ -1,6 +1,6 @@
 # Documentation des Tables
 
-> Généré le: 2025-11-17
+> Généré le: 2025-11-21
 
 ## Table: `users`
 

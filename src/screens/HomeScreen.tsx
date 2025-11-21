@@ -1,1 +1,1 @@
-export { HomeScreenFigma as HomeScreen } from './HomeScreenFigma';
+export { HomeScreenFigma as HomeScreen } from '@/features/home/screens/HomeScreenFigma';

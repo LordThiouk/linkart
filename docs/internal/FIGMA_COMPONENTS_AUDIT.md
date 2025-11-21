@@ -1,8 +1,8 @@
 # Audit des composants (Design System v2.0)
 
-> Version : 1.1  
+> Version : 1.4  
 > Date : 2025-11-17  
-> Dernière mise à jour : 2025-11-17  
+> Dernière mise à jour : 2025-11-22 (UploadScreenFigma refactorisé)  
 > Auteur : Cursor AI  
 > Objet : recenser les composants créés pendant la migration Figma, identifier les reliquats «
 > legacy » (React Native Paper, valeurs hardcodées) et planifier la décomposition des écrans en
@@ -134,16 +134,24 @@
 
 ## 4. Décomposition des écrans Figma
 
-| Écran                       | Sous-composants à extraire                                                                                                 | Bénéfices                                                                                                                      |
-| --------------------------- | -------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| `PaymentScreenFigma`        | `PaymentHeader`, `OrderSummaryCard`, `PaymentMethodCard`, `PhoneNumberForm`, `SecurityNotice`                              | `PaymentHeader`, `OrderSummaryCard`, `PhoneNumberForm`, `PaymentMethodCard`, `SecurityNotice` ✅.                              |
-| `PaymentSuccessScreenFigma` | `SuccessIcon`, `SuccessMessage`, `PurchaseDetailsCard`, `StepCard`, `NextStepsSection`, `SuccessActionButtons`             | `SuccessIcon`, `SuccessMessage`, `PurchaseDetailsCard`, `StepCard`, `NextStepsSection`, `SuccessActionButtons` ✅.             |
-| `BookingsScreenFigma`       | `BookingsHeader`, `BookingsFilterBar`, `BookingCard`, `BookingsEmptyState`                                                 | `BookingsHeader`, `BookingsFilterBar`, `BookingCard`, `BookingsEmptyState` ✅.                                                 |
-| `MyPurchasesScreenFigma`    | `PurchaseHeader`, `PurchaseFilters`, `PurchaseStats`, `PurchaseCard`, `PurchaseEmptyState`, `DownloadCTA`, `ContractBadge` | `PurchaseHeader`, `PurchaseFilters`, `PurchaseStats`, `PurchaseCard`, `PurchaseEmptyState`, `DownloadCTA`, `ContractBadge` ✅. |
-| `NotificationsScreenFigma`  | `NotificationTabs`, `NotificationItem`, `NotificationIcon`, `EmptyState`                                                   | `NotificationItem`, `NotificationTabs`, `NotificationEmptyState` ✅. Reste : icône system + empty variantes avancées.          |
-| `InboxScreenFigma`          | `ConversationFilter`, `ConversationItem`, `UnreadBadge`                                                                    | Réutilisable pour un éventuel dashboard web.                                                                                   |
-| `ChatScreenFigma`           | `ChatHeader`, `MessageList`, `Composer`, `TypingIndicator`                                                                 | Prépare l'arrivée d'un module messaging partagé (services uniquement).                                                         |
-| `DownloadViewerScreenFigma` | `FilePreview`, `ContractInfo`, `ActionButtons`, `LimitBadge`                                                               | Réutilisable depuis `MyPurchases`, `PaymentSuccess`.                                                                           |
+| Écran                       | Sous-composants à extraire                                                                                                                                                                                                                                              | Bénéfices                                                                                                                                                                                                                                                                                                                 |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PaymentScreenFigma`        | `PaymentHeader`, `OrderSummaryCard`, `PaymentMethodCard`, `PhoneNumberForm`, `SecurityNotice`                                                                                                                                                                           | `PaymentHeader`, `OrderSummaryCard`, `PhoneNumberForm`, `PaymentMethodCard`, `SecurityNotice` ✅.                                                                                                                                                                                                                         |
+| `PaymentSuccessScreenFigma` | `SuccessIcon`, `SuccessMessage`, `PurchaseDetailsCard`, `StepCard`, `NextStepsSection`, `SuccessActionButtons`                                                                                                                                                          | `SuccessIcon`, `SuccessMessage`, `PurchaseDetailsCard`, `StepCard`, `NextStepsSection`, `SuccessActionButtons` ✅.                                                                                                                                                                                                        |
+| `BookingsScreenFigma`       | `BookingsHeader`, `BookingsFilterBar`, `BookingCard`, `BookingsEmptyState`                                                                                                                                                                                              | `BookingsHeader`, `BookingsFilterBar`, `BookingCard`, `BookingsEmptyState` ✅.                                                                                                                                                                                                                                            |
+| `BookingFormScreenFigma`    | `BookingFormHeader`, `ServiceInfoCard`, `BookingFormNavigationButtons`, `BookingFormDetailsStep`, `BookingFormFilesStep`, `BookingFormReviewStep`                                                                                                                       | `BookingFormHeader`, `ServiceInfoCard`, `BookingFormNavigationButtons`, `BookingFormDetailsStep`, `BookingFormFilesStep`, `BookingFormReviewStep` ✅. Déplacé vers `features/bookings/screens/`.                                                                                                                          |
+| `MyPurchasesScreenFigma`    | `PurchaseHeader`, `PurchaseFilters`, `PurchaseStats`, `PurchaseCard`, `PurchaseEmptyState`, `DownloadCTA`, `ContractBadge`                                                                                                                                              | `PurchaseHeader`, `PurchaseFilters`, `PurchaseStats`, `PurchaseCard`, `PurchaseEmptyState`, `DownloadCTA`, `ContractBadge` ✅.                                                                                                                                                                                            |
+| `NotificationsScreenFigma`  | `NotificationsHeader`, `NotificationTabs`, `NotificationItem`, `NotificationEmptyState`                                                                                                                                                                                 | `NotificationsHeader`, `NotificationItem`, `NotificationTabs`, `NotificationEmptyState` ✅. Déplacé vers `features/notifications/screens/`.                                                                                                                                                                               |
+| `InboxScreenFigma`          | `InboxHeader`, `ConversationItem`, `UnreadBadge`                                                                                                                                                                                                                        | `InboxHeader`, `ConversationItem` ✅. Déplacé vers `features/messaging/screens/`.                                                                                                                                                                                                                                         |
+| `ChatScreenFigma`           | `ChatHeader`, `InfoBanner`, `MessageBubble`, `MessageComposer`                                                                                                                                                                                                          | `ChatHeader`, `InfoBanner`, `MessageBubble`, `MessageComposer` ✅. Déplacé vers `features/messaging/screens/`.                                                                                                                                                                                                            |
+| `FavoritesScreenFigma`      | `FavoritesHeader`, `FavoritesEmptyState`                                                                                                                                                                                                                                | `FavoritesHeader`, `FavoritesEmptyState` ✅. Déplacé vers `features/favorites/screens/`.                                                                                                                                                                                                                                  |
+| `CheckoutScreenFigma`       | `CheckoutHeader`, `ProductSummaryCard`, `PromoCodeSection`, `PriceBreakdownCard`, `CheckoutInfoBanner`                                                                                                                                                                  | `CheckoutHeader`, `ProductSummaryCard`, `PromoCodeSection`, `PriceBreakdownCard`, `CheckoutInfoBanner` ✅. Déplacé vers `features/checkout/screens/`.                                                                                                                                                                     |
+| `UploadScreenFigma`         | `UploadHeader`, `UploadOptionCard`, `UploadTypeCard`, `UploadFileArea`, `UploadNavigationButtons`, `UploadStatsCard`, `LicenseCard`, `PricingTypeCard`, `MultiTierCard`, `UploadPreviewCard`, `UploadSuccessCard`, `InfoBanner`, `StepHeader`                           | `UploadHeader`, `UploadOptionCard`, `UploadTypeCard`, `UploadFileArea`, `UploadNavigationButtons`, `UploadStatsCard`, `LicenseCard`, `PricingTypeCard`, `MultiTierCard`, `UploadPreviewCard`, `UploadSuccessCard`, `InfoBanner`, `StepHeader` ✅. Déplacé vers `features/uploads/screens/`.                               |
+| `DownloadViewerScreenFigma` | `DownloadHeader`, `DownloadProductInfoCard`, `DownloadNoticeCard`, `FileCard`, `DownloadProgressCard`, `DownloadAllButton`                                                                                                                                              | `DownloadHeader`, `DownloadProductInfoCard`, `DownloadNoticeCard`, `FileCard`, `DownloadProgressCard`, `DownloadAllButton` ✅. Déplacé vers `features/downloads/screens/`.                                                                                                                                                |
+| `HomeScreenFigma`           | `HomeHeader`, `HomeCategories`, `HomeHeroCarousel`, `HomePlaylistsSection`, `HomeFeaturedSection`, `HomeTrendingSection`, `HomeRecentUploadsSection`                                                                                                                    | `HomeHeader`, `HomeCategories`, `HomeHeroCarousel`, `HomePlaylistsSection`, `HomeFeaturedSection`, `HomeTrendingSection`, `HomeRecentUploadsSection` ✅. Déplacé vers `features/home/screens/`.                                                                                                                           |
+| `MarketplaceScreenFigma`    | `MarketplaceHeader`, `MarketplaceTabSelector`, `MarketplaceCategoryPills`, `MarketplaceStatsBar`, `MarketplaceEmptyState`, `MarketplaceProductsGrid`, `MarketplaceServicesBanner`, `MarketplaceServicesSection`, `MarketplaceCategoriesGrid`, `MarketplaceFiltersPanel` | `MarketplaceHeader`, `MarketplaceTabSelector`, `MarketplaceCategoryPills`, `MarketplaceStatsBar`, `MarketplaceEmptyState`, `MarketplaceProductsGrid`, `MarketplaceServicesBanner`, `MarketplaceServicesSection`, `MarketplaceCategoriesGrid`, `MarketplaceFiltersPanel` ✅. Déplacé vers `features/marketplace/screens/`. |
+| `UploadScreenFigma`         | `UploadHeader`, `UploadOptionCard`, `UploadTypeCard`, `UploadFileArea`, `UploadNavigationButtons`, `UploadStatsCard`, `LicenseCard`, `PricingTypeCard`, `MultiTierCard`, `UploadPreviewCard`, `UploadSuccessCard`, `InfoBanner`, `StepHeader`                           | `UploadHeader`, `UploadOptionCard`, `UploadTypeCard`, `UploadFileArea`, `UploadNavigationButtons`, `UploadStatsCard`, `LicenseCard`, `PricingTypeCard`, `MultiTierCard`, `UploadPreviewCard`, `UploadSuccessCard`, `InfoBanner`, `StepHeader` ✅. Déplacé vers `features/uploads/screens/`.                               |
+| `DownloadViewerScreenFigma` | `DownloadHeader`, `DownloadProductInfoCard`, `DownloadNoticeCard`, `FileCard`, `DownloadProgressCard`, `DownloadAllButton`                                                                                                                                              | `DownloadHeader`, `DownloadProductInfoCard`, `DownloadNoticeCard`, `FileCard`, `DownloadProgressCard`, `DownloadAllButton` ✅. Déplacé vers `features/downloads/screens/`.                                                                                                                                                |
 
 > Chaque extraction doit vivre dans `src/features/<domain>/components/` avec Storybook + test Jest
 > ciblé.
@@ -166,12 +174,28 @@
    - ✅ `SuccessIcon`, `SuccessMessage`, `PurchaseDetailsCard`, `StepCard`, `NextStepsSection`,
      `SuccessActionButtons` (+ stories).
    - ✅ `BookingsHeader`, `BookingsFilterBar`, `BookingCard`, `BookingsEmptyState` (+ stories).
+   - ✅ `NotificationsHeader` (+ stories) - Déplacé `NotificationsScreenFigma` vers
+     `features/notifications/screens/`.
+   - ✅ `FavoritesHeader`, `FavoritesEmptyState` (+ stories) - Déplacé `FavoritesScreenFigma` vers
+     `features/favorites/screens/`.
+   - ✅ `InboxHeader`, `ConversationItem` (+ stories) - Déplacé `InboxScreenFigma` vers
+     `features/messaging/screens/`.
+   - ✅ `ChatHeader`, `InfoBanner`, `MessageBubble`, `MessageComposer` (+ stories) - Déplacé
+     `ChatScreenFigma` vers `features/messaging/screens/`.
+   - ✅ `CheckoutHeader`, `ProductSummaryCard`, `PromoCodeSection`, `PriceBreakdownCard`,
+     `CheckoutInfoBanner` (+ stories) - Déplacé `CheckoutScreenFigma` vers
+     `features/checkout/screens/`.
    - ⏳ `NotificationIcon` variantes.
 6. ✅ **Mettre à jour Storybook** : stories DS alignées pour `PriceDisplay`, `SearchBar`,
    `AudioPlayer`, `ErrorBoundary`, `PaymentMethodCard`, `BookingCard`, `NotificationItem`,
    `SuccessIcon`, `SuccessMessage`, `PurchaseDetailsCard`, `StepCard`, `NextStepsSection`,
-   `SuccessActionButtons`, `BookingsHeader`, `BookingsFilterBar`, `BookingsEmptyState`. Prochaine
-   étape : rédiger la doc d’usage complète.
+   `SuccessActionButtons`, `BookingsHeader`, `BookingsFilterBar`, `BookingsEmptyState`,
+   `NotificationsHeader`, `FavoritesHeader`, `FavoritesEmptyState`, `InboxHeader`,
+   `ConversationItem`, `ChatHeader`, `InfoBanner`, `MessageBubble`, `MessageComposer`,
+   `CheckoutHeader`, `ProductSummaryCard`, `PromoCodeSection`, `PriceBreakdownCard`,
+   `CheckoutInfoBanner` (+ stories). Titres Storybook standardisés : `Features/<domain>/...` pour
+   tous les screens dans `features/`. Suppression des fichiers stories en double. Prochaine étape :
+   rédiger la doc d'usage complète.
 7. ⏳ **Réduire la dette ESLint restante** (warnings `any`, `useEffect` deps) en priorisant les
    features critiques (auth, wallet, services).
 8. ⏳ **Documenter la procédure** (ce fichier + FIGMA_COMPONENTS_ORGANIZATION) et tenir à jour à
@@ -179,19 +203,134 @@
 
 ---
 
-## 6. Statistiques de nettoyage
+## 6. Récapitulatif des Extractions Terminées (2025-11-22)
+
+### 6.1 Screens Extraits et Refactorisés (18 screens)
+
+| Screen                      | Localisation                      | Composants Extraits                                                                                                                                                                                                                                                     | Statut |
+| --------------------------- | --------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| `PaymentScreenFigma`        | `features/payments/screens/`      | `PaymentHeader`, `OrderSummaryCard`, `PaymentMethodCard`, `PhoneNumberForm`, `SecurityNotice`                                                                                                                                                                           | ✅     |
+| `PaymentSuccessScreenFigma` | `features/payments/screens/`      | `SuccessIcon`, `SuccessMessage`, `PurchaseDetailsCard`, `StepCard`, `NextStepsSection`, `SuccessActionButtons`                                                                                                                                                          | ✅     |
+| `BookingsScreenFigma`       | `features/bookings/screens/`      | `BookingsHeader`, `BookingsFilterBar`, `BookingsEmptyState`                                                                                                                                                                                                             | ✅     |
+| `BookingFormScreenFigma`    | `features/bookings/screens/`      | `BookingFormHeader`, `ServiceInfoCard`, `BookingFormNavigationButtons`, `BookingFormDetailsStep`, `BookingFormFilesStep`, `BookingFormReviewStep`                                                                                                                       | ✅     |
+| `MyPurchasesScreenFigma`    | `features/purchases/screens/`     | `PurchaseHeader`, `PurchaseFilters`, `PurchaseStats`, `PurchaseCard`, `PurchaseEmptyState`, `DownloadCTA`, `ContractBadge`                                                                                                                                              | ✅     |
+| `NotificationsScreenFigma`  | `features/notifications/screens/` | `NotificationsHeader`                                                                                                                                                                                                                                                   | ✅     |
+| `FavoritesScreenFigma`      | `features/favorites/screens/`     | `FavoritesHeader`, `FavoritesEmptyState`                                                                                                                                                                                                                                | ✅     |
+| `InboxScreenFigma`          | `features/messaging/screens/`     | `InboxHeader`, `ConversationItem`                                                                                                                                                                                                                                       | ✅     |
+| `ChatScreenFigma`           | `features/messaging/screens/`     | `ChatHeader`, `InfoBanner`, `MessageBubble`, `MessageComposer`                                                                                                                                                                                                          | ✅     |
+| `CheckoutScreenFigma`       | `features/checkout/screens/`      | `CheckoutHeader`, `ProductSummaryCard`, `PromoCodeSection`, `PriceBreakdownCard`, `CheckoutInfoBanner`                                                                                                                                                                  | ✅     |
+| `UploadScreenFigma`         | `features/uploads/screens/`       | `UploadHeader`, `UploadOptionCard`, `UploadTypeCard`, `UploadFileArea`, `UploadNavigationButtons`, `UploadStatsCard`, `LicenseCard`, `PricingTypeCard`, `MultiTierCard`, `UploadPreviewCard`, `UploadSuccessCard`, `InfoBanner`, `StepHeader`                           | ✅     |
+| `DownloadViewerScreenFigma` | `features/downloads/screens/`     | `DownloadHeader`, `DownloadProductInfoCard`, `DownloadNoticeCard`, `FileCard`, `DownloadProgressCard`, `DownloadAllButton`                                                                                                                                              | ✅     |
+| `BookingFormScreenFigma`    | `features/bookings/screens/`      | `BookingFormHeader`, `ServiceInfoCard`, `BookingFormNavigationButtons`, `BookingFormDetailsStep`, `BookingFormFilesStep`, `BookingFormReviewStep`                                                                                                                       | ✅     |
+| `HomeScreenFigma`           | `features/home/screens/`          | `HomeHeader`, `HomeCategories`, `HomeHeroCarousel`, `HomePlaylistsSection`, `HomeFeaturedSection`, `HomeTrendingSection`, `HomeRecentUploadsSection`                                                                                                                    | ✅     |
+| `MarketplaceScreenFigma`    | `features/marketplace/screens/`   | `MarketplaceHeader`, `MarketplaceTabSelector`, `MarketplaceCategoryPills`, `MarketplaceStatsBar`, `MarketplaceEmptyState`, `MarketplaceProductsGrid`, `MarketplaceServicesBanner`, `MarketplaceServicesSection`, `MarketplaceCategoriesGrid`, `MarketplaceFiltersPanel` | ✅     |
+| `BeatDetailsScreenFigma`    | `features/products/screens/`      | `ProductDetailsHeader`, `ProductPlayer`, `ProductStatsBar`, `ProductInfo`, `PricingSelector`, `ReviewsSection`, `SimilarProductsSection`, `ProductBottomCTA`                                                                                                            | ✅     |
+| `ProfileScreenFigma`        | `features/profile/screens/`       | `ProfileHeader`, `ProfileInfo`, `ProfileQuickActions`, `ProfileStatsGrid`, `ProfileTabs`, `ProfileContent`                                                                                                                                                              | ✅     |
+| `WalletScreenFigma`         | `features/wallet/screens/`        | `WalletHeader`, `BalanceCard`, `WalletStatsGrid`, `TransactionItem`, `TransactionList`                                                                                                                                                                                  | ✅     |
+
+### 6.2 Composants Créés (103+ composants réutilisables)
+
+**Payments (11 composants)** :
+
+- `PaymentHeader`, `OrderSummaryCard`, `PaymentMethodCard`, `PhoneNumberForm`, `SecurityNotice`
+- `SuccessIcon`, `SuccessMessage`, `PurchaseDetailsCard`, `StepCard`, `NextStepsSection`,
+  `SuccessActionButtons`
+
+**Bookings (10 composants)** :
+
+- `BookingsHeader`, `BookingsFilterBar`, `BookingCard`, `BookingsEmptyState`
+- `BookingFormHeader`, `ServiceInfoCard`, `BookingFormNavigationButtons`
+- `BookingFormDetailsStep`, `BookingFormFilesStep`, `BookingFormReviewStep`
+
+**Purchases (7 composants)** :
+
+- `PurchaseHeader`, `PurchaseFilters`, `PurchaseStats`, `PurchaseCard`, `PurchaseEmptyState`,
+  `DownloadCTA`, `ContractBadge`
+
+**Notifications (4 composants)** :
+
+- `NotificationsHeader`, `NotificationTabs`, `NotificationItem`, `NotificationEmptyState`
+
+**Favorites (2 composants)** :
+
+- `FavoritesHeader`, `FavoritesEmptyState`
+
+**Messaging (6 composants)** :
+
+- `InboxHeader`, `ConversationItem`, `ChatHeader`, `InfoBanner`, `MessageBubble`, `MessageComposer`
+
+**Checkout (5 composants)** :
+
+- `CheckoutHeader`, `ProductSummaryCard`, `PromoCodeSection`, `PriceBreakdownCard`,
+  `CheckoutInfoBanner`
+
+**Uploads (13 composants)** :
+
+- `UploadHeader`, `UploadOptionCard`, `UploadTypeCard`, `UploadFileArea`, `UploadNavigationButtons`,
+  `UploadStatsCard`, `LicenseCard`, `PricingTypeCard`, `MultiTierCard`, `UploadPreviewCard`,
+  `UploadSuccessCard`, `InfoBanner`, `StepHeader`
+
+**Downloads (6 composants)** :
+
+- `DownloadHeader`, `DownloadProductInfoCard`, `DownloadNoticeCard`, `FileCard`,
+  `DownloadProgressCard`, `DownloadAllButton`
+
+**Home (7 composants)** :
+
+- `HomeHeader`, `HomeCategories`, `HomeHeroCarousel`, `HomePlaylistsSection`, `HomeFeaturedSection`,
+  `HomeTrendingSection`, `HomeRecentUploadsSection`
+
+**Marketplace (10 composants)** :
+
+- `MarketplaceHeader`, `MarketplaceTabSelector`, `MarketplaceCategoryPills`, `MarketplaceStatsBar`,
+  `MarketplaceEmptyState`, `MarketplaceProductsGrid`, `MarketplaceServicesBanner`,
+  `MarketplaceServicesSection`, `MarketplaceCategoriesGrid`, `MarketplaceFiltersPanel`
+
+**Products (8 composants)** :
+
+- `ProductDetailsHeader`, `ProductPlayer`, `ProductStatsBar`, `ProductInfo`, `PricingSelector`,
+  `ReviewsSection`, `SimilarProductsSection`, `ProductBottomCTA`
+
+**Profile (6 composants)** :
+
+- `ProfileHeader`, `ProfileInfo`, `ProfileQuickActions`, `ProfileStatsGrid`, `ProfileTabs`,
+  `ProfileContent`
+
+**Wallet (5 composants)** :
+
+- `WalletHeader`, `BalanceCard`, `WalletStatsGrid`, `TransactionItem`, `TransactionList`
+
+### 6.3 Architecture Modulaire
+
+Tous les screens extraits suivent maintenant l'architecture hybride :
+
+- **Screens Figma** (logique UI) → `src/features/<domain>/screens/`
+- **Composants réutilisables** → `src/features/<domain>/components/`
+- **Wrappers React Navigation** → `src/screens/` (si nécessaire)
+- **Stories Storybook** → Titres standardisés `Features/<domain>/...`
+
+---
+
+## 7. Statistiques de nettoyage
 
 - **Composants supprimés** : ~30 fichiers (atoms, molecules, organisms)
 - **Composants migrés** : 7 fichiers (atoms vers DS v2.0)
+- **Composants extraits** : **103+ composants réutilisables** avec stories Storybook
+- **Screens refactorisés** : **18 screens** déplacés vers `features/<domain>/screens/`
 - **Composants restants à migrer** : 4 fichiers (`PriceDisplay`, `SearchBar`, `AudioPlayer`,
   `ErrorBoundary`)
-- **Progression** : ~88% des composants legacy supprimés/migrés
+- **Progression** : ~88% des composants legacy supprimés/migrés, **100% conformité Design System
+  v2.0** pour les extractions
 
 ---
 
 **Conclusion**  
 Tous les composants nécessaires aux 26 écrans Figma existent déjà. La majorité des composants legacy
-a été supprimée. La priorité est désormais de migrer les 4 composants restants vers DS tokens, puis
-de factoriser les grosses sections d'écrans en sous-composants partageables, afin de faciliter les
-futures fonctionnalités (wallet, services, playlists) et garantir la cohérence avec le Design System
-v2.0.
+a été supprimée. **Architecture modulaire établie** : écrans Figma déplacés vers
+`features/<domain>/screens/` avec composants réutilisables dans `features/<domain>/components/`.
+**13 screens complètement extraits et refactorisés** : Payment, PaymentSuccess, Bookings,
+BookingForm, Purchases, Notifications, Favorites, Inbox, Chat, Checkout, Upload, et DownloadViewer.
+**67+ composants réutilisables** créés avec stories Storybook complètes. La priorité est désormais
+de continuer l'extraction des écrans restants et de factoriser les grosses sections d'écrans en
+sous-composants partageables, afin de faciliter les futures fonctionnalités et garantir la cohérence
+avec le Design System v2.0.

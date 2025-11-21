@@ -1,0 +1,1 @@
+export { HomeScreenFigma } from './HomeScreenFigma';

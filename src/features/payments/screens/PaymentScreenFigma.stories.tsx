@@ -3,7 +3,7 @@ import { PaymentScreenFigma } from '@/features/payments/screens/PaymentScreenFig
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const meta: Meta<typeof PaymentScreenFigma> = {
-  title: 'Screens/Payments/PaymentScreenFigma',
+  title: 'Features/Payments/PaymentScreenFigma',
   component: PaymentScreenFigma,
   decorators: [
     Story => (

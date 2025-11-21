@@ -1,1 +1,1 @@
-export { FavoritesScreenFigma as FavoritesScreen } from './FavoritesScreenFigma';
+export { FavoritesScreenFigma as FavoritesScreen } from '@/features/favorites/screens/FavoritesScreenFigma';

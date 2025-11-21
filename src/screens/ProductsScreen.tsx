@@ -1,1 +1,1 @@
-export { MarketplaceScreenFigma as ProductsScreen } from './MarketplaceScreenFigma';
+export { MarketplaceScreenFigma as ProductsScreen } from '@/features/marketplace/screens';

@@ -1,7 +1,8 @@
 # ✅ État des Composants Figma Déjà Migrés
 
-> **Version**: v2.0  
+> **Version**: v2.1  
 > **Date**: 7 Novembre 2025  
+> **Dernière mise à jour**: 22 Novembre 2025 (HomeScreenFigma refactorisé avec 7 composants)  
 > **Objectif**: Inventaire des composants Figma déjà migrés vers React Native
 
 ---
@@ -66,31 +67,33 @@
 
 #### Screens avec suffixe Figma (22 screens)
 
-| N°  | Screen                         | Fichier                                              | Style      | Stories | État       |
-| --- | ------------------------------ | ---------------------------------------------------- | ---------- | ------- | ---------- |
-| 12  | **BeatDetailsScreenFigma**     | `screens/BeatDetailsScreenFigma.tsx`                 | StyleSheet | ✅      | 🟢 Complet |
-| 13  | **CheckoutScreenFigma**        | `screens/CheckoutScreenFigma.tsx`                    | StyleSheet | ✅      | 🟢 Complet |
-| 14  | **FavoritesScreenFigma**       | `screens/FavoritesScreenFigma.tsx`                   | StyleSheet | ✅      | 🟢 Complet |
-| 15  | **HomeScreenFigma**            | `screens/HomeScreenFigma.tsx`                        | StyleSheet | ✅      | 🟢 Complet |
-| 16  | **MarketplaceScreenFigma**     | `screens/MarketplaceScreenFigma.tsx`                 | StyleSheet | ✅      | 🟢 Complet |
-| 17  | **ProfileScreenFigma**         | `screens/ProfileScreenFigma.tsx`                     | StyleSheet | ✅      | 🟢 Complet |
-| 18  | **WalletScreenFigma**          | `screens/WalletScreenFigma.tsx`                      | StyleSheet | ✅      | 🟢 Complet |
-| 19  | **ProfileSetupScreenFigma**    | `screens/auth/ProfileSetupScreenFigma.tsx`           | StyleSheet | ✅      | 🟢 Complet |
-| 20  | **WelcomeScreenFigma**         | `screens/auth/WelcomeScreenFigma.tsx`                | StyleSheet | ✅      | 🟢 Complet |
-| 21  | **BookingFormScreenFigma**     | `screens/bookings/BookingFormScreenFigma.tsx`        | StyleSheet | ✅      | 🟢 Complet |
-| 22  | **BookingsScreenFigma**        | `features/bookings/screens/BookingsScreenFigma.tsx`  | StyleSheet | ✅      | 🟢 Complet |
-| 23  | **BoostScreenFigma**           | `screens/boost/BoostScreenFigma.tsx`                 | StyleSheet | ✅      | 🟢 Complet |
-| 24  | **DownloadViewerScreenFigma**  | `screens/downloads/DownloadViewerScreenFigma.tsx`    | StyleSheet | ✅      | 🟢 Complet |
-| 25  | **LicenseContractScreenFigma** | `screens/legal/LicenseContractScreenFigma.tsx`       | StyleSheet | ✅      | 🟢 Complet |
-| 26  | **ChatScreenFigma**            | `screens/messaging/ChatScreenFigma.tsx`              | StyleSheet | ✅      | 🟢 Complet |
-| 27  | **InboxScreenFigma**           | `screens/messaging/InboxScreenFigma.tsx`             | StyleSheet | ✅      | 🟢 Complet |
-| 28  | **NotificationsScreenFigma**   | `screens/notifications/NotificationsScreenFigma.tsx` | StyleSheet | ✅      | 🟢 Complet |
-| 29  | **PaymentScreenFigma**         | `features/payments/screens/PaymentScreenFigma.tsx`   | StyleSheet | ✅      | 🟢 Complet |
-| 30  | **PaymentSuccessScreenFigma**  | `screens/payments/PaymentSuccessScreenFigma.tsx`     | StyleSheet | ✅      | 🟢 Complet |
-| 31  | **MyPurchasesScreenFigma**     | `screens/purchases/MyPurchasesScreenFigma.tsx`       | StyleSheet | ✅      | 🟢 Complet |
-| 32  | **SearchFiltersScreenFigma**   | `screens/search/SearchFiltersScreenFigma.tsx`        | StyleSheet | ✅      | 🟢 Complet |
-| 33  | **ServiceDetailsScreenFigma**  | `screens/services/ServiceDetailsScreenFigma.tsx`     | StyleSheet | ✅      | 🟢 Complet |
-| 34  | **UploadScreenFigma**          | `screens/upload/UploadScreenFigma.tsx`               | StyleSheet | ✅      | 🟢 Complet |
+| N°  | Screen                         | Fichier                                                       | Style      | Stories | État                                        |
+| --- | ------------------------------ | ------------------------------------------------------------- | ---------- | ------- | ------------------------------------------- |
+| 12  | **BeatDetailsScreenFigma**     | `features/products/screens/BeatDetailsScreenFigma.tsx`        | StyleSheet | ✅      | 🟢 Complet (Refactorisé avec 8 composants)  |
+| 13  | **CheckoutScreenFigma**        | `features/checkout/screens/CheckoutScreenFigma.tsx`           | StyleSheet | ✅      | 🟢 Complet                                  |
+| 14  | **FavoritesScreenFigma**       | `features/favorites/screens/FavoritesScreenFigma.tsx`         | StyleSheet | ✅      | 🟢 Complet                                  |
+| 15  | **HomeScreenFigma**            | `features/home/screens/HomeScreenFigma.tsx`                   | StyleSheet | ✅      | 🟢 Complet                                  |
+| 16  | **MarketplaceScreenFigma**     | `features/marketplace/screens/MarketplaceScreenFigma.tsx`     | StyleSheet | ✅      | 🟢 Complet (Refactorisé avec 10 composants) |
+| 17  | **ProfileScreenFigma**         | `features/profile/screens/ProfileScreenFigma.tsx`             | StyleSheet | ✅      | 🟢 Complet (Refactorisé avec 6 composants)  |
+| 18  | **WalletScreenFigma**          | `features/wallet/screens/WalletScreenFigma.tsx`               | StyleSheet | ✅      | 🟢 Complet (Refactorisé avec 5 composants)  |
+| 19  | **ProfileSetupScreenFigma**    | `screens/auth/ProfileSetupScreenFigma.tsx`                    | StyleSheet | ✅      | 🟢 Complet                                  |
+| 20  | **WelcomeScreenFigma**         | `screens/auth/WelcomeScreenFigma.tsx`                         | StyleSheet | ✅      | 🟢 Complet                                  |
+| 21  | **BookingFormScreenFigma**     | `features/bookings/screens/BookingFormScreenFigma.tsx`        | StyleSheet | ✅      | 🟢 Complet                                  |
+| 22  | **BookingsScreenFigma**        | `features/bookings/screens/BookingsScreenFigma.tsx`           | StyleSheet | ✅      | 🟢 Complet                                  |
+| 23  | **BoostScreenFigma**           | `screens/boost/BoostScreenFigma.tsx`                          | StyleSheet | ✅      | 🟢 Complet                                  |
+| 24  | **DownloadViewerScreenFigma**  | `screens/downloads/DownloadViewerScreenFigma.tsx`             | StyleSheet | ✅      | 🟢 Complet                                  |
+| 25  | **LicenseContractScreenFigma** | `screens/legal/LicenseContractScreenFigma.tsx`                | StyleSheet | ✅      | 🟢 Complet                                  |
+| 26  | **InboxScreenFigma**           | `features/messaging/screens/InboxScreenFigma.tsx`             | StyleSheet | ✅      | 🟢 Complet                                  |
+| 27  | **ChatScreenFigma**            | `features/messaging/screens/ChatScreenFigma.tsx`              | StyleSheet | ✅      | 🟢 Complet                                  |
+| 28  | **NotificationsScreenFigma**   | `features/notifications/screens/NotificationsScreenFigma.tsx` | StyleSheet | ✅      | 🟢 Complet                                  |
+| 29  | **PaymentScreenFigma**         | `features/payments/screens/PaymentScreenFigma.tsx`            | StyleSheet | ✅      | 🟢 Complet                                  |
+| 30  | **PaymentSuccessScreenFigma**  | `features/payments/screens/PaymentSuccessScreenFigma.tsx`     | StyleSheet | ✅      | 🟢 Complet                                  |
+| 31  | **MyPurchasesScreenFigma**     | `features/purchases/screens/MyPurchasesScreenFigma.tsx`       | StyleSheet | ✅      | 🟢 Complet                                  |
+| 32  | **FavoritesScreenFigma**       | `features/favorites/screens/FavoritesScreenFigma.tsx`         | StyleSheet | ✅      | 🟢 Complet                                  |
+| 33  | **CheckoutScreenFigma**        | `features/checkout/screens/CheckoutScreenFigma.tsx`           | StyleSheet | ✅      | 🟢 Complet                                  |
+| 34  | **SearchFiltersScreenFigma**   | `screens/search/SearchFiltersScreenFigma.tsx`                 | StyleSheet | ✅      | 🟢 Complet                                  |
+| 35  | **ServiceDetailsScreenFigma**  | `screens/services/ServiceDetailsScreenFigma.tsx`              | StyleSheet | ✅      | 🟢 Complet                                  |
+| 36  | **UploadScreenFigma**          | `features/uploads/screens/UploadScreenFigma.tsx`              | StyleSheet | ✅      | 🟢 Complet                                  |
 
 #### Screens sans suffixe Figma (14 screens)
 

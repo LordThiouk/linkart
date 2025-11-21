@@ -1,6 +1,6 @@
 # Documentation des Composants
 
-> Généré le: 2025-11-17
+> Généré le: 2025-11-21
 
 ## Atoms
 
@@ -464,13 +464,13 @@ interface ProductCardFigmaProps {
 
   id: string;
   title: string;
-  artist: string;
+  artist?: string;
   artistImage?: string;
   coverImage: string;
   price: number;
   type: 'beat' | 'kit' | 'sample';
   bpm?: number;
-  genre: string;
+  genre?: string;
   likes?: number;
   downloads?: number;
   rating?: number;
@@ -1015,13 +1015,13 @@ interface ServiceCardFigmaProps {
   id: string;
   title: string;
   provider: string;
-  providerImage: string;
+  providerImage?: string;
   coverImage: string;
   price: number;
-  rating: number;
-  reviewCount: number;
-  deliveryTime: string;
-  category: string;
+  rating?: number;
+  reviewCount?: number;
+  deliveryTime?: string;
+  category?: string;
   isPro?: boolean;
   onPress?: () => void;
   style?: ViewStyle;

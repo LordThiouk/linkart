@@ -1,6 +1,10 @@
 import React from 'react';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
-import { CheckoutScreenFigma, CheckoutScreenFigmaProps, CheckoutData } from './CheckoutScreenFigma';
+import {
+  CheckoutScreenFigma,
+  CheckoutScreenFigmaProps,
+  CheckoutData,
+} from '@/features/checkout/screens/CheckoutScreenFigma';
 import { StackNavigationProp } from '@react-navigation/stack';
 
 type CheckoutRouteProp = RouteProp<

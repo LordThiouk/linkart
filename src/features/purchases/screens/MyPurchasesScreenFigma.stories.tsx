@@ -3,7 +3,7 @@ import { MyPurchasesScreenFigma } from '@/features/purchases/screens/MyPurchases
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 const meta: Meta<typeof MyPurchasesScreenFigma> = {
-  title: 'Screens/Purchases/MyPurchasesScreenFigma',
+  title: 'Features/Purchases/MyPurchasesScreenFigma',
   component: MyPurchasesScreenFigma,
   decorators: [
     Story => (

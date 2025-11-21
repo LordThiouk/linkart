@@ -1,1 +1,1 @@
-export { UploadScreenFigma as UploadScreen } from './upload/UploadScreenFigma';
+export { UploadScreenFigma as UploadScreen } from '@/features/uploads/screens/UploadScreenFigma';
