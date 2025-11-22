@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
+import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
 import { PriceDisplay } from './PriceDisplay';
 
 const meta: Meta<typeof PriceDisplay> = {

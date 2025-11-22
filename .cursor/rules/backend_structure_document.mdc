@@ -1,27 +1,6 @@
-# Linkart — Backend Structure Document
-
-> Version: v3.1
-> Architecture séparée : Products (beats/kits payants) + Services (professionnels gratuits)
-> Multi-pricing : Licences pour products, Tiers pour services
-> Design System v2.0 : Système de favoris et playlists éditoriales
-
-Ce document décrit l'**architecture backend**, les **tables**, les **endpoints**, les **politiques de sécurité**, les **processus asynchrones** et les **ops** nécessaires pour implémenter Linkart (MVP → scale). Il sert de référentiel pour les devs backend, les fonctions Edge et Cursor AI.
-
 ---
-
-## 1. Principes généraux
-
-* **Serverless-first** : privilégier Supabase Edge Functions / Vercel Lambdas pour logique métier (stateless).
-* **DB-centric** : Supabase Postgres est la source de vérité (RLS + migrations).
-* **Storage** : Cloudflare R2 ; accès via presigned PUT/GET uniquement.
-* **Secrets** : stocker uniquement dans vault / env variables (Vercel / Supabase secrets).
-* **Observabilité** : logs applicatifs + Sentry + métriques basiques (errors, tx/s, download/s).
-* **Security by design** : presigned URLs, TTL courts, capability-based access control, RLS.
-* **Séparation claire** : Products (beats/kits payants) vs Services (professionnels gratuits).
-* **Multi-pricing** : Tables dédiées pour licences (products) et tiers (services).
-
+alwaysApply: true
 ---
-
 ## 2. Environnements & infra
 
 * **envs** : dev / staging / prod

@@ -17,19 +17,19 @@
 
 ### Couverture Fonctionnelle
 
-| Module               | Screens Migrés                                | Stories | État    |
-| -------------------- | --------------------------------------------- | ------- | ------- |
-| **Auth**             | 4/4 (Welcome, Login, OTP, ProfileSetup)       | ✅      | 🟢 100% |
-| **Home/Marketplace** | 3/3 (Home, Marketplace, BeatDetails)          | ✅      | 🟢 100% |
-| **Purchases**        | 4/4 (Checkout, Payment, Success, MyPurchases) | ✅      | 🟢 100% |
-| **Services**         | 3/3 (ServiceDetails, BookingForm, Bookings)   | ✅      | 🟢 100% |
-| **Profile**          | 3/3 (Profile, Wallet, Favorites)              | ✅      | 🟢 100% |
-| **Messaging**        | 2/2 (Inbox, Chat)                             | ✅      | 🟢 100% |
-| **Upload**           | 1/1 (Upload)                                  | ✅      | 🟢 100% |
-| **Boost**            | 1/1 (Boost)                                   | ✅      | 🟢 100% |
-| **Legal**            | 2/2 (LicenseContract, DownloadViewer)         | ✅      | 🟢 100% |
-| **Notifications**    | 1/1 (Notifications)                           | ✅      | 🟢 100% |
-| **Search**           | 1/1 (SearchFilters)                           | ✅      | 🟢 100% |
+| Module               | Screens Migrés                                | Stories | État                                                   |
+| -------------------- | --------------------------------------------- | ------- | ------------------------------------------------------ |
+| **Auth**             | 4/4 (Welcome, Login, OTP, ProfileSetup)       | ✅      | 🟢 100%                                                |
+| **Home/Marketplace** | 3/3 (Home, Marketplace, BeatDetails)          | ✅      | 🟢 100%                                                |
+| **Purchases**        | 4/4 (Checkout, Payment, Success, MyPurchases) | ✅      | 🟢 100%                                                |
+| **Services**         | 3/3 (ServiceDetails, BookingForm, Bookings)   | ✅      | 🟢 100% (ServiceDetails refactorisé avec 7 composants) |
+| **Profile**          | 3/3 (Profile, Wallet, Favorites)              | ✅      | 🟢 100%                                                |
+| **Messaging**        | 2/2 (Inbox, Chat)                             | ✅      | 🟢 100%                                                |
+| **Upload**           | 1/1 (Upload)                                  | ✅      | 🟢 100%                                                |
+| **Boost**            | 1/1 (Boost)                                   | ✅      | 🟢 100%                                                |
+| **Legal**            | 2/2 (LicenseContract, DownloadViewer)         | ✅      | 🟢 100%                                                |
+| **Notifications**    | 1/1 (Notifications)                           | ✅      | 🟢 100%                                                |
+| **Search**           | 1/1 (SearchFilters)                           | ✅      | 🟢 100% (SearchFilters refactorisé avec 5 composants)  |
 
 **Toutes les fonctionnalités MVP sont couvertes !** 🎉
 
@@ -76,13 +76,13 @@
 | 16  | **MarketplaceScreenFigma**     | `features/marketplace/screens/MarketplaceScreenFigma.tsx`     | StyleSheet | ✅      | 🟢 Complet (Refactorisé avec 10 composants) |
 | 17  | **ProfileScreenFigma**         | `features/profile/screens/ProfileScreenFigma.tsx`             | StyleSheet | ✅      | 🟢 Complet (Refactorisé avec 6 composants)  |
 | 18  | **WalletScreenFigma**          | `features/wallet/screens/WalletScreenFigma.tsx`               | StyleSheet | ✅      | 🟢 Complet (Refactorisé avec 5 composants)  |
-| 19  | **ProfileSetupScreenFigma**    | `screens/auth/ProfileSetupScreenFigma.tsx`                    | StyleSheet | ✅      | 🟢 Complet                                  |
-| 20  | **WelcomeScreenFigma**         | `screens/auth/WelcomeScreenFigma.tsx`                         | StyleSheet | ✅      | 🟢 Complet                                  |
+| 19  | **ProfileSetupScreenFigma**    | `features/auth/screens/ProfileSetupScreenFigma.tsx`           | StyleSheet | ✅      | 🟢 Complet (Refactorisé avec 4 composants)  |
+| 20  | **WelcomeScreenFigma**         | `features/auth/screens/WelcomeScreenFigma.tsx`                | StyleSheet | ✅      | 🟢 Complet (Refactorisé avec 3 composants)  |
 | 21  | **BookingFormScreenFigma**     | `features/bookings/screens/BookingFormScreenFigma.tsx`        | StyleSheet | ✅      | 🟢 Complet                                  |
 | 22  | **BookingsScreenFigma**        | `features/bookings/screens/BookingsScreenFigma.tsx`           | StyleSheet | ✅      | 🟢 Complet                                  |
-| 23  | **BoostScreenFigma**           | `screens/boost/BoostScreenFigma.tsx`                          | StyleSheet | ✅      | 🟢 Complet                                  |
+| 23  | **BoostScreenFigma**           | `features/boosts/screens/BoostScreenFigma.tsx`                | StyleSheet | ✅      | 🟢 Complet (Refactorisé avec 6 composants)  |
 | 24  | **DownloadViewerScreenFigma**  | `screens/downloads/DownloadViewerScreenFigma.tsx`             | StyleSheet | ✅      | 🟢 Complet                                  |
-| 25  | **LicenseContractScreenFigma** | `screens/legal/LicenseContractScreenFigma.tsx`                | StyleSheet | ✅      | 🟢 Complet                                  |
+| 25  | **LicenseContractScreenFigma** | `features/legal/screens/LicenseContractScreenFigma.tsx`       | StyleSheet | ✅      | 🟢 Complet (Refactorisé avec 5 composants)  |
 | 26  | **InboxScreenFigma**           | `features/messaging/screens/InboxScreenFigma.tsx`             | StyleSheet | ✅      | 🟢 Complet                                  |
 | 27  | **ChatScreenFigma**            | `features/messaging/screens/ChatScreenFigma.tsx`              | StyleSheet | ✅      | 🟢 Complet                                  |
 | 28  | **NotificationsScreenFigma**   | `features/notifications/screens/NotificationsScreenFigma.tsx` | StyleSheet | ✅      | 🟢 Complet                                  |
@@ -91,26 +91,26 @@
 | 31  | **MyPurchasesScreenFigma**     | `features/purchases/screens/MyPurchasesScreenFigma.tsx`       | StyleSheet | ✅      | 🟢 Complet                                  |
 | 32  | **FavoritesScreenFigma**       | `features/favorites/screens/FavoritesScreenFigma.tsx`         | StyleSheet | ✅      | 🟢 Complet                                  |
 | 33  | **CheckoutScreenFigma**        | `features/checkout/screens/CheckoutScreenFigma.tsx`           | StyleSheet | ✅      | 🟢 Complet                                  |
-| 34  | **SearchFiltersScreenFigma**   | `screens/search/SearchFiltersScreenFigma.tsx`                 | StyleSheet | ✅      | 🟢 Complet                                  |
-| 35  | **ServiceDetailsScreenFigma**  | `screens/services/ServiceDetailsScreenFigma.tsx`              | StyleSheet | ✅      | 🟢 Complet                                  |
+| 34  | **SearchFiltersScreenFigma**   | `features/search/screens/SearchFiltersScreenFigma.tsx`        | StyleSheet | ✅      | 🟢 Complet (Refactorisé avec 5 composants)  |
+| 35  | **ServiceDetailsScreenFigma**  | `features/services/screens/ServiceDetailsScreenFigma.tsx`     | StyleSheet | ✅      | 🟢 Complet (Refactorisé avec 7 composants)  |
 | 36  | **UploadScreenFigma**          | `features/uploads/screens/UploadScreenFigma.tsx`              | StyleSheet | ✅      | 🟢 Complet                                  |
 
 #### Screens sans suffixe Figma (14 screens)
 
-| N°  | Screen                    | Fichier                                  | Style | Stories | État          |
-| --- | ------------------------- | ---------------------------------------- | ----- | ------- | ------------- |
-| 35  | **CheckoutScreen**        | `screens/CheckoutScreen.tsx`             | ?     | ❌      | 🟡 À vérifier |
-| 36  | **FavoritesScreen**       | `screens/FavoritesScreen.tsx`            | ?     | ✅      | 🟡 À vérifier |
-| 37  | **HomeScreen**            | `screens/HomeScreen.tsx`                 | ?     | ❌      | 🟡 À vérifier |
-| 38  | **PlaylistDetailScreen**  | `screens/PlaylistDetailScreen.tsx`       | ?     | ✅      | 🟡 À vérifier |
-| 39  | **ProductDetailScreen**   | `screens/ProductDetailScreen.tsx`        | ?     | ✅      | 🟡 À vérifier |
-| 40  | **ProductsScreen**        | `screens/ProductsScreen.tsx`             | ?     | ✅      | 🟡 À vérifier |
-| 41  | **ProfileScreen**         | `screens/ProfileScreen.tsx`              | ?     | ❌      | 🟡 À vérifier |
-| 42  | **SplashScreen**          | `screens/SplashScreen.tsx`               | ?     | ✅      | 🟡 À vérifier |
-| 43  | **UploadScreen**          | `screens/UploadScreen.tsx`               | ?     | ✅      | 🟡 À vérifier |
-| 44  | **WalletScreen**          | `screens/WalletScreen.tsx`               | ?     | ❌      | 🟡 À vérifier |
-| 45  | **LoginScreen**           | `screens/auth/LoginScreen.tsx`           | ?     | ✅      | 🟡 À vérifier |
-| 46  | **OTPVerificationScreen** | `screens/auth/OTPVerificationScreen.tsx` | ?     | ✅      | 🟡 À vérifier |
+| N°  | Screen                         | Fichier                                                    | Style      | Stories | État                                       |
+| --- | ------------------------------ | ---------------------------------------------------------- | ---------- | ------- | ------------------------------------------ |
+| 35  | **CheckoutScreen**             | `screens/CheckoutScreen.tsx`                               | ?          | ❌      | 🟡 À vérifier                              |
+| 36  | **FavoritesScreen**            | `screens/FavoritesScreen.tsx`                              | ?          | ✅      | 🟡 À vérifier                              |
+| 37  | **HomeScreen**                 | `screens/HomeScreen.tsx`                                   | ?          | ❌      | 🟡 À vérifier                              |
+| 38  | **PlaylistDetailScreenFigma**  | `features/playlists/screens/PlaylistDetailScreenFigma.tsx` | StyleSheet | ✅      | 🟢 Complet (Refactorisé avec 4 composants) |
+| 39  | **ProductDetailScreen**        | `screens/ProductDetailScreen.tsx`                          | ?          | ✅      | 🟡 À vérifier                              |
+| 40  | **ProductsScreen**             | `screens/ProductsScreen.tsx`                               | ?          | ✅      | 🟡 À vérifier                              |
+| 41  | **ProfileScreen**              | `screens/ProfileScreen.tsx`                                | ?          | ❌      | 🟡 À vérifier                              |
+| 42  | **SplashScreenFigma**          | `features/auth/screens/SplashScreenFigma.tsx`              | StyleSheet | ✅      | 🟢 Complet (Refactorisé avec 3 composants) |
+| 43  | **UploadScreen**               | `screens/UploadScreen.tsx`                                 | ?          | ✅      | 🟡 À vérifier                              |
+| 44  | **WalletScreen**               | `screens/WalletScreen.tsx`                                 | ?          | ❌      | 🟡 À vérifier                              |
+| 45  | **LoginScreenFigma**           | `features/auth/screens/LoginScreenFigma.tsx`               | StyleSheet | ✅      | 🟢 Complet (Refactorisé avec 3 composants) |
+| 46  | **OTPVerificationScreenFigma** | `features/auth/screens/OTPVerificationScreenFigma.tsx`     | StyleSheet | ✅      | 🟢 Complet (Refactorisé avec 3 composants) |
 
 ---
 

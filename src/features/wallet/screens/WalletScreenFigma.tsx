@@ -12,7 +12,7 @@ export interface WalletScreenFigmaProps {
   showBalance?: boolean;
   onToggleBalance?: () => void;
   transactions?: TransactionItemProps[];
-  stats?: Array<{ label: string; value: string; change: string }>;
+  stats?: { label: string; value: string; change: string }[];
 }
 
 export function WalletScreenFigma({
