@@ -1,36 +1,54 @@
-import type { Meta, StoryObj } from '@storybook/react-vite';
-import { View } from 'react-native';
+import type { Meta, StoryObj } from '@storybook/react-native-web-vite';
+import { useState } from 'react';
 import { LoginForm } from './LoginForm';
 
 const meta: Meta<typeof LoginForm> = {
-  title: 'Features/Auth/LoginForm',
+  title: 'features/auth/LoginForm',
   component: LoginForm,
-  decorators: [
-    Story => (
-      <View style={{ flex: 1, padding: 20, justifyContent: 'center' }}>
-        <Story />
-      </View>
-    ),
-  ],
-  argTypes: {
-    onPhoneSubmit: { action: 'phone submitted' },
-    onEmailSubmit: { action: 'email submitted' },
-    // onNavigateToRegister: { action: 'navigated to register' }, // Not in LoginFormProps
-  },
 };
 
 export default meta;
-
 type Story = StoryObj<typeof LoginForm>;
 
-export const Default: Story = {
-  args: {
-    loading: false,
+export const Phone: Story = {
+  render: () => {
+    const [contact, setContact] = useState('');
+    return (
+      <LoginForm
+        contactType="phone"
+        contact={contact}
+        onContactChange={setContact}
+        onSubmit={() => console.log('Submit:', contact)}
+      />
+    );
   },
 };
 
-export const Loading: Story = {
-  args: {
-    loading: true,
+export const Email: Story = {
+  render: () => {
+    const [contact, setContact] = useState('');
+    return (
+      <LoginForm
+        contactType="email"
+        contact={contact}
+        onContactChange={setContact}
+        onSubmit={() => console.log('Submit:', contact)}
+      />
+    );
+  },
+};
+
+export const WithError: Story = {
+  render: () => {
+    const [contact, setContact] = useState('');
+    return (
+      <LoginForm
+        contactType="phone"
+        contact={contact}
+        error="Numéro de téléphone invalide"
+        onContactChange={setContact}
+        onSubmit={() => console.log('Submit:', contact)}
+      />
+    );
   },
 };

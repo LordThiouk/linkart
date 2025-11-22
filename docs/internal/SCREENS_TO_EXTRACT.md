@@ -8,29 +8,39 @@
 
 ---
 
-## ✅ Screens Déjà Extraits (17 screens)
+## ✅ Screens Déjà Extraits (21 screens)
 
-| Screen                      | Localisation                      | Composants Extraits | Statut |
-| --------------------------- | --------------------------------- | ------------------- | ------ |
-| `PaymentScreenFigma`        | `features/payments/screens/`      | 5 composants        | ✅     |
-| `PaymentSuccessScreenFigma` | `features/payments/screens/`      | 6 composants        | ✅     |
-| `BookingsScreenFigma`       | `features/bookings/screens/`      | 4 composants        | ✅     |
-| `BookingFormScreenFigma`    | `features/bookings/screens/`      | 6 composants        | ✅     |
-| `MyPurchasesScreenFigma`    | `features/purchases/screens/`     | 7 composants        | ✅     |
-| `NotificationsScreenFigma`  | `features/notifications/screens/` | 4 composants        | ✅     |
-| `FavoritesScreenFigma`      | `features/favorites/screens/`     | 2 composants        | ✅     |
-| `InboxScreenFigma`          | `features/messaging/screens/`     | 2 composants        | ✅     |
-| `ChatScreenFigma`           | `features/messaging/screens/`     | 4 composants        | ✅     |
-| `CheckoutScreenFigma`       | `features/checkout/screens/`      | 5 composants        | ✅     |
-| `UploadScreenFigma`         | `features/uploads/screens/`       | 13 composants       | ✅     |
-| `DownloadViewerScreenFigma` | `features/downloads/screens/`     | 6 composants        | ✅     |
-| `HomeScreenFigma`           | `features/home/screens/`          | 7 composants        | ✅     |
-| `MarketplaceScreenFigma`    | `features/marketplace/screens/`   | 10 composants       | ✅     |
-| `BeatDetailsScreenFigma`    | `features/products/screens/`      | 8 composants        | ✅     |
-| `ProfileScreenFigma`        | `features/profile/screens/`       | 6 composants        | ✅     |
-| `WalletScreenFigma`         | `features/wallet/screens/`        | 5 composants        | ✅     |
+| Screen                       | Localisation                      | Composants Extraits | Statut |
+| ---------------------------- | --------------------------------- | ------------------- | ------ |
+| `PaymentScreenFigma`         | `features/payments/screens/`      | 5 composants        | ✅     |
+| `PaymentSuccessScreenFigma`  | `features/payments/screens/`      | 6 composants        | ✅     |
+| `BookingsScreenFigma`        | `features/bookings/screens/`      | 4 composants        | ✅     |
+| `BookingFormScreenFigma`     | `features/bookings/screens/`      | 6 composants        | ✅     |
+| `MyPurchasesScreenFigma`     | `features/purchases/screens/`     | 7 composants        | ✅     |
+| `NotificationsScreenFigma`   | `features/notifications/screens/` | 4 composants        | ✅     |
+| `FavoritesScreenFigma`       | `features/favorites/screens/`     | 2 composants        | ✅     |
+| `InboxScreenFigma`           | `features/messaging/screens/`     | 2 composants        | ✅     |
+| `ChatScreenFigma`            | `features/messaging/screens/`     | 4 composants        | ✅     |
+| `CheckoutScreenFigma`        | `features/checkout/screens/`      | 5 composants        | ✅     |
+| `UploadScreenFigma`          | `features/uploads/screens/`       | 13 composants       | ✅     |
+| `DownloadViewerScreenFigma`  | `features/downloads/screens/`     | 6 composants        | ✅     |
+| `HomeScreenFigma`            | `features/home/screens/`          | 7 composants        | ✅     |
+| `MarketplaceScreenFigma`     | `features/marketplace/screens/`   | 10 composants       | ✅     |
+| `BeatDetailsScreenFigma`     | `features/products/screens/`      | 8 composants        | ✅     |
+| `ProfileScreenFigma`         | `features/profile/screens/`       | 6 composants        | ✅     |
+| `WalletScreenFigma`          | `features/wallet/screens/`        | 5 composants        | ✅     |
+| `ServiceDetailsScreenFigma`  | `features/services/screens/`      | 7 composants        | ✅     |
+| `SearchFiltersScreenFigma`   | `features/search/screens/`        | 5 composants        | ✅     |
+| `WelcomeScreenFigma`         | `features/auth/screens/`          | 3 composants        | ✅     |
+| `ProfileSetupScreenFigma`    | `features/auth/screens/`          | 4 composants        | ✅     |
+| `LoginScreenFigma`           | `features/auth/screens/`          | 3 composants        | ✅     |
+| `OTPVerificationScreenFigma` | `features/auth/screens/`          | 3 composants        | ✅     |
+| `BoostScreenFigma`           | `features/boosts/screens/`        | 6 composants        | ✅     |
+| `LicenseContractScreenFigma` | `features/legal/screens/`         | 5 composants        | ✅     |
+| `PlaylistDetailScreenFigma`  | `features/playlists/screens/`     | 4 composants        | ✅     |
+| `SplashScreenFigma`          | `features/auth/screens/`          | 3 composants        | ✅     |
 
-**Total** : 18 screens extraits, 103+ composants réutilisables créés
+**Total** : 28 screens extraits, 146+ composants réutilisables créés
 
 ---
 
@@ -55,22 +65,23 @@
 
 ### Priorité 3 : Screens Services & Recherche
 
-| Screen                      | Localisation Actuelle                                | Localisation Cible           | Complexité | Composants à Extraire                                                                                              | Statut |
-| --------------------------- | ---------------------------------------------------- | ---------------------------- | ---------- | ------------------------------------------------------------------------------------------------------------------ | ------ |
-| `ServiceDetailsScreenFigma` | `src/screens/services/ServiceDetailsScreenFigma.tsx` | `features/services/screens/` | Moyenne    | `ServiceDetailsHeader`, `ServiceInfo`, `ProviderCard`, `PricingTiers`, `Portfolio`, `BookingCTA`, `ReviewsSection` | ⏳     |
-| `SearchFiltersScreenFigma`  | `src/screens/search/SearchFiltersScreenFigma.tsx`    | `features/search/screens/`   | Simple     | `SearchFiltersHeader`, `FilterSection`, `GenreFilter`, `PriceRangeFilter`, `SortFilter`, `ApplyButton`             | ⏳     |
+| Screen                      | Localisation Actuelle        | Localisation Cible | Complexité | Composants à Extraire                                                                                                                  | Statut |
+| --------------------------- | ---------------------------- | ------------------ | ---------- | -------------------------------------------------------------------------------------------------------------------------------------- | ------ |
+| `ServiceDetailsScreenFigma` | `features/services/screens/` | ✅                 | Moyenne    | `ServiceDetailsHeader`, `ServiceInfo`, `ProviderCard`, `PricingTiers`, `ServicePortfolio`, `ServiceBottomCTA`, `ServiceReviewsSection` | ✅     |
+| `SearchFiltersScreenFigma`  | `features/search/screens/`   | ✅                 | Simple     | `SearchFiltersHeader`, `FilterSection`, `ChipFilterGroup`, `ClearFiltersButton`, `SearchResults`                                       | ✅     |
 
 ---
 
 ### Priorité 4 : Screens Auth & Secondaires
 
-| Screen                       | Localisation Actuelle                              | Localisation Cible            | Complexité | Composants à Extraire                                                                           | Statut |
-| ---------------------------- | -------------------------------------------------- | ----------------------------- | ---------- | ----------------------------------------------------------------------------------------------- | ------ |
-| `WelcomeScreenFigma`         | `src/screens/auth/WelcomeScreenFigma.tsx`          | `features/auth/screens/`      | Simple     | `WelcomeHeader`, `OnboardingCarousel`, `GetStartedButton` (déjà dans molecules)                 | ⏳     |
-| `ProfileSetupScreenFigma`    | `src/screens/auth/ProfileSetupScreenFigma.tsx`     | `features/auth/screens/`      | Moyenne    | `ProfileSetupHeader`, `AvatarUpload`, `FormSteps`, `GenreSelector`, `LocationInput`             | ⏳     |
-| `BoostScreenFigma`           | `src/screens/boost/BoostScreenFigma.tsx`           | `features/boosts/screens/`    | Simple     | `BoostHeader`, `BoostOptions`, `DurationSelector`, `PaymentMethod`, `ConfirmButton`             | ⏳     |
-| `LicenseContractScreenFigma` | `src/screens/legal/LicenseContractScreenFigma.tsx` | `features/legal/screens/`     | Simple     | `ContractHeader`, `ContractViewer`, `TermsSection`, `DownloadButton`, `AcceptButton`            | ⏳     |
-| `PlaylistDetailScreenFigma`  | `src/screens/PlaylistDetailScreenFigma.tsx`        | `features/playlists/screens/` | Moyenne    | `PlaylistHeader`, `PlaylistPlayer`, `PlaylistInfo`, `BeatList`, `ShuffleButton`, `RepeatButton` | ⏳     |
+| Screen                       | Localisation Actuelle         | Localisation Cible | Complexité | Composants à Extraire                                                                                                    | Statut |
+| ---------------------------- | ----------------------------- | ------------------ | ---------- | ------------------------------------------------------------------------------------------------------------------------ | ------ |
+| `WelcomeScreenFigma`         | `features/auth/screens/`      | ✅                 | Simple     | `WelcomeLogo`, `WelcomeContent`, `WelcomeFeaturesGrid`                                                                   | ✅     |
+| `ProfileSetupScreenFigma`    | `features/auth/screens/`      | ✅                 | Moyenne    | `ProfileSetupHeader`, `AvatarUpload`, `RoleSelector`, `FormActions`                                                      | ✅     |
+| `BoostScreenFigma`           | `features/boosts/screens/`    | ✅                 | Simple     | `BoostHeader`, `BoostHeroSection`, `BoostInfoBanner`, `BoostPlansSection`, `BoostStatsSection`, `BoostBottomCTA`         | ✅     |
+| `LicenseContractScreenFigma` | `features/legal/screens/`     | ✅                 | Simple     | `ContractHeader`, `ContractVerificationBadge`, `ContractDetailsCard`, `ContractTermsSection`, `ContractSignatureSection` | ✅     |
+| `PlaylistDetailScreenFigma`  | `features/playlists/screens/` | ✅                 | Moyenne    | `PlaylistDetailHeader`, `PlaylistBeatList`, `PlaylistBeatItem`, `PlaylistPlayer`                                         | ✅     |
+| `SplashScreenFigma`          | `features/auth/screens/`      | ✅                 | Simple     | `SplashLogo`, `SplashContent`, `LoadingDots`                                                                             | ✅     |
 
 ---
 
@@ -85,9 +96,9 @@
 
 ## 📊 Statistiques Globales
 
-- **Screens extraits** : 18/26 (69%)
-- **Screens restants** : 8/26 (31%)
-- **Composants créés** : 103+ composants réutilisables
+- **Screens extraits** : 28/28 (100%) ✅
+- **Screens restants** : 0/28 (0%)
+- **Composants créés** : 146+ composants réutilisables
 - **Architecture** : Modulaire établie (`features/<domain>/screens/` +
   `features/<domain>/components/`)
 
@@ -108,8 +119,8 @@
 
 ### Étape 3 : Services & Recherche (Priorité 3)
 
-1. `ServiceDetailsScreenFigma` - Screen service
-2. `SearchFiltersScreenFigma` - Screen filtres
+1. ✅ `ServiceDetailsScreenFigma` - Screen service (7 composants extraits)
+2. ✅ `SearchFiltersScreenFigma` - Screen filtres (5 composants extraits)
 
 ### Étape 4 : Auth & Secondaires (Priorité 4)
 

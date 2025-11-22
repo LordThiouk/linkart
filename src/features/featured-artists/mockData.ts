@@ -1,0 +1,128 @@
+import { FeaturedArtist } from './types';
+
+export const mockArtists: FeaturedArtist[] = [
+  // Beatmaker (produits uniquement)
+  {
+    id: 'a1',
+    name: 'DJ Shadow',
+    artistName: 'DJ Shadow Productions',
+    avatar: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=200',
+    category: 'beatmaker',
+    isBoosted: true,
+    isTop: true,
+    stats: {
+      sales: 150,
+      revenue: 3750000,
+      rating: 4.9,
+      productsCount: 25,
+    },
+    playlist: {
+      id: 'p1',
+      title: 'Top Beats by DJ Shadow',
+      description: 'Les meilleurs beats de DJ Shadow - Collection premium',
+      coverImage: 'https://images.unsplash.com/photo-1582024959432-a3eb161ffa5f?w=400',
+      beatCount: 25,
+      totalPlays: 45000,
+    },
+  },
+  // Mixeur (services uniquement)
+  {
+    id: 'a2',
+    name: 'Audio Engineer Pro',
+    artistName: 'Studio Master',
+    avatar: 'https://images.unsplash.com/photo-1729709606104-32dbcf34c189?w=200',
+    category: 'mixer',
+    isBoosted: true,
+    isTop: true,
+    stats: {
+      bookings: 89,
+      rating: 4.8,
+      servicesCount: 3,
+    },
+    playlist: {
+      id: 'p2',
+      title: 'Top Mixes by Audio Engineer Pro',
+      description: 'Les meilleurs mixes professionnels',
+      coverImage: 'https://images.unsplash.com/photo-1648780693381-12daeb6fe374?w=400',
+      beatCount: 0,
+      serviceCount: 3,
+      totalPlays: 28000,
+    },
+  },
+  // Artiste complet (produits + services)
+  {
+    id: 'a3',
+    name: 'Producer X',
+    artistName: 'Producer X Music',
+    avatar: 'https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?w=200',
+    category: 'artist',
+    isBoosted: false,
+    isTop: true,
+    stats: {
+      sales: 67,
+      revenue: 1675000,
+      bookings: 45,
+      rating: 4.7,
+      productsCount: 15,
+      servicesCount: 2,
+    },
+    playlist: {
+      id: 'p3',
+      title: 'Complete Works by Producer X',
+      description: 'Beats et services de Producer X',
+      coverImage: 'https://images.unsplash.com/photo-1582024959432-a3eb161ffa5f?w=400',
+      beatCount: 15,
+      serviceCount: 2,
+      totalPlays: 35000,
+    },
+  },
+  // Studio (services uniquement)
+  {
+    id: 'a4',
+    name: 'Premium Sound Studio',
+    artistName: 'Premium Sound',
+    avatar: 'https://images.unsplash.com/photo-1692176548571-86138128e36c?w=200',
+    category: 'studio',
+    isBoosted: true,
+    isTop: false,
+    stats: {
+      bookings: 127,
+      rating: 4.8,
+      servicesCount: 5,
+    },
+    playlist: {
+      id: 'p4',
+      title: 'Studio Services',
+      description: 'Tous nos services de studio',
+      coverImage: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=400',
+      beatCount: 0,
+      serviceCount: 5,
+      totalPlays: 38000,
+    },
+  },
+  // Producteur (produits uniquement)
+  {
+    id: 'a5',
+    name: 'BeatKing',
+    artistName: 'BeatKing Studio',
+    avatar: 'https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?w=200',
+    category: 'producer',
+    isBoosted: false,
+    isTop: true,
+    isNewTalent: true,
+    stats: {
+      sales: 89,
+      revenue: 2225000,
+      rating: 4.8,
+      productsCount: 18,
+    },
+    playlist: {
+      id: 'p5',
+      title: 'Dark Trap Collection',
+      description: 'Beats trap sombres et énergiques',
+      coverImage: 'https://images.unsplash.com/photo-1493225457124-a3eb161ffa5f?w=400',
+      beatCount: 18,
+      totalPlays: 32000,
+    },
+  },
+];
