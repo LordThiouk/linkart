@@ -42,8 +42,10 @@ export default meta;
 
 type Story = StoryObj<typeof AudioPlayer>;
 
-const InteractiveWrapper = ({ ...args }: any) => {
-  return <AudioPlayer {...args} />;
+type InteractiveWrapperProps = React.ComponentProps<typeof AudioPlayer>;
+
+const InteractiveWrapper: React.FC<InteractiveWrapperProps> = props => {
+  return <AudioPlayer {...props} />;
 };
 
 export const Default: Story = {

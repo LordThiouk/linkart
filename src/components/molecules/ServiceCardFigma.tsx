@@ -11,13 +11,13 @@ interface ServiceCardFigmaProps {
   id: string;
   title: string;
   provider: string;
-  providerImage: string;
+  providerImage?: string;
   coverImage: string;
   price: number;
-  rating: number;
-  reviewCount: number;
-  deliveryTime: string;
-  category: string;
+  rating?: number;
+  reviewCount?: number;
+  deliveryTime?: string;
+  category?: string;
   isPro?: boolean;
   onPress?: () => void;
   style?: ViewStyle;
@@ -75,11 +75,13 @@ export function ServiceCardFigma({
           />
 
           {/* Category Badge */}
-          <View style={styles.categoryBadge}>
-            <View style={styles.categoryBadgeContent}>
-              <Text style={styles.categoryBadgeText}>{category}</Text>
+          {category && (
+            <View style={styles.categoryBadge}>
+              <View style={styles.categoryBadgeContent}>
+                <Text style={styles.categoryBadgeText}>{category}</Text>
+              </View>
             </View>
-          </View>
+          )}
 
           {/* Pro Badge */}
           {isPro && (
@@ -105,7 +107,7 @@ export function ServiceCardFigma({
             </Text>
 
             <View style={styles.providerContainer}>
-              <ImageWithFallback src={providerImage} alt={provider} style={styles.providerImage} />
+              {providerImage && <ImageWithFallback src={providerImage} alt={provider} style={styles.providerImage} />}
               <Text style={styles.provider} numberOfLines={1}>
                 {provider}
               </Text>
@@ -113,15 +115,23 @@ export function ServiceCardFigma({
           </View>
 
           <View style={styles.footer}>
-            <View style={styles.ratingContainer}>
-              <Star size={16} color="#F59E0B" fill="#F59E0B" />
-              <Text style={styles.rating}>{rating}</Text>
-              <Text style={styles.reviewCount}>({reviewCount})</Text>
-              <View style={styles.deliveryContainer}>
-                <Clock size={16} color="#A3A3A3" />
-                <Text style={styles.deliveryTime}>{deliveryTime}</Text>
+            {(rating !== undefined || reviewCount !== undefined || deliveryTime) && (
+              <View style={styles.ratingContainer}>
+                {rating !== undefined && (
+                  <>
+                    <Star size={16} color="#F59E0B" fill="#F59E0B" />
+                    <Text style={styles.rating}>{rating}</Text>
+                  </>
+                )}
+                {reviewCount !== undefined && <Text style={styles.reviewCount}>({reviewCount})</Text>}
+                {deliveryTime && (
+                  <View style={styles.deliveryContainer}>
+                    <Clock size={16} color="#A3A3A3" />
+                    <Text style={styles.deliveryTime}>{deliveryTime}</Text>
+                  </View>
+                )}
               </View>
-            </View>
+            )}
           </View>
 
           <View style={styles.priceContainer}>

@@ -3,10 +3,20 @@ import { View, Text, TouchableOpacity, ScrollView, StyleSheet } from 'react-nati
 import Animated, { FadeIn, FadeInDown } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
-import { ChevronLeft, Share2, MessageCircle, Clock, CheckCircle, MapPin, Award, Calendar } from 'lucide-react-native';
+import {
+  ChevronLeft,
+  Share2,
+  MessageCircle,
+  Clock,
+  CheckCircle,
+  MapPin,
+  Award,
+  Calendar,
+  Star,
+} from 'lucide-react-native';
 import { ImageWithFallback } from '../../components/atoms/ImageWithFallback';
 import { PrimaryButton } from '../../components/atoms/PrimaryButton';
-import { RatingStarsFigma } from '../../components/molecules/RatingStarsFigma';
+import { colors, spacing, typography, radii } from '@/theme';
 
 const AnimatedView = Animated.createAnimatedComponent(View);
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
@@ -107,7 +117,7 @@ export function ServiceDetailsScreenFigma({ serviceId, onBack, onContact, onBook
         <AnimatedView entering={FadeIn} style={styles.heroContainer}>
           <ImageWithFallback src={service.coverImage} alt={service.title} style={styles.heroImage} />
           <LinearGradient
-            colors={['transparent', 'rgba(10, 10, 10, 0.6)', '#0A0A0A']}
+            colors={['transparent', 'rgba(10, 10, 10, 0.6)', colors.background]}
             start={{ x: 0, y: 0 }}
             end={{ x: 0, y: 1 }}
             style={styles.heroGradient}
@@ -117,11 +127,11 @@ export function ServiceDetailsScreenFigma({ serviceId, onBack, onContact, onBook
           <View style={styles.heroHeader}>
             {onBack && (
               <TouchableOpacity onPress={onBack} style={styles.heroButton} activeOpacity={0.8}>
-                <ChevronLeft size={20} color="#F5F5F5" />
+                <ChevronLeft size={20} color={colors.textPrimary} />
               </TouchableOpacity>
             )}
             <TouchableOpacity style={styles.heroButton} activeOpacity={0.8}>
-              <Share2 size={20} color="#F5F5F5" />
+              <Share2 size={20} color={colors.textPrimary} />
             </TouchableOpacity>
           </View>
 
@@ -141,12 +151,12 @@ export function ServiceDetailsScreenFigma({ serviceId, onBack, onContact, onBook
               <Text style={styles.title}>{service.title}</Text>
               {service.isPro && (
                 <LinearGradient
-                  colors={['#F59E0B', '#EC4899']}
+                  colors={[colors.secondary, colors.accent]}
                   start={{ x: 0, y: 0 }}
                   end={{ x: 1, y: 0 }}
                   style={styles.proBadge}
                 >
-                  <Award size={12} color="#F5F5F5" />
+                  <Award size={12} color={colors.textPrimary} />
                   <Text style={styles.proBadgeText}>PRO</Text>
                 </LinearGradient>
               )}
@@ -157,13 +167,13 @@ export function ServiceDetailsScreenFigma({ serviceId, onBack, onContact, onBook
               <View style={styles.providerInfo}>
                 <Text style={styles.providerName}>{service.provider}</Text>
                 <View style={styles.providerLocation}>
-                  <MapPin size={12} color="#A3A3A3" />
+                  <MapPin size={12} color={colors.textMuted} />
                   <Text style={styles.providerLocationText}>{service.location}</Text>
                 </View>
               </View>
               {onContact && (
                 <TouchableOpacity onPress={onContact} style={styles.contactButton} activeOpacity={0.8}>
-                  <MessageCircle size={20} color="#D4D4D4" />
+                  <MessageCircle size={20} color={colors.textSecondary} />
                 </TouchableOpacity>
               )}
             </View>
@@ -171,19 +181,19 @@ export function ServiceDetailsScreenFigma({ serviceId, onBack, onContact, onBook
             {/* Stats */}
             <View style={styles.statsSection}>
               <View style={styles.statItem}>
-                <RatingStarsFigma rating={service.rating} size="sm" />
+                <Star size={16} color={colors.secondary} fill={colors.secondary} />
                 <Text style={styles.statText}>
-                  {service.rating} ({service.reviewCount})
+                  {service.rating} <Text style={styles.statTextMuted}>({service.reviewCount})</Text>
                 </Text>
               </View>
               <View style={styles.statDot} />
               <View style={styles.statItem}>
-                <CheckCircle size={16} color="#A3A3A3" />
+                <CheckCircle size={16} color={colors.textMuted} />
                 <Text style={styles.statText}>{service.completedOrders} commandes</Text>
               </View>
               <View style={styles.statDot} />
               <View style={styles.statItem}>
-                <Clock size={16} color="#A3A3A3" />
+                <Clock size={16} color={colors.textMuted} />
                 <Text style={styles.statText}>Répond en {service.responseTime}</Text>
               </View>
             </View>
@@ -213,7 +223,7 @@ export function ServiceDetailsScreenFigma({ serviceId, onBack, onContact, onBook
                         <Text style={styles.packageName}>{pkg.name}</Text>
                         {pkg.popular && (
                           <LinearGradient
-                            colors={['#F59E0B', '#EC4899']}
+                            colors={[colors.secondary, colors.accent]}
                             start={{ x: 0, y: 0 }}
                             end={{ x: 1, y: 0 }}
                             style={styles.popularBadge}
@@ -223,7 +233,7 @@ export function ServiceDetailsScreenFigma({ serviceId, onBack, onContact, onBook
                         )}
                       </View>
                       <View style={styles.packageDelivery}>
-                        <Clock size={12} color="#A3A3A3" />
+                        <Clock size={12} color={colors.textMuted} />
                         <Text style={styles.packageDeliveryText}>Livraison en {pkg.deliveryTime}</Text>
                       </View>
                     </View>
@@ -232,7 +242,7 @@ export function ServiceDetailsScreenFigma({ serviceId, onBack, onContact, onBook
                   <View style={styles.packageFeatures}>
                     {pkg.features.map((feature, idx) => (
                       <View key={idx} style={styles.packageFeature}>
-                        <CheckCircle size={16} color="#22C55E" />
+                        <CheckCircle size={16} color={colors.success} />
                         <Text style={styles.packageFeatureText}>{feature}</Text>
                       </View>
                     ))}
@@ -270,7 +280,11 @@ export function ServiceDetailsScreenFigma({ serviceId, onBack, onContact, onBook
                     <View style={styles.reviewInfo}>
                       <View style={styles.reviewHeaderTop}>
                         <Text style={styles.reviewUserName}>{review.userName}</Text>
-                        <RatingStarsFigma rating={review.rating} size="sm" />
+                        <View style={styles.reviewStars}>
+                          {[...Array(review.rating)].map((_, i) => (
+                            <Star key={i} size={12} color={colors.secondary} fill={colors.secondary} />
+                          ))}
+                        </View>
                       </View>
                       <Text style={styles.reviewDate}>{review.date}</Text>
                     </View>
@@ -298,7 +312,7 @@ export function ServiceDetailsScreenFigma({ serviceId, onBack, onContact, onBook
           </View>
           <PrimaryButton onPress={onBook} fullWidth>
             <View style={styles.bookButtonContent}>
-              <Calendar size={20} color="#F5F5F5" />
+              <Calendar size={20} color={colors.textPrimary} />
               <Text style={styles.bookButtonText}>Réserver ce service</Text>
             </View>
           </PrimaryButton>
@@ -311,7 +325,7 @@ export function ServiceDetailsScreenFigma({ serviceId, onBack, onContact, onBook
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
   },
   scrollContent: {
     paddingBottom: 160,
@@ -338,297 +352,306 @@ const styles = StyleSheet.create({
     right: 0,
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingHorizontal: 24,
+    paddingHorizontal: spacing.xl,
   },
   heroButton: {
-    padding: 12,
-    borderRadius: 12,
+    padding: spacing.md,
+    borderRadius: radii.md,
     backgroundColor: 'rgba(10, 10, 10, 0.8)',
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   categoryBadge: {
     position: 'absolute',
-    bottom: 16,
-    left: 24,
+    bottom: spacing.md,
+    left: spacing.xl,
   },
   categoryBadgeContent: {
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 12,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs + 2,
+    borderRadius: radii.md,
     backgroundColor: 'rgba(6, 182, 212, 0.2)',
     borderWidth: 1,
     borderColor: 'rgba(6, 182, 212, 0.3)',
   },
   categoryBadgeText: {
-    color: '#06B6D4',
-    fontSize: 14,
-    fontWeight: '600',
+    color: colors.cyan,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
+    fontWeight: typography.fontWeight.semibold,
   },
   content: {
-    padding: 24,
-    gap: 24,
+    padding: spacing.xl,
+    gap: spacing.xl,
   },
   titleSection: {
-    gap: 16,
+    gap: spacing.md,
   },
   titleRow: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    gap: 12,
-    marginBottom: 12,
+    gap: spacing.md,
+    marginBottom: spacing.md,
   },
   title: {
     flex: 1,
-    color: '#F5F5F5',
-    fontSize: 28,
-    fontWeight: '700',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.displayXl - 4,
+    fontFamily: typography.fontFamily.poppins.bold,
   },
   proBadge: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 8,
+    gap: spacing.xs,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs,
+    borderRadius: radii.sm,
   },
   proBadgeText: {
-    color: '#F5F5F5',
-    fontSize: 11,
-    fontWeight: '700',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.poppins.bold,
   },
   providerSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 12,
-    marginBottom: 16,
+    gap: spacing.md,
+    marginBottom: spacing.md,
   },
   providerAvatar: {
     width: 48,
     height: 48,
-    borderRadius: 12,
+    borderRadius: radii.md,
   },
   providerInfo: {
     flex: 1,
-    gap: 4,
+    gap: spacing.xs,
   },
   providerName: {
-    color: '#F5F5F5',
-    fontSize: 18,
-    fontWeight: '700',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd,
+    fontFamily: typography.fontFamily.poppins.bold,
   },
   providerLocation: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: spacing.xs,
   },
   providerLocationText: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   contactButton: {
-    padding: 12,
-    borderRadius: 12,
-    backgroundColor: '#111111',
+    padding: spacing.md,
+    borderRadius: radii.md,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   statsSection: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 16,
-    paddingBottom: 16,
+    gap: spacing.md,
+    paddingBottom: spacing.md,
     borderBottomWidth: 1,
     borderBottomColor: 'rgba(64, 64, 64, 0.5)',
   },
   statItem: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: spacing.xs,
   },
   statText: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
+  },
+  statTextMuted: {
+    color: colors.textMuted,
   },
   statDot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-    backgroundColor: '#404040',
+    width: spacing.xs,
+    height: spacing.xs,
+    borderRadius: radii.sm / 2,
+    backgroundColor: colors.border,
   },
   descriptionSection: {
-    gap: 12,
+    gap: spacing.md,
   },
   sectionTitle: {
-    color: '#F5F5F5',
-    fontSize: 20,
-    fontWeight: '700',
-    marginBottom: 12,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd + 2,
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.md,
   },
   description: {
-    color: '#D4D4D4',
-    fontSize: 16,
-    fontWeight: '400',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.inter.regular,
     lineHeight: 24,
   },
   packagesSection: {
-    gap: 12,
+    gap: spacing.md,
   },
   packagesList: {
-    gap: 12,
+    gap: spacing.md,
   },
   packageCard: {
-    padding: 16,
-    borderRadius: 16,
+    padding: spacing.md,
+    borderRadius: radii.xxl,
     borderWidth: 2,
-    borderColor: '#404040',
-    backgroundColor: '#111111',
+    borderColor: colors.border,
+    backgroundColor: colors.surface,
   },
   packageCardSelected: {
-    borderColor: '#6366F1',
+    borderColor: colors.primary,
     backgroundColor: 'rgba(99, 102, 241, 0.1)',
   },
   packageHeader: {
     flexDirection: 'row',
     alignItems: 'flex-start',
     justifyContent: 'space-between',
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
   packageHeaderLeft: {
     flex: 1,
-    gap: 8,
+    gap: spacing.sm,
   },
   packageTitleRow: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8,
-    marginBottom: 4,
+    gap: spacing.sm,
+    marginBottom: spacing.xs,
   },
   packageName: {
-    color: '#F5F5F5',
-    fontSize: 18,
-    fontWeight: '700',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.titleMd,
+    fontFamily: typography.fontFamily.poppins.bold,
   },
   popularBadge: {
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 12,
+    paddingHorizontal: spacing.sm,
+    paddingVertical: spacing.xs - 2,
+    borderRadius: radii.md,
   },
   popularBadgeText: {
-    color: '#F5F5F5',
-    fontSize: 10,
-    fontWeight: '700',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.caption - 1,
+    fontFamily: typography.fontFamily.poppins.bold,
   },
   packageDelivery: {
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 4,
+    gap: spacing.xs,
   },
   packageDeliveryText: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   packagePrice: {
-    color: '#F59E0B',
-    fontSize: 18,
-    fontWeight: '700',
+    color: colors.secondary,
+    fontSize: typography.fontSize.titleMd,
+    fontFamily: typography.fontFamily.poppins.bold,
   },
   packageFeatures: {
-    gap: 12,
+    gap: spacing.md,
   },
   packageFeature: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 8,
+    gap: spacing.sm,
   },
   packageFeatureText: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
     flex: 1,
   },
   portfolioSection: {
-    gap: 12,
+    gap: spacing.md,
   },
   portfolioGrid: {
     flexDirection: 'row',
-    gap: 12,
+    gap: spacing.md,
   },
   portfolioItem: {
     flex: 1,
     aspectRatio: 1,
-    borderRadius: 12,
+    borderRadius: radii.md,
     overflow: 'hidden',
-    backgroundColor: '#111111',
+    backgroundColor: colors.surface,
   },
   portfolioImage: {
     width: '100%',
     height: '100%',
   },
   reviewsSection: {
-    gap: 12,
+    gap: spacing.md,
   },
   reviewsHeader: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
   reviewsSeeAll: {
-    color: '#6366F1',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.primary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   reviewsList: {
-    gap: 16,
+    gap: spacing.md,
   },
   reviewCard: {
-    padding: 16,
-    borderRadius: 16,
-    backgroundColor: '#111111',
+    padding: spacing.md,
+    borderRadius: radii.xxl,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
-    gap: 12,
+    borderColor: colors.border,
+    gap: spacing.md,
   },
   reviewHeader: {
     flexDirection: 'row',
     alignItems: 'flex-start',
-    gap: 12,
-    marginBottom: 8,
+    gap: spacing.md,
+    marginBottom: spacing.sm,
   },
   reviewAvatar: {
     width: 40,
     height: 40,
-    borderRadius: 12,
+    borderRadius: radii.md,
   },
   reviewInfo: {
     flex: 1,
-    gap: 4,
+    gap: spacing.xs,
   },
   reviewHeaderTop: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 4,
+    marginBottom: spacing.xs,
+  },
+  reviewStars: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.xs - 2,
   },
   reviewUserName: {
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontWeight: '700',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.poppins.bold,
   },
   reviewDate: {
-    color: '#A3A3A3',
-    fontSize: 12,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.caption,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   reviewComment: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
     lineHeight: 20,
   },
   bottomCTA: {
@@ -636,51 +659,53 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
     borderTopWidth: 1,
     borderTopColor: 'rgba(64, 64, 64, 0.5)',
-    padding: 24,
-    paddingBottom: 32,
+    padding: spacing.xl,
+    paddingBottom: spacing.xl + spacing.sm,
   },
   bottomCTAContent: {
     maxWidth: 400,
     alignSelf: 'center',
     width: '100%',
-    gap: 12,
+    gap: spacing.md,
   },
   bottomCTAInfo: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 12,
+    marginBottom: spacing.md,
   },
   bottomCTAInfoItem: {
-    gap: 4,
+    gap: spacing.xs,
   },
   bottomCTALabel: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   bottomCTAPrice: {
-    color: '#F59E0B',
-    fontSize: 20,
-    fontWeight: '700',
+    color: colors.secondary,
+    fontSize: typography.fontSize.titleMd + 2,
+    fontFamily: typography.fontFamily.poppins.bold,
   },
   bottomCTADelivery: {
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontWeight: '600',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.inter.medium,
+    fontWeight: typography.fontWeight.semibold,
   },
   bookButtonContent: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 8,
+    gap: spacing.sm,
   },
   bookButtonText: {
-    color: '#F5F5F5',
-    fontSize: 16,
-    fontWeight: '600',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.inter.medium,
+    fontWeight: typography.fontWeight.semibold,
   },
 });

@@ -50,24 +50,24 @@ app/
 ├── features/
 │   ├── auth/
 │   ├── products/        # Beats, kits, samples (payants)
+│   │   ├── components/   # Composants réutilisables
+│   │   └── screens/      # Screens Figma (logique UI pure)
 │   ├── services/        # Professionnels gratuits
 │   ├── bookings/        # Système de réservation
 │   ├── pricing/         # Multi-pricing (licences + tiers)
 │   ├── messaging/       # Chat pour services
 │   ├── wallet/          # Wallet (beats/kits uniquement)
+│   ├── payments/        # Paiements (beats/kits uniquement)
+│   │   ├── components/   # Composants réutilisables
+│   │   └── screens/      # Screens Figma (logique UI pure)
 │   ├── uploads/
 │   ├── boosts/
 │   └── index.ts
 ├── hooks/               # Hooks réutilisables
-├── screens/             # Pages principales
-│   ├── HomeScreen.tsx
-│   ├── ProductDetailScreen.tsx
-│   ├── ServiceDetailScreen.tsx
-│   ├── BookingScreen.tsx
-│   ├── UploadScreen.tsx
-│   ├── WalletScreen.tsx
-│   ├── ProfileScreen.tsx
-│   └── SettingsScreen.tsx
+├── screens/             # Wrappers React Navigation (points d'entrée)
+│   ├── payments/        # Wrappers qui importent depuis features
+│   ├── bookings/
+│   └── ...
 ├── store/               # Zustand stores
 ├── services/            # Appels API (axios/fetch)
 ├── theme/               # ✅ Design System centralisé
@@ -84,6 +84,70 @@ app/
 * Chaque **feature** a ses composants + logique isolée.
 * Les **stores Zustand** ne doivent jamais contenir de logique réseau.
 * Les **services/** contiennent uniquement des appels HTTP typés.
+
+### 3.1 Screen Architecture (CRITICAL)
+
+**Séparation claire entre Navigation et Logique UI** :
+
+* **Screens `*Figma`** (logique UI) → `src/features/<domain>/screens/`
+  * Logique UI pure, réutilisable (modales, web, tests)
+  * Pas de dépendance à React Navigation (`useNavigation`, `useRoute`)
+  * Utilise les composants depuis `features/<domain>/components/`
+  * Props typées, exportées via `features/<domain>/screens/index.ts`
+
+* **Wrappers React Navigation** → `src/screens/`
+  * Points d'entrée pour React Navigation
+  * Gèrent les paramètres de route et la navigation
+  * Importent les screens Figma depuis `features/<domain>/screens/`
+  * Wrappers minces qui transforment route params → props
+
+**Exemple** :
+
+```typescript
+// ✅ Screen Figma (logique UI pure)
+// src/features/payments/screens/PaymentScreenFigma.tsx
+interface PaymentScreenFigmaProps {
+  onBack?: () => void;
+  onPaymentSuccess?: (transactionId: string) => void;
+  checkoutData: CheckoutData;
+}
+
+export function PaymentScreenFigma({ onBack, onPaymentSuccess, checkoutData }: PaymentScreenFigmaProps) {
+  // Logique UI pure, pas de useNavigation/useRoute
+  return (
+    <SafeAreaView>
+      <PaymentHeader onBack={onBack} />
+      {/* ... */}
+    </SafeAreaView>
+  );
+}
+
+// ✅ Wrapper React Navigation
+// src/screens/payments/PaymentScreen.tsx
+import { PaymentScreenFigma } from '@/features/payments/screens';
+import { useNavigation, useRoute } from '@react-navigation/native';
+
+export function PaymentScreen() {
+  const navigation = useNavigation();
+  const route = useRoute<PaymentRouteProp>();
+  
+  return (
+    <PaymentScreenFigma
+      onBack={() => navigation.goBack()}
+      onPaymentSuccess={(txId) => navigation.navigate('PaymentSuccess', { transactionId: txId })}
+      checkoutData={route.params}
+    />
+  );
+}
+```
+
+**Règles strictes** :
+* ❌ **JAMAIS** mettre la logique UI directement dans les wrappers React Navigation
+* ❌ **JAMAIS** utiliser `useNavigation` ou `useRoute` dans les screens Figma
+* ✅ **TOUJOURS** exporter les screens Figma via `features/<domain>/screens/index.ts`
+* ✅ **TOUJOURS** créer des wrappers minces dans `src/screens/` pour React Navigation
+
+> **Référence complète** : Voir `docs/internal/SCREEN_ARCHITECTURE.md` pour les détails, exemples et anti-patterns.
 
 ---
 

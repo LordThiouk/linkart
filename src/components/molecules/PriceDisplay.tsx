@@ -1,6 +1,6 @@
 import React from 'react';
-import { View, ViewStyle, Text } from 'react-native';
-import { useTheme } from 'react-native-paper';
+import { View, ViewStyle, Text, TextStyle } from 'react-native';
+import { colors, typography } from '../../theme';
 
 export interface PriceDisplayProps {
   amount: number;
@@ -21,8 +21,7 @@ export const PriceDisplay: React.FC<PriceDisplayProps> = ({
   style,
   testID,
 }) => {
-  const theme = useTheme();
-  const textColor = color || theme.colors.onSurface;
+  const textColor = color || colors.textPrimary;
 
   const formatAmount = (value: number): string => {
     return new Intl.NumberFormat('fr-FR', {
@@ -31,36 +30,38 @@ export const PriceDisplay: React.FC<PriceDisplayProps> = ({
     }).format(value);
   };
 
-  const getTextSize = () => {
+  const getTextStyle = (): TextStyle => {
     switch (size) {
       case 'small':
-        return 14;
+        return {
+          fontSize: typography.fontSize.label,
+          fontFamily: typography.fontFamily.inter.regular,
+          fontWeight: typography.fontWeight.regular,
+        };
       case 'large':
-        return 24;
+        return {
+          fontSize: typography.fontSize.displayXl,
+          fontFamily: typography.fontFamily.poppins.bold,
+          fontWeight: typography.fontWeight.bold,
+        };
       default:
-        return 18;
-    }
-  };
-
-  const getFontWeight = () => {
-    switch (size) {
-      case 'small':
-        return 'normal';
-      case 'large':
-        return 'bold';
-      default:
-        return '600';
+        return {
+          fontSize: typography.fontSize.titleMd,
+          fontFamily: typography.fontFamily.poppins.semibold,
+          fontWeight: typography.fontWeight.semibold,
+        };
     }
   };
 
   return (
     <View style={style} testID={testID}>
       <Text
-        style={{
-          fontSize: getTextSize(),
-          fontWeight: getFontWeight() as any,
-          color: textColor,
-        }}
+        style={[
+          getTextStyle(),
+          {
+            color: textColor,
+          },
+        ]}
       >
         {formatAmount(amount)}
         {showCurrency && ` ${currency}`}

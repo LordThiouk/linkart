@@ -7,6 +7,7 @@ import { Shield, ArrowLeft } from 'lucide-react-native';
 import { OTPField } from '../../components/atoms/OTPField';
 import { PrimaryButton } from '../../components/atoms/PrimaryButton';
 import * as Haptics from 'expo-haptics';
+import { colors, spacing, typography, radii } from '@/theme';
 
 interface OTPVerificationScreenProps {
   contact: string;
@@ -20,16 +21,23 @@ export function OTPVerificationScreen({ contact, onVerify, onBack }: OTPVerifica
   const [resendTimer, setResendTimer] = useState(30);
   const [canResend, setCanResend] = useState(false);
 
-  const backX = useSharedValue(-20);
-  const backOpacity = useSharedValue(0);
-  const logoY = useSharedValue(-20);
-  const logoOpacity = useSharedValue(0);
-  const contentY = useSharedValue(20);
-  const contentOpacity = useSharedValue(0);
-  const formY = useSharedValue(20);
-  const formOpacity = useSharedValue(0);
+  // Détecter si on est dans Storybook (navigateur)
+  const isStorybook = typeof window !== 'undefined' && window.location?.pathname?.includes('/iframe.html');
+
+  // Initialiser les valeurs différemment selon l'environnement
+  const backX = useSharedValue(isStorybook ? 0 : -20);
+  const backOpacity = useSharedValue(isStorybook ? 1 : 0);
+  const logoY = useSharedValue(isStorybook ? 0 : -20);
+  const logoOpacity = useSharedValue(isStorybook ? 1 : 0);
+  const contentY = useSharedValue(isStorybook ? 0 : 20);
+  const contentOpacity = useSharedValue(isStorybook ? 1 : 0);
+  const formY = useSharedValue(isStorybook ? 0 : 20);
+  const formOpacity = useSharedValue(isStorybook ? 1 : 0);
 
   useEffect(() => {
+    // Dans Storybook, les animations sont déjà à leur état final
+    if (isStorybook) return;
+
     backX.value = withTiming(0, { duration: 600, easing: Easing.out(Easing.ease) });
     backOpacity.value = withTiming(1, { duration: 600 });
     logoY.value = withTiming(0, { duration: 600, easing: Easing.out(Easing.ease) });
@@ -42,7 +50,7 @@ export function OTPVerificationScreen({ contact, onVerify, onBack }: OTPVerifica
       formY.value = withTiming(0, { duration: 600, easing: Easing.out(Easing.ease) });
       formOpacity.value = withTiming(1, { duration: 600 });
     }, 200);
-  }, []);
+  }, [isStorybook]);
 
   useEffect(() => {
     if (resendTimer > 0) {
@@ -103,19 +111,19 @@ export function OTPVerificationScreen({ contact, onVerify, onBack }: OTPVerifica
         >
           <Animated.View style={backAnimatedStyle}>
             <TouchableOpacity onPress={onBack} style={styles.backButton} activeOpacity={0.8}>
-              <ArrowLeft size={20} color="#A3A3A3" />
+              <ArrowLeft size={20} color={colors.textMuted} />
               <Text style={styles.backText}>Retour</Text>
             </TouchableOpacity>
           </Animated.View>
 
           <Animated.View style={[styles.logoContainer, logoAnimatedStyle]}>
             <LinearGradient
-              colors={['#8B5CF6', '#EC4899']}
+              colors={[colors.primaryDark, colors.accent]}
               start={{ x: 0, y: 0 }}
               end={{ x: 1, y: 1 }}
               style={styles.logo}
             >
-              <Shield size={32} color="#F5F5F5" />
+              <Shield size={32} color={colors.textPrimary} />
             </LinearGradient>
           </Animated.View>
 
@@ -161,42 +169,42 @@ export function OTPVerificationScreen({ contact, onVerify, onBack }: OTPVerifica
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
   },
   keyboardView: {
     flex: 1,
   },
   scrollContent: {
     flexGrow: 1,
-    padding: 32, // p-8
+    padding: spacing.xl,
   },
   backButton: {
     flexDirection: 'row',
     alignItems: 'center',
     alignSelf: 'flex-start',
-    marginBottom: 32, // mb-8
+    marginBottom: spacing.xl,
   },
   backText: {
-    color: '#A3A3A3',
-    fontSize: 16,
-    fontFamily: 'Inter_400Regular',
-    marginLeft: 8,
+    color: colors.textMuted,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.inter.regular,
+    marginLeft: spacing.sm,
   },
   logoContainer: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 48, // mb-12
+    marginBottom: spacing.xxl,
   },
   logo: {
-    width: 64, // w-16
+    width: 64, // w-16 (specific size)
     height: 64, // h-16
-    borderRadius: 32,
+    borderRadius: radii.full, // 32 = width/2 (circle)
     alignItems: 'center',
     justifyContent: 'center',
-    shadowColor: '#EC4899',
-    shadowOffset: { width: 0, height: 8 },
+    shadowColor: colors.accent,
+    shadowOffset: { width: 0, height: spacing.sm },
     shadowOpacity: 0.3,
-    shadowRadius: 12,
+    shadowRadius: spacing.md,
     elevation: 12,
   },
   content: {
@@ -204,59 +212,59 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginBottom: 48, // mb-12
+    marginBottom: spacing.xxl,
   },
   title: {
-    color: '#F5F5F5',
-    fontSize: 28,
-    fontFamily: 'Poppins_700Bold',
-    marginBottom: 8,
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.displayXl - 4, // 28px (between headingLg and displayXl)
+    fontFamily: typography.fontFamily.poppins.bold,
+    marginBottom: spacing.sm,
     textAlign: 'center',
   },
   subtitle: {
-    color: '#A3A3A3',
-    fontSize: 16,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.inter.regular,
     textAlign: 'center',
   },
   contact: {
-    color: '#D4D4D4',
-    fontFamily: 'Inter_500Medium',
+    color: colors.textSecondary,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   formContainer: {
-    gap: 32, // space-y-8
+    gap: spacing.xl,
   },
   errorContainer: {
-    marginTop: 16,
+    marginTop: spacing.md,
   },
   errorText: {
-    color: '#EF4444',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.error,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
     textAlign: 'center',
   },
   verifyButton: {
-    marginTop: 24,
+    marginTop: spacing.lg,
   },
   resendContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 24,
+    marginTop: spacing.lg,
   },
   resendText: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
   resendLink: {
-    color: '#6366F1',
-    fontSize: 14,
-    fontFamily: 'Inter_500Medium',
+    color: colors.primary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   resendTimer: {
-    color: '#A3A3A3',
-    fontSize: 14,
-    fontFamily: 'Inter_400Regular',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.regular,
   },
 });

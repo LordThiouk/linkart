@@ -13,6 +13,7 @@ import Animated, {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Music, TrendingUp, Radio, Heart, LucideIcon } from 'lucide-react-native';
 import { PrimaryButton } from '../../components/atoms/PrimaryButton';
+import { colors, spacing, typography, radii } from '@/theme';
 
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
@@ -27,27 +28,38 @@ interface WelcomeScreenFigmaProps {
 }
 
 const features: Feature[] = [
-  { icon: Music, label: 'Explore', gradient: ['#6366F1', '#8B5CF6'] },
-  { icon: TrendingUp, label: 'Trending', gradient: ['#F59E0B', '#EC4899'] },
-  { icon: Radio, label: 'Radio', gradient: ['#8B5CF6', '#EC4899'] },
-  { icon: Heart, label: 'Favorites', gradient: ['#EC4899', '#06B6D4'] },
+  { icon: Music, label: 'Explore', gradient: [colors.primary, colors.primaryDark] },
+  { icon: TrendingUp, label: 'Trending', gradient: [colors.secondary, colors.accent] },
+  { icon: Radio, label: 'Radio', gradient: [colors.primaryDark, colors.accent] },
+  { icon: Heart, label: 'Favorites', gradient: [colors.accent, colors.cyan] },
 ];
 
 export function WelcomeScreenFigma({ onStart }: WelcomeScreenFigmaProps) {
-  const containerOpacity = useSharedValue(0);
-  const logoScale = useSharedValue(0.5);
-  const logoOpacity = useSharedValue(0);
-  const titleY = useSharedValue(20);
-  const titleOpacity = useSharedValue(0);
-  const descriptionY = useSharedValue(20);
-  const descriptionOpacity = useSharedValue(0);
-  const featuresY = useSharedValue(20);
-  const featuresOpacity = useSharedValue(0);
-  const buttonY = useSharedValue(50);
-  const buttonOpacity = useSharedValue(0);
+  // Détecter si on est dans Storybook (navigateur)
+  const isStorybook = typeof window !== 'undefined' && window.location?.pathname?.includes('/iframe.html');
+
+  // Initialiser les valeurs différemment selon l'environnement
+  const containerOpacity = useSharedValue(isStorybook ? 1 : 0);
+  const logoScale = useSharedValue(isStorybook ? 1 : 0.5);
+  const logoOpacity = useSharedValue(isStorybook ? 1 : 0);
+  const titleY = useSharedValue(isStorybook ? 0 : 20);
+  const titleOpacity = useSharedValue(isStorybook ? 1 : 0);
+  const descriptionY = useSharedValue(isStorybook ? 0 : 20);
+  const descriptionOpacity = useSharedValue(isStorybook ? 1 : 0);
+  const featuresY = useSharedValue(isStorybook ? 0 : 20);
+  const featuresOpacity = useSharedValue(isStorybook ? 1 : 0);
+  const buttonY = useSharedValue(isStorybook ? 0 : 50);
+  const buttonOpacity = useSharedValue(isStorybook ? 1 : 0);
   const rotation = useSharedValue(0);
 
   useEffect(() => {
+    // Dans Storybook, les animations sont déjà à leur état final (sauf rotation)
+    if (isStorybook) {
+      // La rotation continue même dans Storybook
+      rotation.value = withRepeat(withTiming(360, { duration: 20000, easing: Easing.linear }), -1, false);
+      return;
+    }
+
     // Container animation
     containerOpacity.value = withTiming(1, { duration: 500 });
 
@@ -73,7 +85,7 @@ export function WelcomeScreenFigma({ onStart }: WelcomeScreenFigmaProps) {
     // Button animation
     buttonY.value = withDelay(800, withTiming(0, { duration: 500 }));
     buttonOpacity.value = withDelay(800, withTiming(1, { duration: 500 }));
-  }, []);
+  }, [isStorybook]);
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
     opacity: containerOpacity.value,
@@ -131,7 +143,7 @@ export function WelcomeScreenFigma({ onStart }: WelcomeScreenFigmaProps) {
           end={{ x: 1, y: 1 }}
           style={styles.featureIconContainer}
         >
-          <feature.icon size={24} color="#F5F5F5" />
+          <feature.icon size={24} color={colors.textPrimary} />
         </LinearGradient>
         <Text style={styles.featureLabel}>{feature.label}</Text>
       </AnimatedTouchableOpacity>
@@ -146,7 +158,7 @@ export function WelcomeScreenFigma({ onStart }: WelcomeScreenFigmaProps) {
           <Animated.View style={[styles.logoContainer, logoAnimatedStyle]}>
             <View style={styles.logoGlow}>
               <LinearGradient
-                colors={['#6366F1', '#8B5CF6', '#EC4899']}
+                colors={[colors.primary, colors.primaryDark, colors.accent]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.logoGlowGradient}
@@ -154,12 +166,12 @@ export function WelcomeScreenFigma({ onStart }: WelcomeScreenFigmaProps) {
             </View>
             <View style={styles.logo}>
               <LinearGradient
-                colors={['#6366F1', '#EC4899']}
+                colors={[colors.primary, colors.accent]}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 1 }}
                 style={styles.logoGradient}
               >
-                <Music size={64} color="#F5F5F5" />
+                <Music size={64} color={colors.textPrimary} />
               </LinearGradient>
             </View>
           </Animated.View>
@@ -198,7 +210,7 @@ export function WelcomeScreenFigma({ onStart }: WelcomeScreenFigmaProps) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0A0A0A',
+    backgroundColor: colors.background,
   },
   content: {
     flex: 1,
@@ -207,36 +219,36 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    paddingHorizontal: 32,
-    paddingVertical: 40,
+    paddingHorizontal: spacing.xl,
+    paddingVertical: spacing.xxl - spacing.sm, // 40px
   },
   logoContainer: {
-    marginBottom: 48,
+    marginBottom: spacing.xxl,
     position: 'relative',
   },
   logoGlow: {
     position: 'absolute',
     width: 160,
     height: 160,
-    borderRadius: 80,
+    borderRadius: 80, // Half of width/height for perfect circle
     opacity: 0.4,
-    top: -16,
-    left: -16,
+    top: -spacing.md,
+    left: -spacing.md,
   },
   logoGlowGradient: {
     width: '100%',
     height: '100%',
-    borderRadius: 80,
+    borderRadius: 80, // Half of width/height for perfect circle
   },
   logo: {
     width: 128,
     height: 128,
-    borderRadius: 64,
+    borderRadius: 64, // Half of width/height for perfect circle
     overflow: 'hidden',
-    shadowColor: '#6366F1',
-    shadowOffset: { width: 0, height: 8 },
+    shadowColor: colors.primary,
+    shadowOffset: { width: 0, height: spacing.sm },
     shadowOpacity: 0.5,
-    shadowRadius: 16,
+    shadowRadius: spacing.md,
     elevation: 12,
   },
   logoGradient: {
@@ -246,54 +258,54 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   title: {
-    color: '#F5F5F5',
-    fontSize: 28,
-    fontWeight: '700',
+    color: colors.textPrimary,
+    fontSize: typography.fontSize.headingLg + 4, // 28px
+    fontFamily: typography.fontFamily.poppins.bold,
     textAlign: 'center',
-    marginBottom: 16,
+    marginBottom: spacing.md,
   },
   description: {
-    color: '#A3A3A3',
-    fontSize: 16,
-    fontWeight: '400',
+    color: colors.textMuted,
+    fontSize: typography.fontSize.body,
+    fontFamily: typography.fontFamily.inter.regular,
     textAlign: 'center',
-    marginBottom: 48,
+    marginBottom: spacing.xxl,
     maxWidth: 320,
-    lineHeight: 24,
+    lineHeight: typography.fontSize.body * typography.lineHeight.normal, // 24px
   },
   featuresGrid: {
     width: '100%',
     maxWidth: 320,
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 16,
-    marginBottom: 32,
+    gap: spacing.md,
+    marginBottom: spacing.xl,
   },
   featureCard: {
     width: '47%',
     alignItems: 'center',
-    gap: 12,
-    padding: 24,
-    borderRadius: 16,
-    backgroundColor: '#111111',
+    gap: spacing.md - spacing.xs, // 12px
+    padding: spacing.lg,
+    borderRadius: radii.lg,
+    backgroundColor: colors.surface,
     borderWidth: 1,
-    borderColor: '#404040',
+    borderColor: colors.border,
   },
   featureIconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 12,
+    width: spacing.xxl, // 48px
+    height: spacing.xxl, // 48px
+    borderRadius: radii.md,
     alignItems: 'center',
     justifyContent: 'center',
   },
   featureLabel: {
-    color: '#D4D4D4',
-    fontSize: 14,
-    fontWeight: '500',
+    color: colors.textSecondary,
+    fontSize: typography.fontSize.label,
+    fontFamily: typography.fontFamily.inter.medium,
   },
   buttonContainer: {
-    paddingHorizontal: 32,
-    paddingBottom: 32,
-    paddingTop: 16,
+    paddingHorizontal: spacing.xl,
+    paddingBottom: spacing.xl,
+    paddingTop: spacing.md,
   },
 });

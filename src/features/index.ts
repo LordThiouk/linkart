@@ -18,3 +18,15 @@ export * from './ratings';
 
 // Admin
 export * from './admin';
+
+// Payments
+export * from './payments';
+
+// Bookings
+export * from './bookings';
+
+// Notifications
+export * from './notifications';
+
+// Home
+export * from './home';

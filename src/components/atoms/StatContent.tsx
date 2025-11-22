@@ -1,6 +1,6 @@
 import React from 'react';
-import { ViewStyle } from 'react-native';
-import { Card } from 'react-native-paper';
+import { View, ViewStyle } from 'react-native';
+import { spacing } from '@/theme';
 
 interface StatContentProps {
   children: React.ReactNode;
@@ -8,9 +8,9 @@ interface StatContentProps {
   padding?: number;
 }
 
-export const StatContent: React.FC<StatContentProps> = ({ children, style, padding = 16 }) => {
+export const StatContent: React.FC<StatContentProps> = ({ children, style, padding = spacing.md }) => {
   return (
-    <Card.Content
+    <View
       style={[
         {
           alignItems: 'center',
@@ -20,6 +20,6 @@ export const StatContent: React.FC<StatContentProps> = ({ children, style, paddi
       ]}
     >
       {children}
-    </Card.Content>
+    </View>
   );
 };

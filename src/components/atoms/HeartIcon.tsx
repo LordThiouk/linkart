@@ -1,10 +1,10 @@
 import React, { useRef } from 'react';
 import { TouchableOpacity, Animated, ViewStyle } from 'react-native';
 import { Heart } from 'lucide-react-native';
-import { useTheme } from 'react-native-paper';
 import * as Haptics from 'expo-haptics';
 import Toast from 'react-native-toast-message';
 import { useFavoritesStore } from '../../store/favoritesStore';
+import { colors, radii, hexToRgba } from '@/theme';
 
 export interface HeartIconProps {
   productId: string;
@@ -21,7 +21,6 @@ export const HeartIcon: React.FC<HeartIconProps> = ({
   showAnimation = true,
   testID,
 }) => {
-  const theme = useTheme();
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const { isFavorite, toggleFavorite, error, clearError } = useFavoritesStore();
 
@@ -81,16 +80,16 @@ export const HeartIcon: React.FC<HeartIconProps> = ({
 
   const getIconColor = () => {
     if (disabled) {
-      return theme.colors.onSurfaceVariant;
+      return colors.textMuted;
     }
-    return favorite ? '#EC4899' : theme.colors.onSurfaceVariant;
+    return favorite ? colors.accent : colors.textMuted;
   };
 
   const containerStyle: ViewStyle = {
     padding: 8,
-    borderRadius: theme.roundness,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    opacity: disabled ? 0.5 : 1,
+    borderRadius: radii.full,
+    backgroundColor: hexToRgba(colors.black, 0.4),
+    opacity: disabled ? 0.6 : 1,
   };
 
   return (

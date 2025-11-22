@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, TouchableOpacity, ViewStyle } from 'react-native';
-import { useTheme } from 'react-native-paper';
 import { Search, X } from 'lucide-react-native';
+import { colors, typography, spacing, radii, shadows } from '../../theme';
 
 export interface SearchBarProps {
   placeholder?: string;
@@ -24,7 +24,6 @@ export const SearchBar: React.FC<SearchBarProps> = ({
   style,
   testID,
 }) => {
-  const theme = useTheme();
   const [isFocused, setIsFocused] = useState(false);
 
   const handleFocus = () => {
@@ -53,40 +52,32 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         {
           flexDirection: 'row',
           alignItems: 'center',
-          backgroundColor: theme.colors.surface,
-          borderRadius: theme.roundness,
+          backgroundColor: colors.surface,
+          borderRadius: radii.lg,
           borderWidth: 1,
-          borderColor: isFocused ? theme.colors.primary : theme.colors.outline,
-          paddingHorizontal: 16,
-          paddingVertical: 8,
-          elevation: isFocused ? 4 : 1,
-          shadowColor: '#000',
-          shadowOffset: { width: 0, height: isFocused ? 2 : 1 },
-          shadowOpacity: isFocused ? 0.25 : 0.1,
-          shadowRadius: isFocused ? 4 : 1,
+          borderColor: isFocused ? colors.primary : colors.border,
+          paddingHorizontal: spacing.md,
+          paddingVertical: spacing.sm,
+          ...(isFocused ? shadows.md : shadows.sm),
         },
         style,
       ]}
       testID={testID}
     >
       {/* Search Icon */}
-      <Search
-        size={20}
-        color={isFocused ? theme.colors.primary : theme.colors.onSurfaceVariant}
-        style={{ marginRight: 8 }}
-      />
+      <Search size={20} color={isFocused ? colors.primary : colors.textMuted} style={{ marginRight: spacing.sm }} />
 
       {/* Text Input */}
       <TextInput
         style={{
           flex: 1,
-          fontSize: theme.fonts.bodyMedium.fontSize,
-          fontFamily: theme.fonts.bodyMedium.fontFamily,
-          color: theme.colors.onSurface,
-          paddingVertical: 4,
+          fontSize: typography.fontSize.body,
+          fontFamily: typography.fontFamily.inter.regular,
+          color: colors.textPrimary,
+          paddingVertical: spacing.xs,
         }}
         placeholder={placeholder}
-        placeholderTextColor={theme.colors.onSurfaceVariant}
+        placeholderTextColor={colors.textMuted}
         value={value}
         onChangeText={onChangeText}
         onFocus={handleFocus}
@@ -101,12 +92,12 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         <TouchableOpacity
           onPress={handleClear}
           style={{
-            padding: 4,
-            marginLeft: 8,
+            padding: spacing.xs,
+            marginLeft: spacing.sm,
           }}
           testID={`${testID}-clear`}
         >
-          <X size={18} color={theme.colors.onSurfaceVariant} />
+          <X size={18} color={colors.textMuted} />
         </TouchableOpacity>
       )}
 
@@ -115,14 +106,14 @@ export const SearchBar: React.FC<SearchBarProps> = ({
         <TouchableOpacity
           onPress={handleSearch}
           style={{
-            padding: 4,
-            marginLeft: 8,
-            backgroundColor: theme.colors.primary,
-            borderRadius: theme.roundness / 2,
+            padding: spacing.xs,
+            marginLeft: spacing.sm,
+            backgroundColor: colors.primary,
+            borderRadius: radii.md,
           }}
           testID={`${testID}-search`}
         >
-          <Search size={18} color={theme.colors.onPrimary} />
+          <Search size={18} color={colors.primaryForeground} />
         </TouchableOpacity>
       )}
     </View>

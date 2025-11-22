@@ -5,7 +5,6 @@ import { LoginScreen } from './LoginScreen';
 const meta: Meta<typeof LoginScreen> = {
   title: 'Screens/Auth/LoginScreen',
   component: LoginScreen,
-  decorators: [Story => <Story />],
   parameters: {
     layout: 'fullscreen',
   },

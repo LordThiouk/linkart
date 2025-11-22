@@ -4,20 +4,20 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Animated, { useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
 import { Play, Pause, Heart, ShoppingCart, Download, Package, LucideIcon } from 'lucide-react-native';
 import { ImageWithFallback } from './ImageWithFallback';
-import { RatingStars } from '../molecules/RatingStars';
+import { RatingStarsFigma } from '../molecules/RatingStarsFigma';
 
 const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
 
 interface ProductCardFigmaProps {
   id: string;
   title: string;
-  artist: string;
+  artist?: string;
   artistImage?: string;
   coverImage: string;
   price: number;
   type: 'beat' | 'kit' | 'sample';
   bpm?: number;
-  genre: string;
+  genre?: string;
   likes?: number;
   downloads?: number;
   rating?: number;
@@ -187,22 +187,23 @@ export function ProductCardFigma({
           </Text>
 
           {/* Artist */}
-          {artistImage ? (
-            <View style={styles.artistContainer}>
-              <ImageWithFallback src={artistImage} alt={artist} style={styles.artistImage} />
+          {artist &&
+            (artistImage ? (
+              <View style={styles.artistContainer}>
+                <ImageWithFallback src={artistImage} alt={artist} style={styles.artistImage} />
+                <Text style={styles.artist} numberOfLines={1}>
+                  {artist}
+                </Text>
+              </View>
+            ) : (
               <Text style={styles.artist} numberOfLines={1}>
                 {artist}
               </Text>
-            </View>
-          ) : (
-            <Text style={styles.artist} numberOfLines={1}>
-              {artist}
-            </Text>
-          )}
+            ))}
 
           {/* Meta Info */}
           <View style={styles.metaContainer}>
-            <Text style={styles.genre}>{genre}</Text>
+            {genre && <Text style={styles.genre}>{genre}</Text>}
             {bpm && (
               <>
                 <Text style={styles.separator}>•</Text>
@@ -214,8 +215,12 @@ export function ProductCardFigma({
           {/* Rating */}
           {rating !== undefined && (
             <View style={styles.ratingContainer}>
-              <RatingStars rating={rating} size={20} />
-              {reviewCount !== undefined && <Text style={styles.reviewCountText}>({reviewCount})</Text>}
+              <RatingStarsFigma
+                rating={rating}
+                size="lg"
+                showNumber={reviewCount !== undefined}
+                reviewCount={reviewCount}
+              />
             </View>
           )}
 

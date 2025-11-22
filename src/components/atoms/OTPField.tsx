@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import { useRef, useEffect } from 'react';
 import { View, TextInput, StyleSheet, ViewStyle } from 'react-native';
 
 interface OTPFieldProps {
